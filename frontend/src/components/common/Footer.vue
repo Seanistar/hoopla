@@ -1,6 +1,6 @@
 <template>
   <div class="footer">
-    Produced By SEANISTAR. August 2018
+    Produced By SEANISTAR. since August 2018
   </div>
 </template>
 

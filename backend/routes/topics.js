@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-
 var db = require('../db/mysql');
 
 router.get('/', function(req, res, next) {
@@ -16,8 +15,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/page/:id', function(req, res, next) {
-  const id = req.params.id;
-  const sql = [`SELECT * FROM topic WHERE id=?`, id];
+  const sql = [`SELECT * FROM topic WHERE id=?`, req.params.id];
   db.query(...sql, function (err, rows) {
     if (!err) {
       console.log(rows);
@@ -32,7 +30,7 @@ router.get('/page/:id', function(req, res, next) {
 router.put('/add', function(req, res, next) {
   const title = req.body['title'];
   const content = req.body['content'];
-  // const authorId = req.body['authorId'];
+  // const aid = req.body['author_id'];
   db.query('INSERT INTO topic (title, content) VALUES(?,?)', [title, content], function (err, rows) {
     if (!err) {
       // console.log(rows);
@@ -44,11 +42,25 @@ router.put('/add', function(req, res, next) {
   });
 });
 
-router.put('/edit', function(req, res, next) {
+router.put('/edit/:id', function(req, res, next) {
   const title = req.body['title'];
   const content = req.body['content'];
-  const topicId = req.body['topicId'];
-  db.query('UPDATE topic SET title=?, content=? WHERE id=?', [title, content, topicId], function (err, rows) {
+  const aid = req.body['author_id'];
+  const tid = req.params.id;
+  db.query('UPDATE topic SET title=?, content=?, author_id=? WHERE id=?', [title, content, aid, tid], function (err, rows) {
+    if (!err) {
+      // console.log(rows);
+      res.status(200).send({success: true});
+    } else {
+      console.log('query error : ' + err);
+      res.send(err);
+    }
+  });
+});
+
+router.delete('/:id', (req, res) => {
+  const sql = [`DELETE FROM topic WHERE id=?`, req.params.id];
+  db.query(...sql, function (err, rows) {
     if (!err) {
       // console.log(rows);
       res.status(200).send({success: true});

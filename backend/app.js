@@ -16,19 +16,25 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
-app.use(require('connect-history-api-fallback')()); //.listen(9018)
+app.use(require('connect-history-api-fallback')());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// routes
 var indexRouter = require('./routes/index');
 var movieRouter = require('./routes/movies');
 var topicRouter = require('./routes/topics');
+var authorRouter = require('./routes/authors');
+var postRouter = require('./routes/posts')
 app.use('/', indexRouter);
 app.use('/api/topics', topicRouter);
+app.use('/api/authors', authorRouter);
 app.use('/api/movies', movieRouter);
+app.use('/api/posts', postRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
+  console.log('404 not found...');
 });
 
 // error handler

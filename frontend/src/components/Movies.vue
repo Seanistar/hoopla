@@ -1,11 +1,11 @@
 <template>
   <div class="movies">
-    <h1>영화 목록</h1>
+    <h1>MOVIES</h1>
     <div v-for="movie in movies" v-bind:key="movie.id" class="movie">
       <img v-bind:src="movie.poster" class="poster">
       <div>
         <strong>{{movie.name}}</strong>, <i>{{movie.director}}</i> [{{movie.year}}]
-        <router-link :to="{ name: 'show', params: { id: movie.id }}">더보기</router-link>
+        <router-link :to="{ name: 'movie-page', params: { id: movie.id }}">더보기</router-link>
       </div>
     </div>
   </div>

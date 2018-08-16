@@ -26,14 +26,17 @@
     </md-table>
 
     <div class="button-container">
+      <p style="float: left">{{ selected }}</p>
+      <md-button class="md-fab md-accent" @click="onDeleteTopic">
+        <md-icon>delete</md-icon>
+      </md-button>
       <md-button class="md-fab md-primary" @click="onAddTopic">
         <md-icon>add</md-icon>
       </md-button>
-      <md-button class="md-fab md-plain" @click="onEditTopic">
+      <md-button class="md-fab" @click="onEditTopic">
         <md-icon>edit</md-icon>
       </md-button>
     </div>
-    <!--<p>Selected:</p>{{ selected }}-->
   </div>
 </template>
 
@@ -74,7 +77,7 @@ export default {
   mounted () {
     setTimeout(() => {
       const heads = document.getElementsByClassName('md-table-head')
-      console.log(heads.length)
+      // console.log(heads.length)
       for (let i = 0; i < heads.length; i++) {
         heads[i].style.textAlign = 'center'
       }
@@ -86,22 +89,27 @@ export default {
       // console.log(response.data)
       this.searched = this.topics = response.data
     },
-    getClass: ({ id }) => ({
-      'md-primary': id === 2,
-      'md-accent': id === 3
+    getClass: ({ author_id }) => ({
+      'md-primary': true,
+      'md-accent': author_id === null
     }),
     onSelect (item) {
       this.selected = item
-      this.$router.push({
-        name: 'topic-page',
-        params: {id: item.id}
-      })
+      // this.$router.push({name: 'topic-page', params: {id: item.id}})
     },
     onAddTopic () {
       this.$router.push({name: 'add-topic'})
     },
     onEditTopic () {
-      this.$router.push({name: 'edit-topic'})
+      this.$router.push({name: 'edit-topic', params: {id: this.selected.id}})
+    },
+    onDeleteTopic () {
+      if (!confirm('delete selected topic?')) return
+      TopicService.deleteTopic(this.selected.id)
+        .then((res) => {
+          console.log(res.data)
+          window.reload()
+        })
     },
     onSearch (items, term) {
       if (term) {

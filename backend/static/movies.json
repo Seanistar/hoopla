@@ -14,13 +14,6 @@
     "poster": "http://img.cgv.co.kr/Movie/Thumbnail/Poster/000079/79437/79437_185.jpg"
   },
   {
-    "id": 3,
-    "name": "더킹",
-    "year": 2017,
-    "director": "한재림",
-    "poster": "http://img.cgv.co.kr/Movie/Thumbnail/Poster/000079/79423/79423_185.jpg"
-  },
-  {
     "id": 4,
     "name": "모아나",
     "year": 2017,
@@ -40,5 +33,12 @@
     "year": 2017,
     "director": "신카이 마코토",
     "poster": "http://img.cgv.co.kr/Movie/Thumbnail/Poster/000079/79313/79313_1000.jpg"
+  },
+  {
+    "id": 3,
+    "name": "더킹",
+    "year": 2017,
+    "director": "한재림",
+    "poster": "http://img.cgv.co.kr/Movie/Thumbnail/Poster/000079/79423/79423_185.jpg"
   }
 ]

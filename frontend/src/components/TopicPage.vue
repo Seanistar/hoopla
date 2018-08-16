@@ -58,7 +58,7 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      console.log(vm.id = to.params.id)
+      // console.log(vm.id = to.params.id)
       vm.getTopicPage(to.params.id)
     })
   },
@@ -66,7 +66,7 @@ export default {
     async getTopicPage (id) {
       if (id === 0) return console.warn('no id')
       const response = await TopicService.getTopicPage(id)
-      console.log(response.data)
+      // console.log(response.data)
       this.page = response.data[0]
     }
   },
