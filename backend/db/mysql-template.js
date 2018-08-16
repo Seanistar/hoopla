@@ -1,5 +1,12 @@
 let mysql = require('mysql');
 
+/*const connector = mysql.createConnection({
+  host: '',
+  user: '',
+  password: '',
+  database: ''
+});*/
+
 const connector =  mysql.createPool({
   connectionLimit : 10,
   host: '',
