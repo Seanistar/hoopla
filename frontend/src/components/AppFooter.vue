@@ -12,10 +12,11 @@ export default {
 
 <style scoped>
   .footer {
-    position: absolute;
-    top: calc(100vh - 50px);
-    padding-top: 20px;
-    height: 50px;
-    max-height: 50px;
+    background: #f3f3f3;
+    margin-top: 3rem;
+    padding: 1rem 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
   }
 </style>

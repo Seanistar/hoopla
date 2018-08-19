@@ -1,15 +1,16 @@
 <template>
   <div id="app">
-    <app-header/>
-    <!--<img src="./assets/logo.png">-->
-    <router-view/>
-    <app-footer/>
+    <v-app>
+      <app-header/>
+      <router-view/>
+      <app-footer/>
+    </v-app>
   </div>
 </template>
 
 <script>
-import AppHeader from '@/components/common/Header'
-import AppFooter from '@/components/common/Footer'
+import AppHeader from '@/components/AppHeader'
+import AppFooter from '@/components/AppFooter'
 
 export default {
   name: 'App',
@@ -19,11 +20,11 @@ export default {
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+/*font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin: 0 15px 10px 15px;
+  margin: 5px;*/
 }
 </style>

@@ -34,7 +34,7 @@
 
 <script>
 import Vue from 'vue'
-import TopicService from '@/services/TopicService'
+import TopicService from '@/services/topic.service'
 import { MdField } from 'vue-material/dist/components'
 
 Vue.use(MdField)

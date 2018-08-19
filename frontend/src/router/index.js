@@ -9,54 +9,64 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: () => import('@/components/HelloWorld')
+      component: () => import('@/views/HelloHome')
     },
     {
+      path: '/scrap',
+      name: 'scraps',
+      component: () => import('@/views/Scraps')
+    },
+    {
+      path: '/topic',
+      name: 'home-topic',
+      component: () => import('@/views/HomeTopic')
+    }
+    /* {
       path: '/movies',
       name: 'movies',
-      component: () => import('@/components/Movies')
+      component: () => import('@/views/Movies')
     },
     {
       path: '/movies/page/:id',
       name: 'movie-page',
-      component: () => import('@/components/MoviePage')
+      component: () => import('@/views/MoviePage')
     },
     {
       path: '/topics',
       name: 'topics',
-      component: () => import('@/components/Topics')
+      component: () => import('@/views/Topics')
     },
     {
       path: '/topics/page/:id',
       name: 'topic-page',
       props: true,
-      component: () => import('@/components/TopicPage')
+      component: () => import('@/views/TopicPage')
     },
     {
       path: '/topics/add',
       name: 'add-topic',
-      component: () => import('@/components/AddTopic')
+      component: () => import('@/views/AddTopic')
     },
     {
       path: '/topics/edit/:id',
       name: 'edit-topic',
       props: true,
-      component: () => import('@/components/EditTopic')
+      component: () => import('@/views/EditTopic')
     },
     {
       path: '/authors',
       name: 'authors',
-      component: () => import('@/components/Authors')
+      component: () => import('@/views/Authors')
     },
     {
       path: '/posts',
       name: 'posts',
-      component: () => import('@/components/Posts')
+      component: () => import('@/views/Posts')
     },
     {
       path: '/posts/add',
       name: 'add-post',
-      component: () => import('@/components/AddPost')
-    }
+      component: () => import('@/views/AddPost')
+    } */
   ]
 })

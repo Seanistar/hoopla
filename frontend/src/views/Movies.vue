@@ -15,9 +15,9 @@
 export default {
   created () {
     this.$http.get('/api/movies')
-    .then((response) => {
-      this.movies = response.data
-    })
+      .then((response) => {
+        this.movies = response.data
+      })
   },
   name: 'hello',
   data () {

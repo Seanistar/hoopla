@@ -1,4 +1,4 @@
-const CommonPlugin = {
+const BasePlugin = {
   install (Vue, options) {
     const head = document.getElementsByTagName('head')[0]
     const link = document.createElement('link')
@@ -8,4 +8,4 @@ const CommonPlugin = {
   }
 }
 
-export default CommonPlugin
+export default BasePlugin

@@ -1,4 +1,4 @@
-import Api from './Api'
+import Api from '../common/api.service'
 
 export default {
   getTopics () {

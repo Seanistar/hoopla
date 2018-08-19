@@ -21,11 +21,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // routes
 var indexRouter = require('./routes/index');
+var scrapRouter = require('./routes/scraps');
 var movieRouter = require('./routes/movies');
 var topicRouter = require('./routes/topics');
 var authorRouter = require('./routes/authors');
-var postRouter = require('./routes/posts')
+var postRouter = require('./routes/posts');
 app.use('/', indexRouter);
+app.use('/api/scraps', scrapRouter);
 app.use('/api/topics', topicRouter);
 app.use('/api/authors', authorRouter);
 app.use('/api/movies', movieRouter);

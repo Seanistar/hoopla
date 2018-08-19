@@ -37,8 +37,8 @@
 </template>
 
 <script>
-import TopicService from '@/services/TopicService'
-import CommonFilter from '../lib/common.filter';
+import TopicService from '@/services/topic.service'
+import CommonFilter from '../common/date.filter'
 
 export default {
   name: 'EditTopic',

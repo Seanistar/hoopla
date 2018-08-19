@@ -38,7 +38,7 @@
 
 <script>
 import Vue from 'vue'
-import TopicService from '@/services/TopicService'
+import TopicService from '@/services/topic.service'
 import Moment from 'moment'
 import { MdApp, MdToolbar, MdList, MdDrawer, MdContent }
   from 'vue-material/dist/components'
