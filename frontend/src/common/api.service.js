@@ -65,8 +65,8 @@ export const ScrapService = {
 }
 
 export const AuthorService = {
-  getAuthors () {
-    return ApiService.get('authors')
+  get () {
+    return ApiService.query('authors')
   }
 }
 

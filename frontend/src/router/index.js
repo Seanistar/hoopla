@@ -17,6 +17,11 @@ export default new Router({
       component: () => import('@/views/Scraps')
     },
     {
+      path: '/author',
+      name: 'authors',
+      component: () => import('@/views/Authors')
+    },
+    {
       path: '/topic',
       name: 'home-topic',
       component: () => import('@/views/HomeTopic')

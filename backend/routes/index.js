@@ -1,14 +1,14 @@
-var express = require('express');
-var path = require('path');
-var router = express.Router();
+const express = require('express')
+const router = express.Router()
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.sendFile(path.join(__dirname, '../public', 'index.html'))
-});
+const scrap = require('./scraps')
+const author = require('./authors')
+const movie = require('./movies')
+const topic = require('./topics')
 
-router.get('/:id', function (req, res, next) {
-  res.send(`index${req.params.id}`);
-});
+router.use('/scraps', scrap)
+router.use('/authors', author)
+router.use('/movies', movie)
+router.use('/topics', topic)
 
-module.exports = router;
+module.exports = router

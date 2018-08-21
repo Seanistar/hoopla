@@ -1,11 +1,11 @@
 <template>
   <div>
     <v-toolbar flat color="white">
-      <v-toolbar-title>My SCRAP</v-toolbar-title>
+      <v-toolbar-title>Author List</v-toolbar-title>
       <!--<v-divider class="mx-2" inset vertical></v-divider>-->
       <v-spacer></v-spacer>
       <v-dialog v-model="dialog" max-width="500px">
-        <v-btn slot="activator" color="indigo accent-2" class="mb-2">New Scrap</v-btn>
+        <v-btn slot="activator" color="primary" dark class="mb-2">New Author</v-btn>
         <v-card>
           <v-card-title>
             <span class="headline">{{ formTitle }}</span>
@@ -41,16 +41,15 @@
         </v-card>
       </v-dialog>
     </v-toolbar>
-    <v-data-table :headers="headers" :items="scraps" class="elevation-1"
+    <v-data-table :headers="headers" :items="authors" class="elevation-1"
                   :pagination.sync="pagination" :rows-per-page-items="perPage"
                   item-key="id"><!--:loading="true" -->
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
         <td class="text-xs-center">{{ props.item.id }}</td>
-        <td class="text-xs-center">{{ props.item.author_id }}</td>
-        <td class="text-xs-center">{{ props.item.title }}</td>
-        <td class="text-xs-center">{{ props.item.content }}</td>
-        <td class="text-xs-center">{{ props.item.created|timestamp }}</td>
+        <td class="text-xs-center">{{ props.item.name }}</td>
+        <td class="text-xs-center">{{ props.item.perm }}</td>
+        <td class="text-xs-center">{{ props.item.registered|toDate }}</td>
         <td class="justify-center layout px-0">
           <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
           <v-icon small @click="deleteItem(props.item)">delete</v-icon>
@@ -63,34 +62,30 @@
         <!--<v-btn color="primary" @click="initialize">Reset</v-btn>-->
       </template>
     </v-data-table>
-    <!--<div class="text-xs-center">
-      <v-pagination v-model="page" :length="4" circle></v-pagination>
-    </div>-->
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { FETCH_SCRAPS, CREATE_SCRAP, UPDATE_SCRAP, DELETE_SCRAP } from '@/store/actions.type'
-import DateFilter from '@/common/date.filter'
+import { FETCH_AUTHORS, CREATE_AUTHOR, UPDATE_AUTHOR, DELETE_AUTHOR } from '@/store/actions.type'
+import Moment from 'moment'
 import ScrapItem from '@/components/ScrapItem'
 
-const _ITEM = { id: '', author_id: '', title: '', content: '', created: '' }
+const _ITEM = { id: '', name: '', perm: '', registered: '' }
 export default {
-  name: 'ScrapList',
+  name: 'AuthorList',
   components: { ScrapItem },
   data: () => ({
     dialog: false,
-    perPage: [10, 25, 50, 100, {'text': '$vuetify.dataIterator.rowsPerPageAll', 'value': -1}],
+    perPage: [10, 25, {'text': '$vuetify.dataIterator.rowsPerPageAll', 'value': -1}],
     pagination: {
       sortBy: 'id'
     },
     headers: [
-      { text: 'Scrap ID', value: 'id', align: 'center' },
-      { text: 'Author ID', value: 'author_id', align: 'center' },
-      { text: 'Title', value: 'title', align: 'center' },
-      { text: 'Content', value: 'content', align: 'center', sortable: false },
-      { text: 'Created At', value: 'created', align: 'center' },
+      { text: 'Author ID', value: 'id', align: 'center' },
+      { text: 'Name', value: 'name', align: 'center' },
+      { text: 'Permission', value: 'perm', align: 'center', sortable: false },
+      { text: 'Registered At', value: 'registered', align: 'center' },
       { text: 'Actions', value: 'name', align: 'center', sortable: false }
     ],
     editedIndex: -1,
@@ -99,23 +94,22 @@ export default {
   }),
   computed: {
     ...mapGetters([
-      'scrapsCount',
-      'isScrapsLoading',
-      'scrapItem'
+      'authorsCount',
+      'isAuthorsLoading'
     ]),
-    scraps: {
+    authors: {
       get () {
-        return this.$store.state.scrap.scraps
+        return this.$store.state.author.authors
       },
       set (value) {
-        this.$store.dispatch(CREATE_SCRAP, value)
+        this.$store.dispatch(CREATE_AUTHOR, value)
       }
     },
     listConfig () {
       return {}
     },
     formTitle () {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+      return this.editedIndex === -1 ? 'New Author' : 'Edit Author'
     }
   },
   watch: {
@@ -125,44 +119,45 @@ export default {
   },
   mounted () {
     // console.log(this.$store.state.scrap)
-    this.fetchScraps()
+    this.fetchAuthors()
   },
   methods: {
-    fetchScraps () {
-      this.$store.dispatch(FETCH_SCRAPS, this.listConfig)
+    fetchAuthors () {
+      this.$store.dispatch(FETCH_AUTHORS, this.listConfig)
     },
     initialize () {
     },
     editItem (item) {
-      this.editedIndex = this.scraps.indexOf(item)
+      this.editedIndex = this.authors.indexOf(item)
       this.editedItem = Object.assign({}, item)
-      this.editedItem.created = DateFilter(this.editedItem.created)
+      this.editedItem.created = new Date()
       this.dialog = true
     },
     deleteItem (item) {
-      // const index = this.scraps.indexOf(item)
-      // confirm('Are you sure you want to delete this item?') && this.scraps.splice(index, 1)
-      confirm('Are you sure you want to delete this item?') && this.$store.dispatch(DELETE_SCRAP, item.id)
+      // const index = this.authors.indexOf(item)
+      // confirm('Are you sure you want to delete this item?') && this.authors.splice(index, 1)
+      confirm('Are you sure you want to delete this item?') && this.$store.dispatch(DELETE_AUTHOR, item.id)
     },
     close () {
       this.dialog = false
-      this.$nextTick(() => {
+      setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
-      })
-      /* setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      }, 100) */
+      }, 300)
     },
     save () {
       if (this.editedIndex > -1) {
-        // Object.assign(this.scraps[this.editedIndex], this.editedItem)
-        this.$store.dispatch(UPDATE_SCRAP, {id: this.scraps[this.editedIndex].id, obj: this.editedItem})
+        // Object.assign(this.authors[this.editedIndex], this.editedItem)
+        this.$store.dispatch(UPDATE_AUTHOR, {id: this.authors[this.editedIndex].id, obj: this.editedItem})
       } else {
-        this.scraps = this.editedItem
+        this.authors = this.editedItem
       }
       this.close()
+    }
+  },
+  filters: {
+    toDate (val) {
+      return Moment(val).format('YYYY-MM-DD')
     }
   }
 }

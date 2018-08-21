@@ -20,18 +20,17 @@ app.use(require('connect-history-api-fallback')());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // routes
-var indexRouter = require('./routes/index');
+app.use('/api', require('./routes'))
+/* var indexRouter = require('./routes/index');
 var scrapRouter = require('./routes/scraps');
+var authorRouter = require('./routes/authors');
 var movieRouter = require('./routes/movies');
 var topicRouter = require('./routes/topics');
-var authorRouter = require('./routes/authors');
-var postRouter = require('./routes/posts');
 app.use('/', indexRouter);
 app.use('/api/scraps', scrapRouter);
-app.use('/api/topics', topicRouter);
 app.use('/api/authors', authorRouter);
 app.use('/api/movies', movieRouter);
-app.use('/api/posts', postRouter);
+app.use('/api/topics', topicRouter); */
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

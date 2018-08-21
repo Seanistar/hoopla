@@ -1,3 +1,4 @@
 node_modules/
 public/
-db/mysql.js
+common/db.mysql.js
+common/config.js

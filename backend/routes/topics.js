@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var db = require('../db/mysql');
+var db = require('../common/db.mysql');
 
 router.get('/', function(req, res, next) {
   db.query('select * from topic', function (err, rows) {

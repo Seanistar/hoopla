@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-toolbar color="cyan" dark tabs>
+    <v-toolbar color="brown lighten-4" ligth tabs>
       <v-toolbar-side-icon></v-toolbar-side-icon>
       <v-toolbar-title>SCRAPBOOK</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -10,7 +10,7 @@
       <v-btn icon>
         <v-icon>more_vert</v-icon>
       </v-btn>
-      <v-tabs slot="extension" v-model="tab" color="cyan" grow>
+      <v-tabs slot="extension" v-model="tab" color="brown lighten-3" grow>
         <v-tabs-slider color="yellow"></v-tabs-slider>
         <v-tab v-for="(item, index) in items" :key="index" @click="onSelect(item.link)">
           {{ item.text }}
@@ -39,8 +39,8 @@ export default {
       items: [
         {text: 'home', link: 'home'},
         {text: 'scrap', link: 'scraps'},
-        {text: 'author', link: '/author'},
-        {text: 'setting', link: '/topic'},
+        {text: 'author', link: 'authors'},
+        {text: 'setting', link: 'v'},
         {text: 'news', link: 'home-topic'}
       ],
       content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     onSelect (link) {
-      console.log('select ' + link)
+      // console.log('select ' + link)
       this.$router.push({name: link})
     }
   }
