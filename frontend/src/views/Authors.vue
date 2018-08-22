@@ -1,5 +1,5 @@
 <template>
-  <div class="home-author">
+  <div class="view-author">
     <author-list/>
   </div>
 </template>
@@ -7,13 +7,13 @@
 <script>
 import AuthorList from '@/components/AuthorList'
 export default {
-  name: 'HomeScrap',
+  name: 'ViewAuthor',
   components: { AuthorList }
 }
 </script>
 
 <style scoped>
-  .home-author {
+  .view-author {
     padding-top: 10px
   }
 </style>

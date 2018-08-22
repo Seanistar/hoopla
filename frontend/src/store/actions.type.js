@@ -8,6 +8,10 @@ export const FETCH_AUTHORS = 'fetchAuthors'
 export const DELETE_AUTHOR = 'deleteAuthor'
 export const CREATE_AUTHOR = 'createAuthor'
 export const UPDATE_AUTHOR = 'updateAuthor'
+export const FETCH_VOLUNTEERS = 'fetchVolunteer'
+export const DELETE_VOLUNTEER = 'deleteVolunteer'
+export const CREATE_VOLUNTEER = 'createVolunteer'
+export const UPDATE_VOLUNTEER = 'updateVolunteer'
 
 // will be obsoleted
 export const FETCH_TOPICS = 'fetchTopics'

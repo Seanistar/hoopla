@@ -2,7 +2,7 @@
   <div>
     <v-toolbar color="brown lighten-4" ligth tabs>
       <v-toolbar-side-icon></v-toolbar-side-icon>
-      <v-toolbar-title>SCRAPBOOK</v-toolbar-title>
+      <v-toolbar-title>성소모임</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn icon>
         <v-icon>search</v-icon>
@@ -40,8 +40,8 @@ export default {
         {text: 'home', link: 'home'},
         {text: 'scrap', link: 'scraps'},
         {text: 'author', link: 'authors'},
-        {text: 'setting', link: 'v'},
-        {text: 'news', link: 'home-topic'}
+        {text: 'volunteer', link: 'volunteers'},
+        {text: 'news', link: 'topics'}
       ],
       content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
     }

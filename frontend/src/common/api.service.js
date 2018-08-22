@@ -19,7 +19,7 @@ const ApiService = {
         throw new Error(`[scrapbook] ApiService ${error}`)
       })
   },
-  get (resource, plug = '') {
+  get (resource, plug) {
     return Vue.axios
       .get(`${resource}/${plug}`)
       .catch((error) => {
@@ -59,6 +59,9 @@ export const ScrapService = {
   update (plug, params) {
     return ApiService.update(`scraps`, plug, params)
   },
+  upload (forms) {
+    return ApiService.post('scraps/upload', forms)
+  },
   destroy (plug) {
     return ApiService.delete(`scraps/${plug}`)
   }
@@ -94,23 +97,17 @@ export const TopicService = {
   }
 }
 
-export const PostService = {
-  fetchPosts () {
-    return ApiService.get('posts')
+export const VolunteerService = {
+  query (params = {}) {
+    return ApiService.query('volts', params)
   },
-  addPost (params) {
-    return ApiService.post('posts/add', params)
+  create (params) {
+    return ApiService.put('volts', { volts: params })
   },
-  updatePost (params) {
-    return ApiService.put(`posts/update/${params.id}`, params)
+  update (params) {
+    return ApiService.post(`volts/${params.id}`, params)
   },
-  getPost (params) {
-    return ApiService.get('posts/page/' + params.id)
-  },
-  deletePost (id) {
-    return ApiService.delete('posts/delete/' + id)
-  },
-  uploadFile (forms) {
-    return ApiService.post('posts/upload', forms)
+  delete (id) {
+    return ApiService.delete(`volts/${id}`)
   }
 }

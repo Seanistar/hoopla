@@ -6,6 +6,7 @@ import router from '@/router'
 import store from '@/store'
 import SweetAlert from 'vue-sweetalert2'
 import ApiService from '@/common/api.service'
+import '@/assets/base.css'
 import 'vuetify/dist/vuetify.min.css' // Ensure you are using css-loader
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import {
@@ -19,6 +20,7 @@ import {
   VDivider,
   VBtn,
   VList,
+  VForm,
   VDialog,
   VAlert,
   VTextField,
@@ -44,6 +46,7 @@ Vue.use(Vuetify, {
     VDivider,
     VBtn,
     VList,
+    VForm,
     VTabs,
     VIcon,
     VDialog,

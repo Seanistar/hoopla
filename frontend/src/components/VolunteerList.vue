@@ -1,11 +1,10 @@
 <template>
   <div>
     <v-toolbar flat color="white">
-      <v-toolbar-title>My SCRAP</v-toolbar-title>
-      <!--<v-divider class="mx-2" inset vertical></v-divider>-->
+      <v-toolbar-title>봉사자 리스트</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-dialog v-model="dialog" max-width="500px">
-        <v-btn slot="activator" color="indigo accent-2" dark class="mb-2">New Scrap</v-btn>
+      <v-btn color="indigo accent-2" dark class="mb-2" @click="newVolunteer">신규 봉사자</v-btn>
+      <!--<v-dialog v-model="dialog" max-width="500px">
         <v-card>
           <v-card-title>
             <span class="headline">{{ formTitle }}</span>
@@ -39,17 +38,20 @@
             <v-btn color="blue darken-1" flat @click.native="save">Save</v-btn>
           </v-card-actions>
         </v-card>
-      </v-dialog>
+      </v-dialog>-->
     </v-toolbar>
-    <v-data-table :headers="headers" :items="scraps" class="elevation-1" dark
+    <v-data-table :headers="headers" :items="volunteers" class="elevation-1" dark
                   :pagination.sync="pagination" :rows-per-page-items="perPage"
-                  item-key="id"><!--:loading="true" -->
+                  item-key="id">
       <template slot="items" slot-scope="props">
         <td class="text-xs-center">{{ props.item.id }}</td>
-        <td class="text-xs-center">{{ props.item.author_id }}</td>
-        <td class="text-xs-center">{{ props.item.title }}</td>
-        <td class="text-xs-center">{{ props.item.content }}</td>
-        <td class="text-xs-center">{{ props.item.created|timestamp }}</td>
+        <td class="text-xs-center">{{ props.item.name }}</td>
+        <td class="text-xs-center">{{ props.item.cath_name }}</td>
+        <td class="text-xs-center">{{ props.item.la_code }}</td>
+        <td class="text-xs-center">{{ props.item.ma_code }}</td>
+        <td class="text-xs-center">{{ props.item.sa_code }}</td>
+        <td class="text-xs-center">{{ props.item.birth_date|toDate }}</td>
+        <td class="text-xs-center">{{ props.item.cath_date|toDate }}</td>
         <td class="justify-center layout px-0">
           <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
           <v-icon small @click="deleteItem(props.item)">delete</v-icon>
@@ -59,36 +61,35 @@
         <v-alert :value="true" color="error" icon="warning">
           Sorry, nothing to display here :(
         </v-alert>
-        <!--<v-btn color="primary" @click="initialize">Reset</v-btn>-->
       </template>
     </v-data-table>
-    <!--<div class="text-xs-center">
-      <v-pagination v-model="page" :length="4" circle></v-pagination>
-    </div>-->
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { FETCH_SCRAPS, CREATE_SCRAP, UPDATE_SCRAP, DELETE_SCRAP } from '@/store/actions.type'
-import DateFilter from '@/common/date.filter'
+import { FETCH_VOLUNTEERS, CREATE_VOLUNTEER, UPDATE_VOLUNTEER, DELETE_VOLUNTEER } from '@/store/actions.type'
+import Moment from 'moment'
 
-const _ITEM = { id: '', author_id: '', title: '', content: '', created: '' }
+const _ITEM = { id: '', name: '', perm: '', registered: '' }
 export default {
-  name: 'ScrapList',
+  name: 'VoltList',
   data: () => ({
     dialog: false,
-    perPage: [10, 25, 50, 100, {'text': '$vuetify.dataIterator.rowsPerPageAll', 'value': -1}],
+    perPage: [10, 25, {'text': '$vuetify.dataIterator.rowsPerPageAll', 'value': -1}],
     pagination: {
       sortBy: 'id'
     },
     headers: [
-      { text: 'Scrap ID', value: 'id', align: 'center' },
-      { text: 'Author ID', value: 'author_id', align: 'center' },
-      { text: 'Title', value: 'title', align: 'center' },
-      { text: 'Content', value: 'content', align: 'center', sortable: false },
-      { text: 'Created At', value: 'created', align: 'center' },
-      { text: 'Actions', value: 'name', align: 'center', sortable: false }
+      { text: 'ID', value: 'id', align: 'center' },
+      { text: '성명', value: 'name', align: 'center' },
+      { text: '세례명', value: 'cathName', align: 'center', sortable: false },
+      { text: '소속 교구', value: 'laName', align: 'center' },
+      { text: '소속 본당', value: 'maName', align: 'center' },
+      { text: '소속 지구', value: 'saName', align: 'center' },
+      { text: '생년월일', value: 'birthDate', align: 'center' },
+      { text: '세례일', value: 'cathDate', align: 'center' },
+      { text: '편집', value: 'name', align: 'center', sortable: false }
     ],
     editedIndex: -1,
     editedItem: _ITEM,
@@ -96,23 +97,22 @@ export default {
   }),
   computed: {
     ...mapGetters([
-      'scrapsCount',
-      'isScrapsLoading',
-      'scrapItem'
+      'volunteersCount',
+      'isVolunteersLoading'
     ]),
-    scraps: {
+    volunteers: {
       get () {
-        return this.$store.state.scrap.scraps
+        return this.$store.state.volunteer.volunteers
       },
       set (value) {
-        this.$store.dispatch(CREATE_SCRAP, value)
+        this.$store.dispatch(CREATE_VOLUNTEER, value)
       }
     },
     listConfig () {
       return {}
     },
     formTitle () {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+      return this.editedIndex === -1 ? 'New Volunteer' : 'Edit Volunteer'
     }
   },
   watch: {
@@ -121,45 +121,46 @@ export default {
     }
   },
   mounted () {
-    // console.log(this.$store.state.scrap)
-    this.fetchScraps()
+    this.fetchVolunteers()
   },
   methods: {
-    fetchScraps () {
-      this.$store.dispatch(FETCH_SCRAPS, this.listConfig)
+    fetchVolunteers () {
+      this.$store.dispatch(FETCH_VOLUNTEERS)
     },
-    initialize () {
+    newVolunteer () {
+      this.$router.push({name: 'new-volunteer'})
     },
     editItem (item) {
-      this.editedIndex = this.scraps.indexOf(item)
+      this.editedIndex = this.volunteers.indexOf(item)
       this.editedItem = Object.assign({}, item)
-      this.editedItem.created = DateFilter(this.editedItem.created)
+      this.editedItem.created = new Date()
       this.dialog = true
     },
     deleteItem (item) {
-      // const index = this.scraps.indexOf(item)
-      // confirm('Are you sure you want to delete this item?') && this.scraps.splice(index, 1)
-      confirm('Are you sure you want to delete this item?') && this.$store.dispatch(DELETE_SCRAP, item.id)
+      // const index = this.volunteers.indexOf(item)
+      // confirm('Are you sure you want to delete this item?') && this.volunteers.splice(index, 1)
+      confirm('Are you sure you want to delete this item?') && this.$store.dispatch(DELETE_VOLUNTEER, item.id)
     },
     close () {
       this.dialog = false
-      this.$nextTick(() => {
+      setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
-      })
-      /* setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      }, 100) */
+      }, 300)
     },
     save () {
       if (this.editedIndex > -1) {
-        // Object.assign(this.scraps[this.editedIndex], this.editedItem)
-        this.$store.dispatch(UPDATE_SCRAP, {id: this.scraps[this.editedIndex].id, obj: this.editedItem})
+        // Object.assign(this.volunteers[this.editedIndex], this.editedItem)
+        this.$store.dispatch(UPDATE_VOLUNTEER, {id: this.volunteers[this.editedIndex].id, obj: this.editedItem})
       } else {
-        this.scraps = this.editedItem
+        this.volunteers = this.editedItem
       }
       this.close()
+    }
+  },
+  filters: {
+    toDate (val) {
+      return Moment(val).format('YYYY-MM-DD')
     }
   }
 }

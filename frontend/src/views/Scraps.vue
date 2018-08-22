@@ -1,19 +1,20 @@
 <template>
-  <div class="home-scrap">
+  <div class="view-scrap">
     <scrap-list/>
   </div>
 </template>
 
 <script>
 import ScrapList from '@/components/ScrapList'
+
 export default {
-  name: 'HomeScrap',
+  name: 'ViewScrap',
   components: { ScrapList }
 }
 </script>
 
 <style scoped>
-  .home-scrap {
+  .view-scrap {
     padding-top: 10px
   }
 </style>

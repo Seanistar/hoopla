@@ -3,7 +3,7 @@
     <v-app>
       <app-header/>
       <router-view/>
-      <app-footer/>
+      <!--<app-footer/>-->
     </v-app>
   </div>
 </template>
@@ -24,7 +24,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin: 5px;*/
+  color: #2c3e50; */
+  margin: 2px 2px;
 }
 </style>

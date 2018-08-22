@@ -5,7 +5,7 @@
       <!--<v-divider class="mx-2" inset vertical></v-divider>-->
       <v-spacer></v-spacer>
       <v-dialog v-model="dialog" max-width="500px">
-        <v-btn slot="activator" color="primary" dark class="mb-2">New Author</v-btn>
+        <v-btn slot="activator" color="indigo accent-2" dark class="mb-2">New Author</v-btn>
         <v-card>
           <v-card-title>
             <span class="headline">{{ formTitle }}</span>
@@ -41,7 +41,7 @@
         </v-card>
       </v-dialog>
     </v-toolbar>
-    <v-data-table :headers="headers" :items="authors" class="elevation-1"
+    <v-data-table :headers="headers" :items="authors" class="elevation-1" dark
                   :pagination.sync="pagination" :rows-per-page-items="perPage"
                   item-key="id"><!--:loading="true" -->
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
@@ -69,12 +69,10 @@
 import { mapGetters } from 'vuex'
 import { FETCH_AUTHORS, CREATE_AUTHOR, UPDATE_AUTHOR, DELETE_AUTHOR } from '@/store/actions.type'
 import Moment from 'moment'
-import ScrapItem from '@/components/ScrapItem'
 
 const _ITEM = { id: '', name: '', perm: '', registered: '' }
 export default {
   name: 'AuthorList',
-  components: { ScrapItem },
   data: () => ({
     dialog: false,
     perPage: [10, 25, {'text': '$vuetify.dataIterator.rowsPerPageAll', 'value': -1}],
@@ -143,7 +141,7 @@ export default {
       setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
-      }, 300)
+      }, 100)
     },
     save () {
       if (this.editedIndex > -1) {
