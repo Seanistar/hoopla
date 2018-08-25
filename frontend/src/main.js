@@ -12,6 +12,7 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import {
   Vuetify, // required
   VApp, // required
+  VMenu,
   VGrid,
   VCard,
   VTabs,
@@ -24,11 +25,16 @@ import {
   VDialog,
   VAlert,
   VTextField,
+  VTextarea,
+  VSelect,
   VDataTable,
   VPagination,
   VProgressLinear,
   VFooter,
   VToolbar,
+  VTooltip,
+  VRadioGroup,
+  VDatePicker,
   transitions
 } from 'vuetify'
 import { Ripple } from 'vuetify/es5/directives'
@@ -40,6 +46,7 @@ Vue.use(SweetAlert)
 Vue.use(Vuetify, {
   components: {
     VApp,
+    VMenu,
     VJumbotron,
     VGrid,
     VCard,
@@ -52,11 +59,16 @@ Vue.use(Vuetify, {
     VDialog,
     VAlert,
     VTextField,
+    VTextarea,
+    VSelect,
     VDataTable,
     VPagination,
     VProgressLinear,
     VFooter,
     VToolbar,
+    VTooltip,
+    VRadioGroup,
+    VDatePicker,
     transitions
   },
   directives: {
@@ -64,6 +76,7 @@ Vue.use(Vuetify, {
   }
 })
 Vue.filter('timestamp', DateFilter)
+Vue.prototype.$eventBus = new Vue()
 
 ApiService.init()
 

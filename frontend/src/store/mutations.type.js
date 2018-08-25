@@ -7,10 +7,12 @@ export const FETCH_AUTHORS_END = 'setAuthors'
 export const SET_AUTHOR = 'setAuthor'
 export const ADD_AUTHOR = 'addAuthor'
 export const REMOVE_AUTHOR = 'removeAuthor'
+
 export const SET_VOLUNTEER = 'setVolunteer'
 export const ADD_VOLUNTEER = 'addVolunteer'
 export const REMOVE_VOLUNTEER = 'removeVolunteer'
-export const FETCH_VOLUNTEERS_END = 'setVolunteers'
+export const FETCH_VOLUNTEERS_END = 'fetchVolunteers'
+export const FETCH_VOLUNTEER = 'fetchVolunteer'
 export const SET_AUTH = 'setAuth'
 
 // will be obsoleted

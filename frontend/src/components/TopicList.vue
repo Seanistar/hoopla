@@ -45,11 +45,9 @@
 <script>
 import { mapGetters } from 'vuex'
 import { FETCH_TOPICS } from '@/store/actions.type'
-import TopicPreview from '@/components/TopicPreview'
 
 export default {
   name: 'TopicList',
-  components: { TopicPreview },
   computed: {
     ...mapGetters([
       'topicsCount',

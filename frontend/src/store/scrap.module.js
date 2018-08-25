@@ -26,8 +26,9 @@ const getters = {
   scrapsCount (state) {
     return state.scrapsCount
   },
-  scrapItem (state) {
-    return state.scrapItem
+  scrapItem: (state) => (id) => {
+    return state.scraps.find((o) => o.id === id)
+    // return state.scrapItem
   },
   scraps (state) {
     return state.scraps

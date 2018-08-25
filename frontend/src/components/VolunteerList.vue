@@ -3,7 +3,7 @@
     <v-toolbar flat color="white">
       <v-toolbar-title>봉사자 리스트</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn color="indigo accent-2" dark class="mb-2" @click="newVolunteer">신규 봉사자</v-btn>
+      <v-btn color="indigo accent-2" outline dark class="mb-2" @click="newVolunteer">신규 봉사자</v-btn>
       <!--<v-dialog v-model="dialog" max-width="500px">
         <v-card>
           <v-card-title>
@@ -46,12 +46,12 @@
       <template slot="items" slot-scope="props">
         <td class="text-xs-center">{{ props.item.id }}</td>
         <td class="text-xs-center">{{ props.item.name }}</td>
-        <td class="text-xs-center">{{ props.item.cath_name }}</td>
+        <td class="text-xs-center">{{ props.item.ca_name }}</td>
         <td class="text-xs-center">{{ props.item.la_code }}</td>
         <td class="text-xs-center">{{ props.item.ma_code }}</td>
         <td class="text-xs-center">{{ props.item.sa_code }}</td>
         <td class="text-xs-center">{{ props.item.birth_date|toDate }}</td>
-        <td class="text-xs-center">{{ props.item.cath_date|toDate }}</td>
+        <td class="text-xs-center">{{ props.item.ca_date|toDate }}</td>
         <td class="justify-center layout px-0">
           <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
           <v-icon small @click="deleteItem(props.item)">delete</v-icon>
@@ -59,7 +59,7 @@
       </template>
       <template slot="no-data">
         <v-alert :value="true" color="error" icon="warning">
-          Sorry, nothing to display here :(
+          표시할 봉사자 정보가 없습니다.
         </v-alert>
       </template>
     </v-data-table>
@@ -83,13 +83,13 @@ export default {
     headers: [
       { text: 'ID', value: 'id', align: 'center' },
       { text: '성명', value: 'name', align: 'center' },
-      { text: '세례명', value: 'cathName', align: 'center', sortable: false },
+      { text: '세례명', value: 'caName', align: 'center', sortable: false },
       { text: '소속 교구', value: 'laName', align: 'center' },
       { text: '소속 본당', value: 'maName', align: 'center' },
       { text: '소속 지구', value: 'saName', align: 'center' },
       { text: '생년월일', value: 'birthDate', align: 'center' },
-      { text: '세례일', value: 'cathDate', align: 'center' },
-      { text: '편집', value: 'name', align: 'center', sortable: false }
+      { text: '세례일', value: 'caDate', align: 'center' },
+      { text: '편집', value: 'action', align: 'center', sortable: false }
     ],
     editedIndex: -1,
     editedItem: _ITEM,
@@ -107,9 +107,6 @@ export default {
       set (value) {
         this.$store.dispatch(CREATE_VOLUNTEER, value)
       }
-    },
-    listConfig () {
-      return {}
     },
     formTitle () {
       return this.editedIndex === -1 ? 'New Volunteer' : 'Edit Volunteer'
@@ -131,14 +128,9 @@ export default {
       this.$router.push({name: 'new-volunteer'})
     },
     editItem (item) {
-      this.editedIndex = this.volunteers.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.editedItem.created = new Date()
-      this.dialog = true
+      this.$router.push({name: 'edit-volunteer', params: {volt: item, id: item.id}})
     },
     deleteItem (item) {
-      // const index = this.volunteers.indexOf(item)
-      // confirm('Are you sure you want to delete this item?') && this.volunteers.splice(index, 1)
       confirm('Are you sure you want to delete this item?') && this.$store.dispatch(DELETE_VOLUNTEER, item.id)
     },
     close () {
@@ -146,11 +138,10 @@ export default {
       setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
-      }, 300)
+      }, 10)
     },
     save () {
       if (this.editedIndex > -1) {
-        // Object.assign(this.volunteers[this.editedIndex], this.editedItem)
         this.$store.dispatch(UPDATE_VOLUNTEER, {id: this.volunteers[this.editedIndex].id, obj: this.editedItem})
       } else {
         this.volunteers = this.editedItem

@@ -1,12 +1,12 @@
 <template>
   <div>
-    <v-toolbar color="brown lighten-4" ligth tabs>
-      <v-toolbar-side-icon></v-toolbar-side-icon>
-      <v-toolbar-title>성소모임</v-toolbar-title>
+    <v-toolbar color="brown lighten-4" light tabs>
+      <v-icon>account_balance</v-icon>
+      <v-toolbar-title class="headline font-weight-medium">카톨릭 성서모임</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon>
+      <!--<v-btn icon>
         <v-icon>search</v-icon>
-      </v-btn>
+      </v-btn>-->
       <v-btn icon>
         <v-icon>more_vert</v-icon>
       </v-btn>
@@ -17,14 +17,6 @@
         </v-tab>
       </v-tabs>
     </v-toolbar>
-
-    <!--<v-tabs-items v-model="tab">
-      <v-tab-item v-for="(item, idx) in items" :key="idx">
-        <v-card flat>
-          <v-card-text>{{ content }}</v-card-text>
-        </v-card>
-      </v-tab-item>
-    </v-tabs-items>-->
   </div>
 </template>
 

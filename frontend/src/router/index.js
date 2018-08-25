@@ -21,12 +21,12 @@ export default new Router({
       name: 'new-volunteer',
       component: () => import('@/views/NewVolunteer')
     },
-    /* {
-      path: '/volunteer/:id?',
+    {
+      path: '/volunteer/edit/:id?',
       name: 'edit-volunteer',
       props: true,
       component: () => import('@/views/EditVolunteer')
-    }, */
+    },
     {
       path: '/scrap',
       name: 'scraps',

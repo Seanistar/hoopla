@@ -8,6 +8,7 @@ import {
 import {
   FETCH_START,
   FETCH_VOLUNTEERS_END,
+  FETCH_VOLUNTEER,
   ADD_VOLUNTEER,
   SET_VOLUNTEER,
   REMOVE_VOLUNTEER
@@ -24,7 +25,11 @@ const getters = {
   volunteersCount (state) {
     return state.volunteersCount
   },
-  volunteers (state) {
+  volunteerInfo: (state) => (id) => {
+    return state.volunteers.find((o) => o.id === id)
+  },
+  volunteers (state, param) {
+    console.log(param)
     return state.volunteers
   },
   isVolunteersLoading (state) {
@@ -43,19 +48,27 @@ const actions = {
         throw new Error(error)
       })
   },
-  [CREATE_VOLUNTEER] (context, scrap) {
-    return VolunteerService.create(scrap)
+  [FETCH_VOLUNTEER] (context, params) {
+    return VolunteerService.get(params)
       .then(({ data }) => {
-        scrap.id = data.lastId
-        context.commit(ADD_VOLUNTEER, scrap)
+        context.commit(SET_VOLUNTEER, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
+  [CREATE_VOLUNTEER] (context, volunteer) {
+    return VolunteerService.create(volunteer)
+      .then(({ data }) => {
+        volunteer.id = data.lastId
+        context.commit(ADD_VOLUNTEER, volunteer)
       })
       .catch((error) => {
         throw new Error(error)
       })
   },
   [UPDATE_VOLUNTEER] (context, params) {
-    context.commit(FETCH_START)
-    return VolunteerService.update(params.id, params.obj)
+    return VolunteerService.update(params)
       .then(({ data }) => {
         context.commit(SET_VOLUNTEER, params)
       })
@@ -84,16 +97,18 @@ const mutations = {
     state.volunteersCount = volunteers.length
     state.isLoading = false
   },
-  [ADD_VOLUNTEER] (state, scrap) {
-    console.log(scrap)
-    scrap.created = DateFilter()
-    state.volunteers.push(scrap)
+  [ADD_VOLUNTEER] (state, volunteer) {
+    volunteer.registered = DateFilter()
+    state.volunteers.push(volunteer)
   },
   [SET_VOLUNTEER] (state, data) {
     const pos = state.volunteers.findIndex((o) => o.id === data.id)
     if (pos > -1) {
       console.log('set position : ', pos)
       Object.assign(state.volunteers[pos], data.obj)
+    } else {
+      console.log('no pos and add position : ', pos)
+      state.volunteers.push(data.obj)
     }
   },
   [REMOVE_VOLUNTEER] (state, id) {

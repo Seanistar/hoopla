@@ -1,8 +1,26 @@
 .tp-10 {
   padding-top: 10px;
 }
+.tp-15 {
+  padding-top: 15px;
+}
+.tp-20 {
+  padding-top: 20px;
+}
 .bp-10 {
   padding-bottom: 10px;
+}
+.tm-10 {
+  margin-top: 10px;
+}
+.bm-10 {
+  margin-bottom: 10px;
+}
+.fl-r {
+  float: right;
+}
+.fl-l {
+  float: left;
 }
 .sub-title {
   font-size: 30px;

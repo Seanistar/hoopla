@@ -26,14 +26,11 @@ const ApiService = {
         throw new Error(`[scrapbook] ApiService ${error}`)
       })
   },
-  post (resource, params) {
-    return Vue.axios.post(`${resource}`, params)
-  },
-  update (resource, plug, params) {
-    return Vue.axios.put(`${resource}/${plug}`, params)
-  },
-  put (resource, params) {
+  create (resource, params) {
     return Vue.axios.put(`${resource}`, params)
+  },
+  update (resource, params) {
+    return Vue.axios.post(`${resource}`, params)
   },
   delete (resource) {
     return Vue.axios
@@ -54,13 +51,13 @@ export const ScrapService = {
     return ApiService.get('scraps', plug)
   },
   create (params) {
-    return ApiService.post('scraps', { scrap: params })
+    return ApiService.create('scraps', { scrap: params })
   },
   update (plug, params) {
-    return ApiService.update(`scraps`, plug, params)
+    return ApiService.update(`scraps/${plug}`, params)
   },
   upload (forms) {
-    return ApiService.post('scraps/upload', forms)
+    return ApiService.update('scraps/upload', forms)
   },
   destroy (plug) {
     return ApiService.delete(`scraps/${plug}`)
@@ -87,10 +84,10 @@ export const TopicService = {
     return ApiService.get(`topics/page/${id}`)
   },
   addTopicInfo (params) {
-    return ApiService.put('topics/add', params)
+    return ApiService.create('topics/add', params)
   },
   editTopicInfo (id, params) {
-    return ApiService.put(`topics/edit/${id}`, params)
+    return ApiService.update(`topics/edit/${id}`, params)
   },
   deleteTopic (id) {
     return ApiService.delete(`topics/${id}`)
@@ -101,13 +98,19 @@ export const VolunteerService = {
   query (params = {}) {
     return ApiService.query('volts', params)
   },
+  get (id) {
+    return ApiService.get('volts', id)
+  },
   create (params) {
-    return ApiService.put('volts', { volts: params })
+    return ApiService.create('volts', { volts: params })
   },
   update (params) {
-    return ApiService.post(`volts/${params.id}`, params)
+    return ApiService.update(`volts/${params.id}`, params)
   },
   delete (id) {
     return ApiService.delete(`volts/${id}`)
+  },
+  test (testCode) {
+    return ApiService.query(`volts/code/1`, { params: { code: testCode } })
   }
 }

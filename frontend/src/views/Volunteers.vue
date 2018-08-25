@@ -1,15 +1,23 @@
 <template>
   <div class="view-volunteer">
-    <volts-list/>
+    <volunteer-list/>
+    <button @click="codeTest">test</button>
   </div>
 </template>
 
 <script>
-import VoltsList from '@/components/VolunteerList'
+import VolunteerList from '@/components/VolunteerList'
+import { VolunteerService } from '@/common/api.service'
 
 export default {
   name: 'ViewVolts',
-  components: { VoltsList }
+  components: { VolunteerList },
+  methods: {
+    async codeTest () {
+      const res = await VolunteerService.test('01-01002-01002003')
+      console.log(res.data)
+    }
+  }
 }
 </script>
 
