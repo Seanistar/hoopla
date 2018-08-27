@@ -10,9 +10,10 @@
       <v-btn icon>
         <v-icon>more_vert</v-icon>
       </v-btn>
-      <v-tabs slot="extension" v-model="tab" color="brown lighten-3" grow>
+      <v-tabs slot="extension" v-model="tabIdx" color="brown lighten-3" grow>
         <v-tabs-slider color="yellow"></v-tabs-slider>
-        <v-tab v-for="(item, index) in items" :key="index" @click="onSelect(item.link)">
+        <v-tab v-for="(item, index) in items" :key="index" ripple
+               @click="onSelect(item.link)">
           {{ item.text }}
         </v-tab>
       </v-tabs>
@@ -21,28 +22,38 @@
 </template>
 
 <script>
+import {trimStart} from 'lodash/string'
 
 export default {
   name: 'Header',
   data () {
     return {
       title: '',
-      tab: null,
+      tabIdx: null,
       items: [
-        {text: 'home', link: 'home'},
-        {text: 'scrap', link: 'scraps'},
-        {text: 'author', link: 'authors'},
-        {text: 'volunteer', link: 'volunteers'},
-        {text: 'news', link: 'topics'}
+        {text: '주님과 함께', link: 'home'},
+        {text: '봉사자 관리', link: 'volunteers'},
+        {text: '봉사자 조회', link: 'search'},
+        {text: '관리자 설정', link: 'admins'},
+        {text: '알림 사항', link: 'notices'}
       ],
       content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
     }
   },
   methods: {
     onSelect (link) {
+      if (!this.$isLogin) {
+        alert('로그인이 필요합니다.')
+        return location.reload()
+      }
       // console.log('select ' + link)
       this.$router.push({name: link})
     }
+  },
+  mounted () {
+    const name = trimStart(location.pathname, '/')
+    const pos = this.items.findIndex(o => o.link.indexOf(name) > -1)
+    this.tabIdx = pos
   }
 }
 </script>

@@ -7,25 +7,30 @@
         </v-tab>
       </v-tabs>
       <v-divider class="bm-10 tm-10"></v-divider>
-      <volunteer-item v-if="tabIdx === 0" :volt="volt"/>
-      <volunteer-edus v-else-if="tabIdx === 1"/>
-      <volunteer-acts v-else/>
+      <volunteer-item v-if="tabIdx === 0" :v_id="id" ref="Item"/>
+      <volunteer-edus v-else-if="tabIdx === 1" :v_id="id" ref="Edus"/>
+      <volunteer-acts v-else-if="tabIdx === 2" :v_id="id" ref="Acts"/>
     </v-container>
   </div>
 </template>
 
 <script>
-import { isEmpty } from 'lodash/lang'
-import { FETCH_VOLUNTEER } from '@/store/actions.type'
 import VolunteerItem from '@/components/VolunteerItem'
 import VolunteerEdus from '@/components/VolunteerEdus'
 import VolunteerActs from '@/components/VolunteerActs'
 
+// const _menu = ['Item', 'Edus', 'Acts']
 export default {
   name: 'EditVolts',
   components: { VolunteerItem, VolunteerEdus, VolunteerActs },
-  props: {
-    volt: { type: Object, default: () => {} }
+  props: { id: null },
+  watch: {
+    tabIdx (idx) {
+      // this.$refs[_menu[idx]].fetchData()
+      if (idx === 1 || idx === 2) {
+
+      }
+    }
   },
   data: () => ({
     tabIdx: 0,
@@ -34,19 +39,7 @@ export default {
       { text: '봉사자 교육 현황', link: '' },
       { text: '봉사자 활동 내역', link: '' }
     ]
-  }),
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
-      vm.getVoltInfo(to.params.id)
-    })
-  },
-  methods: {
-    getVoltInfo (id) {
-      if (isEmpty(this.volt)) return this.$store.dispatch(FETCH_VOLUNTEER, id)
-      const res = this.$store.getters.volunteerInfo(id)
-      console.log(this.volt = res)
-    }
-  }
+  })
 }
 </script>
 

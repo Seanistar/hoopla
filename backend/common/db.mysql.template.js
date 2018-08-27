@@ -12,7 +12,8 @@ const connector =  mysql.createPool({
   host: '',
   user: '',
   password: '',
-  database: 'medium'
+  database: 'medium',
+  dateStrings: true
 });
 
 setInterval(function () {

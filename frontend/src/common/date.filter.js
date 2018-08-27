@@ -1,5 +1,7 @@
 import Moment from 'moment'
+import {isNull} from 'lodash/lang'
 
-export default (val) => {
-  return Moment(val).format('YYYY-MM-DD HH:mm:ss')
+export default {
+  timestamp: (val) => !isNull(val) ? Moment(val).format('YYYY-MM-DD HH:mm:ss') : '',
+  datestamp: (val) => !isNull(val) ? Moment(val).format('YYYY-MM-DD') : ''
 }

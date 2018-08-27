@@ -12,8 +12,9 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import {
   Vuetify, // required
   VApp, // required
-  VMenu,
   VGrid,
+  VMenu,
+  VSubheader,
   VCard,
   VTabs,
   VIcon,
@@ -35,6 +36,7 @@ import {
   VTooltip,
   VRadioGroup,
   VDatePicker,
+  VExpansionPanel,
   transitions
 } from 'vuetify'
 import { Ripple } from 'vuetify/es5/directives'
@@ -47,15 +49,16 @@ Vue.use(Vuetify, {
   components: {
     VApp,
     VMenu,
-    VJumbotron,
     VGrid,
+    VSubheader,
     VCard,
+    VTabs,
+    VIcon,
+    VJumbotron,
     VDivider,
     VBtn,
     VList,
     VForm,
-    VTabs,
-    VIcon,
     VDialog,
     VAlert,
     VTextField,
@@ -69,13 +72,15 @@ Vue.use(Vuetify, {
     VTooltip,
     VRadioGroup,
     VDatePicker,
+    VExpansionPanel,
     transitions
   },
   directives: {
     Ripple
   }
 })
-Vue.filter('timestamp', DateFilter)
+Vue.filter('timestamp', DateFilter['timestamp'])
+Vue.filter('datestamp', DateFilter['datestamp'])
 Vue.prototype.$eventBus = new Vue()
 
 ApiService.init()

@@ -49,7 +49,7 @@
         <td class="text-xs-center">{{ props.item.author_id }}</td>
         <td class="text-xs-center">{{ props.item.title }}</td>
         <td class="text-xs-center">{{ props.item.content }}</td>
-        <td class="text-xs-center">{{ props.item.created|timestamp }}</td>
+        <td class="text-xs-center">{{ props.item.created|timeStamp }}</td>
         <td class="justify-center layout px-0">
           <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
           <v-icon small @click="deleteItem(props.item)">delete</v-icon>

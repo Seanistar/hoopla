@@ -49,7 +49,7 @@
         <td class="text-xs-center">{{ props.item.id }}</td>
         <td class="text-xs-center">{{ props.item.name }}</td>
         <td class="text-xs-center">{{ props.item.perm }}</td>
-        <td class="text-xs-center">{{ props.item.registered|toDate }}</td>
+        <td class="text-xs-center">{{ props.item.registered|timeStamp }}</td>
         <td class="justify-center layout px-0">
           <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
           <v-icon small @click="deleteItem(props.item)">delete</v-icon>
@@ -68,7 +68,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import { FETCH_AUTHORS, CREATE_AUTHOR, UPDATE_AUTHOR, DELETE_AUTHOR } from '@/store/actions.type'
-import Moment from 'moment'
 
 const _ITEM = { id: '', name: '', perm: '', registered: '' }
 export default {
@@ -151,11 +150,6 @@ export default {
         this.authors = this.editedItem
       }
       this.close()
-    }
-  },
-  filters: {
-    toDate (val) {
-      return Moment(val).format('YYYY-MM-DD')
     }
   }
 }

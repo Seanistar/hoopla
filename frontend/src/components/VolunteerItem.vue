@@ -4,7 +4,7 @@
       <v-layout row wrap>
         <!--첫번째 라인-->
         <v-flex xs12 sm6>
-          <v-text-field label="성명" :rules="[rules.required]"
+          <v-text-field label="성명" prepend-icon="mood" :rules="[rules.required]"
                   :clearable="true" v-model="params.name"
                   hint="실명으로 입력해 주세요."
           ></v-text-field>
@@ -15,7 +15,7 @@
         </v-flex>
         <!--두번째 라인-->
         <v-flex xs12 sm6>
-          <v-text-field label="세례명" :rules="[rules.required]"
+          <v-text-field label="세례명" prepend-icon="face" :rules="[rules.required]"
                         clearable v-model="params.ca_name"
           ></v-text-field>
         </v-flex>
@@ -29,50 +29,36 @@
       <v-layout wrap>
         <v-flex xs12 sm4 d-flex>
           <v-select label="교구코드"
-            :items="items" v-model="params.la_code"
+            :items="la_codes" v-model="params.la_name"
           ></v-select>
         </v-flex>
         <v-flex xs12 sm4 d-flex>
-          <v-select label="본당코드" ref="ma_code"
-            :items="items" v-model="params.ma_code" :disabled="params.la_code === null"
+          <v-select label="본당코드" ref="ma_name"
+            :items="ma_codes" v-model="params.ma_name" :disabled="params.la_name === null"
           ></v-select>
         </v-flex>
         <v-flex xs12 sm4 d-flex>
-          <v-select label="지구코드" ref="sa_code"
-            :items="items" v-model="params.sa_code" :disabled="params.ma_code === null"
+          <v-select label="지구코드" ref="sa_name"
+            :items="sa_codes" v-model="params.sa_name" :disabled="params.ma_name === null"
           ></v-select>
         </v-flex>
       </v-layout>
 
-      <!--네번째 라인-->
-      <!--<v-layout row wrap>
-        <v-flex xs12 sm6>
-          <v-radio-group v-model="params.sex" row>
-            <v-radio label="남자" value="m"></v-radio>
-            <v-radio label="여자" value="f"></v-radio>
-          </v-radio-group>
-        </v-flex>
-      </v-layout>-->
-
       <v-layout row wrap>
         <!-- 번째 라인-->
         <v-flex xs12 sm6>
-          <v-text-field label="이메일"
-                  v-model="params.email"
-                  :rules="[rules.email]"
+          <v-text-field label="이메일" prepend-icon="email"
+                  v-model="params.email" :rules="[rules.email]"
           ></v-text-field>
         </v-flex>
         <v-flex xs12 sm6>
-          <v-text-field label="전화번호"
-                  v-model="params.phone"
-                  mask="### - #### - ####"
-                  hint="'-' 없이 입력해주세요."
-                  persistent-hint
+          <v-text-field label="전화번호" prepend-icon="phone" persistent-hint
+                  v-model="params.phone" mask="### - #### - ####" hint="'-' 없이 입력해주세요."
           ></v-text-field>
         </v-flex>
         <!-- 번째 라인-->
         <v-flex xs12>
-          <v-text-field label="주소" v-model="params.address"
+          <v-text-field label="주소" prepend-icon="home" v-model="params.address"
           ></v-text-field>
         </v-flex>
         <!-- 번째 라인-->
@@ -81,9 +67,21 @@
           ></v-text-field>
         </v-flex>
         <v-flex xs12 sm6>
-          <!--<v-text-field label="최종학력" v-model="params.degree"></v-text-field>-->
           <v-select label="최종학력" :items="degrees" v-model="params.degree"></v-select>
         </v-flex>
+
+        <v-flex xs12 sm6>
+          <v-select label="활동상태" prepend-icon="contacts"
+                    :items="states" item-text="nm" item-value="cd" v-model="params.state"></v-select>
+        </v-flex>
+        <v-flex xs12 sm6>
+          <v-radio-group v-model="params.sex" row>
+            <span style="color: rgba(0,0,0,0.54)"><v-icon>wc</v-icon></span>&nbsp;&nbsp;:&nbsp;&nbsp;
+           <v-radio label="남자" value="M"></v-radio>
+           <v-radio label="여자" value="F"></v-radio>
+         </v-radio-group>
+        </v-flex>
+
         <!-- 번째 라인-->
         <v-flex xs12 sm6>
           <date-picker ref="auth_date" refs="auth_date" title="선서일"
@@ -96,7 +94,7 @@
       </v-layout>
 
       <v-layout row wrap class="tp-20">
-        <v-textarea label="메모 사항"
+        <v-textarea label="메모사항"
           box auto-grow
           v-model="params.memo"
         ></v-textarea>
@@ -108,8 +106,8 @@
           <v-btn color="black accent-2" outline class="mb-2" @click="$router.back()">취소</v-btn>
         </div>
         <div>
-          <v-btn color="orange accent-2" outline class="mb-2" @click="reset">초기화</v-btn>
-          <v-btn color="indigo accent-2" outline class="mb-2" @click="submit">{{textForm}}</v-btn>
+          <v-btn color="orange accent-2" outline class="mb-2" @click="reset" v-if="!isEditMode">초기화</v-btn>
+          <v-btn color="indigo accent-2" outline class="mb-2" @click="submit">{{!isEditMode ? '추가완료' : '수정완료'}}</v-btn>
         </div>
       </v-layout>
     </v-container>
@@ -117,27 +115,23 @@
 </template>
 
 <script>
-import { isEmpty } from 'lodash/lang'
+import {isEmpty, isNull, isUndefined} from 'lodash/lang'
 import Moment from 'moment'
-import DatePicker from './DatePicker'
-import { CREATE_VOLUNTEER, UPDATE_VOLUNTEER } from '@/store/actions.type'
+import DatePicker from './control/DatePicker'
+import {CREATE_VOLUNTEER, UPDATE_VOLUNTEER, FETCH_VOLUNTEER_ITEM} from '@/store/actions.type'
+import {VolunteerService} from '@/common/api.service'
 
 export default {
   name: 'VolunteerItem',
-  props: {
-    volt: { type: Object, default: () => {} }
-  },
   components: { DatePicker },
+  props: { v_id: null },
   computed: {
     form () {
       return this.$data.params
     },
-    textForm () {
-      return isEmpty(this.volt) ? '추가 완료' : '수정 완료'
-    },
     volunteerInfo: {
       get () {
-        return this.$store.state.volunteer.volunteerInfo
+        return this.$store.getters.volunteerInfo(parseInt(this.v_id))
       },
       set (value) {
         this.$store.dispatch(CREATE_VOLUNTEER, value)
@@ -145,15 +139,18 @@ export default {
     }
   },
   data: () => ({
+    isEditMode: false,
     formHasErrors: false,
     params: { // is equal to bible's column
       sex: 'f',
+      state: 'ACT',
       birth_date: null,
       ca_date: null,
       name: null,
-      la_code: null, // 교구코드
-      ma_code: null, // 본당코드
-      sa_code: null, // 지구코드
+      area_code: null,
+      la_name: null, // 교구
+      ma_name: null, // 본당
+      sa_name: null, // 지구
       address: null,
       email: null,
       phone: null,
@@ -162,7 +159,7 @@ export default {
       ca_name: null,
       rec_date: null,
       auth_date: null,
-      memo: '찬미 예수! 주님과 함께하시게됨을 축하드립니다.'
+      memo: null
     },
     title: [
       { text: '봉사자 기본 정보', link: '' },
@@ -183,27 +180,46 @@ export default {
       // name: v => v.length <= 10 || 'Name must be less than 10 characters'
     },
     degrees: ['초졸', '중졸', '고졸', '초대졸', '대졸'],
-    items: ['01', '02', '03', '04', '05']
+    states: [{cd: 'ACT', nm: '활동중'}, {cd: 'BRK', nm: '쉼'}, {cd: 'STP', nm: '중단'}, {cd: 'DTH', nm: '사망'}],
+    la_codes: ['본부', '정릉', '수지', '부산'],
+    ma_codes: ['명동', '반포', '흑석', '상암'],
+    sa_codes: ['제5구역', '제2구역', '제3구역', '제4구역']
+    /* la_codes: [{cd: '01', nm: '본부'}, {cd: '02', nm: '정릉'}, {cd: '03', nm: '수지'}, {cd: '04', nm: '부산'}],
+    ma_codes: [{cd: '001', nm: '명동'}, {cd: '002', nm: '반포'}, {cd: '003', nm: '흑석'}, {cd: '004', nm: '상암'}],
+    sa_codes: [{cd: '005', nm: '제5구역'}, {cd: '002', nm: '제2구역'}, {cd: '003', nm: '제3구역'}, {cd: '004', nm: '제4구역'}] */
   }),
   created () {
-    this.$eventBus.$on('close-date-picker', (obj) => {
-      console.info(obj.refs, this.$data.params[obj.refs] = obj.date)
-    })
-    !isEmpty(this.volt) && this.$nextTick(() => {
-      Object.keys(this.volt).forEach(k => {
-        const pos = k.indexOf('_date')
-        if (pos > 0) {
-          this.$refs[k].date = this.volt[k] = this.date(this.volt[k])
-        }
-      })
-      this.params = this.volt
-      // console.log(this.params)
-    })
+    const _this = this
+    this.$eventBus.$on(`close-date-picker-birth_date`, date => (_this.params.birth_date = date))
+    this.$eventBus.$on(`close-date-picker-ca_date`, date => (_this.params.ca_date = date))
+    this.$eventBus.$on(`close-date-picker-auth_date`, date => (_this.params.auth_date = date))
+    this.$eventBus.$on(`close-date-picker-rec_date`, date => (_this.params.rec_date = date))
+
+    this.isEditMode = !isUndefined(this.v_id)
+    if (this.isEditMode) this.fetchData()
   },
   methods: {
+    async loadItem () {
+      let item = null
+      if (!isEmpty(this.volunteerInfo)) item = this.volunteerInfo
+      else {
+        const res = await VolunteerService.get(this.v_id)
+        item = res.data[0]
+        console.warn('loaded by service...')
+      }
+
+      !isEmpty(item) && this.$nextTick(() => {
+        /* Object.keys(item).forEach(k => {
+          if (k.indexOf('_date') > 0) {
+            this.$refs[k].date = this.date(item[k])
+          }
+        }) */
+        this.params = item
+        // const [lc, mc, sc] = item.area_code.split('-')
+      })
+    },
     reset () {
       this.formHasErrors = false
-
       Object.keys(this.form).forEach(f => {
         this.$refs[f] !== undefined && this.$refs[f].reset()
         this.$data.params[f] = null
@@ -222,18 +238,20 @@ export default {
         // this.$refs[f].validate(true)
       })
 
-      if (isEmpty(this.volt)) {
+      if (!this.isEditMode) {
         this.$store.dispatch(CREATE_VOLUNTEER, this.form)
-        setTimeout(() => {
-          this.$router.push({name: 'volunteers'})
-        }, 300)
+        this.$parent.changeTab(1)
       } else {
         this.$store.dispatch(UPDATE_VOLUNTEER, this.form)
-        confirm('수정되었습니다. 리스트로 이동하시겠습니까?') && this.$router.push({name: 'volunteers'})
+        confirm('수정되었습니다. 리스트 화면으로 이동하시겠습니까?') && this.$router.push({name: 'volunteers'})
       }
     },
     date (val) {
-      return val !== null ? Moment(val).format('YYYY-MM-DD') : '0000-00-00'
+      return !isNull(val) ? Moment(val).format('YYYY-MM-DD') : null
+    },
+    async fetchData () {
+      await this.$store.dispatch(FETCH_VOLUNTEER_ITEM, this.v_id)
+      this.loadItem()
     }
   }
 }

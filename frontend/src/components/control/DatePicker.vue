@@ -26,7 +26,7 @@
       >
         <v-spacer></v-spacer>
         <v-btn flat outline color="primary" @click="date = ''; menu = false">취소</v-btn>
-        <v-btn flat outline color="primary" @click="save">확인</v-btn>
+        <v-btn flat outline color="primary" @click.prevent="save">확인</v-btn>
       </v-date-picker>
     </v-menu>
   </div>
@@ -51,10 +51,13 @@ export default {
   methods: {
     save () {
       this.$refs.menu.save(this.date)
-      this.$eventBus.$emit('close-date-picker', {refs: this.refs, date: this.date})
+      this.$eventBus.$emit(`close-date-picker-${this.refs}`, this.date)
     },
     reset () {
       this.date = null
+    },
+    setDate (date) {
+      this.date = date
     },
     parseDate (date) {
       if (!date) return null

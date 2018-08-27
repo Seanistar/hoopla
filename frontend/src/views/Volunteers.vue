@@ -1,20 +1,20 @@
 <template>
-  <div class="view-volunteer">
+  <div class="tp-10">
     <volunteer-list/>
-    <button @click="codeTest">test</button>
+    <!--<button @click="codeTest">test</button>-->
   </div>
 </template>
 
 <script>
 import VolunteerList from '@/components/VolunteerList'
-import { VolunteerService } from '@/common/api.service'
+import {CodeService} from '@/common/api.service'
 
 export default {
   name: 'ViewVolts',
   components: { VolunteerList },
   methods: {
     async codeTest () {
-      const res = await VolunteerService.test('01-01002-01002003')
+      const res = await CodeService.test('01-01002-01002003')
       console.log(res.data)
     }
   }
@@ -22,7 +22,4 @@ export default {
 </script>
 
 <style scoped>
-  .view-volunteer {
-    padding-top: 10px
-  }
 </style>

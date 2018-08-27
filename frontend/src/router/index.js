@@ -12,35 +12,36 @@ export default new Router({
       component: () => import('@/views/HelloHome')
     },
     {
-      path: '/volunteer',
+      path: '/volunteers',
       name: 'volunteers',
       component: () => import('@/views/Volunteers')
     },
     {
-      path: '/volunteer/new',
+      path: '/volunteers/new',
       name: 'new-volunteer',
+      props: true,
       component: () => import('@/views/NewVolunteer')
     },
     {
-      path: '/volunteer/edit/:id?',
+      path: '/volunteers/edit/:id?',
       name: 'edit-volunteer',
       props: true,
       component: () => import('@/views/EditVolunteer')
     },
     {
-      path: '/scrap',
-      name: 'scraps',
-      component: () => import('@/views/Scraps')
+      path: '/admins',
+      name: 'admins',
+      component: () => import('@/views/Admins')
     },
     {
-      path: '/author',
+      path: '/authors',
       name: 'authors',
       component: () => import('@/views/Authors')
     },
     {
-      path: '/topic',
-      name: 'topics',
-      component: () => import('@/views/Topics')
+      path: '/notices',
+      name: 'notices',
+      component: () => import('@/views/Notices')
     }
   ]
 })

@@ -5,6 +5,7 @@ import topic from './topic.module'
 import scrap from './scrap.module'
 import author from './author.module'
 import volunteer from './volunteer.module'
+import code from './code.module'
 
 Vue.use(Vuex)
 
@@ -14,6 +15,7 @@ export default new Vuex.Store({
     scrap,
     author,
     volunteer,
+    code,
     topic
   }
 })
