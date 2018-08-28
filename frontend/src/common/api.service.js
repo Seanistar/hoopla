@@ -43,9 +43,12 @@ const ApiService = {
 
 export default ApiService
 
-export const AuthorService = {
+export const AdminService = {
   get () {
-    return ApiService.query('authors')
+    return ApiService.query('admin')
+  },
+  login (params) {
+    return ApiService.update('admin/login', params)
   }
 }
 

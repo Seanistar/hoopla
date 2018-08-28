@@ -31,7 +31,7 @@ export default {
       title: '',
       tabIdx: null,
       items: [
-        {text: '주님과 함께', link: 'home'},
+        {text: '성서와 함께', link: 'home'},
         {text: '봉사자 관리', link: 'volunteers'},
         {text: '봉사자 조회', link: 'search'},
         {text: '관리자 설정', link: 'admins'},
@@ -40,11 +40,17 @@ export default {
       content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
     }
   },
+  computed: {
+    isLogin () {
+      return this.$store.getters.isLogin
+    }
+  },
   methods: {
     onSelect (link) {
-      if (!this.$isLogin) {
+      if (!this.isLogin) {
         alert('로그인이 필요합니다.')
-        return location.reload()
+        setTimeout(() => { this.tabIdx = 0 }, 10)
+        return
       }
       // console.log('select ' + link)
       this.$router.push({name: link})

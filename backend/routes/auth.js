@@ -12,9 +12,9 @@ class User {
 
   verify (pwd) {
     const encrypted = crypto.createHmac('sha1', config.secret)
-      .update(password)
+      .update(pwd)
       .digest('base64')
-    console.log(this.password === encrypted)
+    console.log(this.password === encrypted, encrypted)
 
     return this.password === encrypted
   }

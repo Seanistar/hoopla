@@ -26,7 +26,7 @@
 <script>
 import PostsService from '@/services/PostsService'
 export default {
-  name: 'addPost',
+  name: 'SearchVolunteer',
   data () {
     return {
       title: '',

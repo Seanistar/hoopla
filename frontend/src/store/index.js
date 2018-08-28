@@ -1,9 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import topic from './topic.module'
 import scrap from './scrap.module'
-import author from './author.module'
+import admin from './admin.module'
 import volunteer from './volunteer.module'
 import code from './code.module'
 
@@ -13,9 +12,8 @@ export default new Vuex.Store({
   modules: {
     // auth,
     scrap,
-    author,
+    admin,
     volunteer,
-    code,
-    topic
+    code
   }
 })

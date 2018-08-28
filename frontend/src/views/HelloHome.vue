@@ -24,7 +24,7 @@
               <v-subheader>관리자 아이디</v-subheader>
             </v-flex>
             <v-flex xs8>
-              <v-text-field label="ID" clearable></v-text-field>
+              <v-text-field label="ID" clearable required v-model="admin.name"></v-text-field>
             </v-flex>
           </v-layout>
           <v-layout row>
@@ -32,9 +32,9 @@
               <v-subheader>관리자 암호</v-subheader>
             </v-flex>
             <v-flex xs8>
-              <v-text-field label="Password"
+              <v-text-field label="Password" v-model="admin.pwd" required
                             :type="showPassword ? 'text' : 'password'"
-                            :append-icon="showPassword ? 'visibility_off' : 'visibility'"
+                            :append-icon="!showPassword ? 'visibility_off' : 'visibility'"
                             @click:append="showPassword = !showPassword"
               ></v-text-field>
             </v-flex>
@@ -44,7 +44,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="primary" flat @click="dialog = false">취소</v-btn>
-          <v-btn color="primary" flat @click="dialog = false">확인</v-btn>
+          <v-btn color="primary" flat @click="login">확인</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -52,13 +52,30 @@
 </template>
 
 <script>
+import {LOGIN_ADMIN} from '@/store/actions.type'
+
 export default {
   name: 'HelloHome',
   data: () => ({
     dialog: false,
     showPassword: false,
+    admin: {
+      name: 'seangrit',
+      pwd: '6397'
+    },
     gradient: 'to top, #7B1FA2, #E1BEE7'
-  })
+  }),
+  methods: {
+    async login () {
+      await this.$store.dispatch(LOGIN_ADMIN, this.admin)
+      if (this.$store.getters.isLogin) {
+        alert('관리자로 확인되었습니다.')
+      } else {
+        alert('등록되지 않은 관리자압니다.')
+      }
+      this.dialog = false
+    }
+  }
 }
 </script>
 
