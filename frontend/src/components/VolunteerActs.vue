@@ -20,7 +20,7 @@
                 </v-flex>
                 <v-flex xs12>
                   <v-select label="봉사 단체" v-model="dlgItem.grp_code"
-                            :items="groupCodes" item-text="name" item-value="code"
+                            :items="groupObjects" item-text="name" item-value="code"
                   ></v-select>
                 </v-flex>
                 <v-flex xs12>
@@ -45,7 +45,7 @@
       <template slot="items" slot-scope="props">
         <tr @click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'unset')}">
           <td class="text-xs-center">{{ props.item.id }}</td>
-          <td class="text-xs-center">{{ props.item.grp_name }}</td>
+          <td class="text-xs-center">{{ getGroupName(parseInt(props.item.grp_code)) }}</td>
           <td class="text-xs-center">{{ props.item.s_date }}</td>
           <td class="text-xs-center">{{ props.item.e_date }}</td>
           <td class="text-xs-center">{{ props.item.area_code }}</td>
@@ -66,6 +66,7 @@
 import InlineButtons from './control/InlineButtons'
 import DatePicker from './control/DatePicker'
 import {isEmpty, isUndefined} from 'lodash/lang'
+import {find} from 'lodash/collection'
 import {FETCH_VOLUNTEER_ACTS, CREATE_VOLUNTEER_ACT, UPDATE_VOLUNTEER_ACT, DELETE_VOLUNTEER_ACT} from '../store/actions.type'
 
 const DEFALUT_ITEM = {id: null, s_date: '', e_date: '', grp_code: null, gv_ids: '', content: ''}
@@ -82,7 +83,7 @@ export default {
         this.$store.dispatch(CREATE_VOLUNTEER_ACT, data)
       }
     },
-    groupCodes () {
+    groupObjects () {
       return this.$store.getters.eduCodes
     }
   },
@@ -130,6 +131,7 @@ export default {
       this.dialog = false
       this.dlgItem.v_id = this.v_id
       if (isUndefined(this.selected.id)) {
+        this.dlgItem.grp_name = this.getGroupName(this.dlgItem.grp_code)
         this.volunteerActs = this.dlgItem
       } else {
         this.updateActItem(this.dlgItem)
@@ -144,7 +146,11 @@ export default {
     async fetchData () {
       this.selected = {}
       if (isUndefined(this.v_id)) return
-      await this.$store.dispatch(FETCH_VOLUNTEER_ACTS, this.vid)
+      await this.$store.dispatch(FETCH_VOLUNTEER_ACTS, this.v_id)
+    },
+    getGroupName (code) {
+      const obj = find(this.groupObjects, (g) => g.code === code)
+      return !isEmpty(obj) ? obj.name : ''
     }
   }
 }

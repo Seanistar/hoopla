@@ -6,8 +6,8 @@
         <v-layout align-center>
           <v-flex>
             <h3 class="display-3">환영합니다.</h3>
-            <span class="subheading">말씀 봉사의 부르심에 응답하는 봉사자들을 효과적으로 관리하고 지원하는 프로그램입니다.
-              봉사자들의 그룹공부, 연수현황, 그룹봉사, 특강, 피정, 전출입, 쉼, 노트검사 및 보완 교육 등을 체계적으로 정리하여 성서모임 수녀님들이 함께 공유하는 데 목적이 있습니다.</span>
+            <span class="subheading">말씀 봉사의 부르심에 응답하는 봉사자들을 효과적으로 관리하고 지원하는 프로그램입니다.</span><br/>
+            <span class="subheading">봉사자들의 그룹공부, 연수현황, 그룹봉사, 특강, 피정, 전출입, 쉼, 노트검사 및 보완 교육 등을 체계적으로 정리하여 성서모임 수녀님들이 함께 공유하는 데 목적이 있습니다.</span>
             <v-divider class="my-3"></v-divider>
             <div class="title mb-3">관리자 계정으로 로그인하세요!</div>
             <v-btn class="mx-0" color="deep-purple accent-2" large @click="dialog = true">Login</v-btn>
