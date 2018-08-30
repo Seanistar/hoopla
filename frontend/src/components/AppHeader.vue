@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-toolbar color="brown lighten-4" light tabs>
+    <v-toolbar color="blue lighten-4" light tabs>
       <v-icon>account_balance</v-icon>
       <v-toolbar-title class="headline font-weight-medium">카톨릭 성서모임</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -10,10 +10,10 @@
       <v-btn icon>
         <v-icon>more_vert</v-icon>
       </v-btn>
-      <v-tabs slot="extension" v-model="tabIdx" color="brown lighten-3" grow>
+      <v-tabs slot="extension" v-model="tabIdx" color="blue lighten-2" grow>
         <v-tabs-slider color="yellow"></v-tabs-slider>
         <v-tab v-for="(item, index) in items" :key="index" ripple
-               @click="onSelect(item.link)">
+               @click="onSelect(item.link)" >
           {{ item.text }}
         </v-tab>
       </v-tabs>
@@ -30,6 +30,7 @@ export default {
     return {
       title: '',
       tabIdx: null,
+      alert: {show: false, message: '로그인이 필요합니다.'},
       items: [
         {text: '성서와 함께', link: 'home'},
         {text: '봉사자 관리', link: 'volunteers'},
@@ -47,7 +48,7 @@ export default {
   methods: {
     onSelect (link) {
       if (!this.isLogin && link !== 'home') {
-        alert('로그인이 필요합니다.')
+        alert('로그인이 필요합니다!')
         return setTimeout(() => { this.tabIdx = 0 }, 10)
       }
       // console.log('select ' + link)

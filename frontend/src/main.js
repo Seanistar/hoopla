@@ -18,6 +18,7 @@ import {
   VCard,
   VTabs,
   VIcon,
+  VImg,
   VJumbotron,
   VDivider,
   VBtn,
@@ -37,6 +38,7 @@ import {
   VRadioGroup,
   VDatePicker,
   VExpansionPanel,
+  VProgressCircular,
   transitions
 } from 'vuetify'
 import { Ripple } from 'vuetify/es5/directives'
@@ -54,6 +56,7 @@ Vue.use(Vuetify, {
     VCard,
     VTabs,
     VIcon,
+    VImg,
     VJumbotron,
     VDivider,
     VBtn,
@@ -73,6 +76,7 @@ Vue.use(Vuetify, {
     VRadioGroup,
     VDatePicker,
     VExpansionPanel,
+    VProgressCircular,
     transitions
   },
   directives: {

@@ -1,18 +1,21 @@
 <template>
   <div>
     <v-toolbar flat color="white">
-      <v-toolbar-title>봉사자 리스트</v-toolbar-title>
+      <h4>전체 봉사자 리스트</h4>
       <v-spacer></v-spacer>
       <v-btn color="indigo accent-2" outline dark class="mb-2" @click="newVolunteer">신규 봉사자</v-btn>
     </v-toolbar>
-    <v-data-table :headers="headers" :items="volunteers" class="elevation-1" dark
-                  :pagination.sync="pagination" :rows-per-page-items="perPage"
+    <v-progress-circular class="progressing" :size="50" color="primary"
+                         :indeterminate="isVolunteersLoading" v-show="isVolunteersLoading"
+    ></v-progress-circular>
+    <v-data-table :headers="headers" :items="volunteers" class="elevation-10" dark
+                  :pagination.sync="pagination" :rows-per-page-items="perPage" rows-per-page-text="페이지 당 보기 개수"
                   item-key="id">
       <template slot="items" slot-scope="props">
         <td class="text-xs-center">{{ props.item.id }}</td>
         <td class="text-xs-center">{{ props.item.name }}</td>
         <td class="text-xs-center">{{ props.item.ca_name }}</td>
-        <td class="text-xs-center">{{ props.item.area_code }}</td>
+        <td class="text-xs-center">{{ activityState[props.item.state] }}</td>
         <td class="text-xs-center">{{ props.item.la_name }}</td>
         <td class="text-xs-center">{{ props.item.ma_name }}</td>
         <td class="text-xs-center">{{ props.item.sa_name }}</td>
@@ -23,8 +26,11 @@
           <v-icon small @click="deleteItem(props.item)">delete</v-icon>
         </td>
       </template>
-      <template slot="no-data">
-        <v-alert :value="true" color="error" icon="warning">
+      <template slot="pageText" slot-scope="{ pageStart, pageStop, itemsLength }">
+        전체 {{itemsLength}}개 중 {{ pageStart }} ~ {{ pageStop }}
+      </template>
+      <template slot="no-data" v-if="fetched">
+        <v-alert :value="true" color="warning" icon="warning">
           표시할 봉사자 정보가 없습니다.
         </v-alert>
       </template>
@@ -36,20 +42,19 @@
 import { mapGetters } from 'vuex'
 import { FETCH_VOLUNTEERS, CREATE_VOLUNTEER, UPDATE_VOLUNTEER, DELETE_VOLUNTEER } from '@/store/actions.type'
 
-const _ITEM = { id: '', name: '', perm: '', registered: '' }
+// const _ITEM = { id: '', name: '', perm: '', registered: '' }
 export default {
   name: 'VoltList',
   data: () => ({
     dialog: false,
-    perPage: [10, 25, {'text': '$vuetify.dataIterator.rowsPerPageAll', 'value': -1}],
-    pagination: {
-      sortBy: 'id'
-    },
+    fetched: false,
+    perPage: [10, 25, {text: '$vuetify.dataIterator.rowsPerPageAll', value: -1}],
+    pagination: { sortBy: 'id' },
     headers: [
       { text: 'ID', value: 'id', align: 'center' },
       { text: '성명', value: 'name', align: 'center' },
       { text: '세례명', value: 'caName', align: 'center', sortable: false },
-      { text: '구역코드', value: 'areaCode', align: 'center' },
+      { text: '활동상태', value: 'areaCode', align: 'center' },
       { text: '소속교구', value: 'laName', align: 'center' },
       { text: '소속본당', value: 'maName', align: 'center' },
       { text: '소속지구', value: 'saName', align: 'center' },
@@ -58,8 +63,8 @@ export default {
       { text: '편집', value: 'action', align: 'center', sortable: false }
     ],
     editedIndex: -1,
-    editedItem: _ITEM,
-    defaultItem: _ITEM
+    editedItem: {},
+    defaultItem: { id: null, name: '' }
   }),
   computed: {
     ...mapGetters([
@@ -74,6 +79,9 @@ export default {
         this.$store.dispatch(CREATE_VOLUNTEER, value)
       }
     },
+    activityState () {
+      return { ACT: '활동중', STP: '중단', BRK: '쉼', DTH: '사망' }
+    },
     formTitle () {
       return this.editedIndex === -1 ? '봉사자 추가' : '봉사자 수정'
     }
@@ -87,8 +95,9 @@ export default {
     this.fetchVolunteers()
   },
   methods: {
-    fetchVolunteers () {
-      this.$store.dispatch(FETCH_VOLUNTEERS)
+    async fetchVolunteers () {
+      await this.$store.dispatch(FETCH_VOLUNTEERS)
+      this.fetched = true
     },
     newVolunteer () {
       this.$router.push({name: 'new-volunteer'})

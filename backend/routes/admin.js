@@ -14,13 +14,12 @@ const encryptPassword = (pwd) => {
 const getPassword = (id) => {
   return new _promise(function(resolve, reject) {
     const sql = ['SELECT password pwd FROM admins WHERE admin_id=?', [id]]
-
     return db.query(...sql, (err, row) => {
       if (!err) {
-        console.log('query has done')
-        resolve(row[0].pwd)
+        console.log('query getPassword has done')
+        resolve(row.length ? row[0].pwd : '')
       } else {
-        console.log('query error : ' + err)
+        console.log('query getPassword error : ' + err)
         reject(err)
       }
     })
@@ -29,6 +28,7 @@ const getPassword = (id) => {
 
 router.post('/login', (req, res) => {
   const {name, pwd} = req.body
+
   getPassword(name)
     .then(admin_password => {
       // console.log(admin_password, encryptPassword(pwd), admin_password === encryptPassword(pwd))

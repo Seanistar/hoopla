@@ -31,11 +31,11 @@ router.get('/page/:id', (req, res, next) => {
 })
 
 router.put('/', (req, res, next) => {
-  const {name, ca_name, birth_date, ca_date, area_code, la_name, ma_name, sa_name, email, phone, address, job, degree, auth_date, rec_date, memo} = req.body
+  const {name, ca_name, birth_date, ca_date, state, area_code, la_name, ma_name, sa_name, email, phone, address, job, degree, auth_date, rec_date, memo} = req.body
   const sql = [
-    `INSERT INTO volunteers (name, ca_name, birth_date, ca_date, area_code, la_name, ma_name, sa_name, email, phone, address, job, degree, auth_date, rec_date, memo) 
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-    [name, ca_name, birth_date, ca_date, area_code, la_name, ma_name, sa_name, email, phone, address, job, degree, auth_date, rec_date, memo]
+    `INSERT INTO volunteers (name, ca_name, birth_date, ca_date, state, area_code, la_name, ma_name, sa_name, email, phone, address, job, degree, auth_date, rec_date, memo) 
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    [name, ca_name, birth_date, ca_date, state, area_code, la_name, ma_name, sa_name, email, phone, address, job, degree, auth_date, rec_date, memo]
   ]
 
   db.query(...sql, (err, rows) => {
@@ -52,13 +52,13 @@ router.put('/', (req, res, next) => {
 
 router.post('/:id', (req, res, next) => {
   const id = req.params.id
-  const {name, ca_name, birth_date, ca_date, area_code, la_name, ma_name, sa_name, email, phone, address, job, degree, auth_date, rec_date, memo} = req.body
+  const {name, ca_name, birth_date, ca_date, state, area_code, la_name, ma_name, sa_name, email, phone, address, job, degree, auth_date, rec_date, memo} = req.body
   const sql = [
     `UPDATE volunteers 
-    SET name=?, ca_name=?, birth_date=?, ca_date=?, area_code=?, la_name=?, ma_name=?, sa_name=?,
+    SET name=?, ca_name=?, birth_date=?, ca_date=?, state=?, area_code=?, la_name=?, ma_name=?, sa_name=?,
     email=?, phone=?, address=?, job=?, degree=?, auth_date=?, rec_date=?, memo=?
     WHERE id=?`,
-    [name, ca_name, birth_date, ca_date, area_code, la_name, ma_name, sa_name, email, phone, address, job, degree, auth_date, rec_date, memo, id]
+    [name, ca_name, birth_date, ca_date, state, area_code, la_name, ma_name, sa_name, email, phone, address, job, degree, auth_date, rec_date, memo, id]
   ]
 
   db.query(...sql, (err, rows) => {
@@ -166,7 +166,9 @@ router.delete('/edu/:id', (req, res) => {
  * volunteer activities
  */
 router.get('/act/:id', (req, res) => {
-  db.query('SELECT * FROM acts', (err, rows) => {
+  const select = `SELECT a.*, c.name grp_name 
+  FROM acts a LEFT JOIN edu_code c ON a.grp_code=c.code WHERE v_id=?`
+  db.query(select, req.params.id, (err, rows) => {
     if (!err) {
       res.status(200).send(rows)
     } else {

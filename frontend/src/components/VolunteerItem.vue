@@ -1,6 +1,9 @@
 <template>
   <v-form ref="form">
     <v-container>
+      <v-alert class="alert-c" v-model="alert.show" :color="alert.type" :icon="alert.icon" dismissible>
+        {{ alert.message }}
+      </v-alert>
       <v-layout row wrap>
         <!--첫번째 라인-->
         <v-flex xs12 sm6>
@@ -47,19 +50,19 @@
       <v-layout row wrap>
         <!-- 번째 라인-->
         <v-flex xs12 sm6>
-          <v-text-field label="이메일" prepend-icon="email"
+          <v-text-field label="이메일"
                   v-model="params.email" :rules="[rules.email]"
-          ></v-text-field>
+          ></v-text-field><!--prepend-icon="email"-->
         </v-flex>
         <v-flex xs12 sm6>
-          <v-text-field label="전화번호" prepend-icon="phone" persistent-hint
+          <v-text-field label="전화번호" persistent-hint
                   v-model="params.phone" mask="### - #### - ####" hint="'-' 없이 입력해주세요."
-          ></v-text-field>
+          ></v-text-field><!--prepend-icon="phone"-->
         </v-flex>
         <!-- 번째 라인-->
         <v-flex xs12>
-          <v-text-field label="주소" prepend-icon="home" v-model="params.address"
-          ></v-text-field>
+          <v-text-field label="주소" v-model="params.address"
+          ></v-text-field><!--prepend-icon="home"-->
         </v-flex>
         <!-- 번째 라인-->
         <v-flex xs12 sm6>
@@ -71,8 +74,7 @@
         </v-flex>
 
         <v-flex xs12 sm6>
-          <v-select label="활동상태" prepend-icon="contacts"
-                    :items="states" item-text="nm" item-value="cd" v-model="params.state"></v-select>
+          <v-select label="활동상태" :items="states" item-text="nm" item-value="cd" v-model="params.state"></v-select><!--prepend-icon="contacts"-->
         </v-flex>
         <v-flex xs12 sm6>
           <v-radio-group v-model="params.sex" row>
@@ -107,7 +109,7 @@
         </div>
         <div>
           <v-btn color="orange accent-2" outline class="mb-2" @click="reset" v-if="!isEditMode">초기화</v-btn>
-          <v-btn color="indigo accent-2" outline class="mb-2" @click="submit">{{!isEditMode ? '추가완료' : '수정완료'}}</v-btn>
+          <v-btn color="indigo accent-2" outline class="mb-2" @click="submit" ref="submit">{{!isEditMode ? '추가' : '수정'}}</v-btn>
         </div>
       </v-layout>
     </v-container>
@@ -115,15 +117,15 @@
 </template>
 
 <script>
-import {isEmpty, isNull, isUndefined} from 'lodash/lang'
-import Moment from 'moment'
+import {isEmpty, isUndefined} from 'lodash/lang'
 import DatePicker from './control/DatePicker'
+import AppAlert from './control/AppAlert'
 import {CREATE_VOLUNTEER, UPDATE_VOLUNTEER, FETCH_VOLUNTEER_ITEM} from '@/store/actions.type'
 import {VolunteerService} from '@/common/api.service'
 
 export default {
   name: 'VolunteerItem',
-  components: { DatePicker },
+  components: { AppAlert, DatePicker },
   props: { v_id: null },
   computed: {
     form () {
@@ -140,9 +142,10 @@ export default {
   },
   data: () => ({
     isEditMode: false,
+    isDisabled: false,
     formHasErrors: false,
     params: { // is equal to bible's column
-      sex: 'f',
+      sex: 'F',
       state: 'ACT',
       birth_date: null,
       ca_date: null,
@@ -181,6 +184,7 @@ export default {
     },
     degrees: ['초졸', '중졸', '고졸', '초대졸', '대졸'],
     states: [{cd: 'ACT', nm: '활동중'}, {cd: 'BRK', nm: '쉼'}, {cd: 'STP', nm: '중단'}, {cd: 'DTH', nm: '사망'}],
+    alert: {show: false, message: '초기화 되었습니다.', icon: 'check_circle', type: 'success'},
     la_codes: ['본부', '정릉', '수지', '부산'],
     ma_codes: ['명동', '반포', '흑석', '상암'],
     sa_codes: ['제5구역', '제2구역', '제3구역', '제4구역']
@@ -209,11 +213,11 @@ export default {
       }
 
       !isEmpty(item) && this.$nextTick(() => {
-        /* Object.keys(item).forEach(k => {
+        Object.keys(item).forEach(k => {
           if (k.indexOf('_date') > 0) {
-            this.$refs[k].date = this.date(item[k])
+            this.$refs[k] && this.$refs[k].setDate(item[k])
           }
-        }) */
+        })
         this.params = item
         // const [lc, mc, sc] = item.area_code.split('-')
       })
@@ -227,7 +231,7 @@ export default {
     },
     submit () {
       if (!this.$refs.form.validate()) {
-        alert('입력된 데이터를 다시 확인해주세요.')
+        this.alert = {message: '입력 데이터를 확인해주세요.', icon: 'priority_high', type: 'warning', show: true}
         return
       }
 
@@ -239,19 +243,21 @@ export default {
       })
 
       if (!this.isEditMode) {
-        this.$store.dispatch(CREATE_VOLUNTEER, this.form)
-        this.$parent.changeTab(1)
+        this.alert = {message: '추가되었습니다.', icon: 'check_circle', type: 'success', show: true}
+        this.$nextTick(() => { this.$refs['submit'].disabled = true })
+        this.createItem()
       } else {
         this.$store.dispatch(UPDATE_VOLUNTEER, this.form)
-        confirm('수정되었습니다. 리스트 화면으로 이동하시겠습니까?') && this.$router.push({name: 'volunteers'})
+        this.alert = {message: '수정되었습니다.', icon: 'check_circle', type: 'success', show: true}
       }
-    },
-    date (val) {
-      return !isNull(val) ? Moment(val).format('YYYY-MM-DD') : null
     },
     async fetchData () {
       await this.$store.dispatch(FETCH_VOLUNTEER_ITEM, this.v_id)
       this.loadItem()
+    },
+    async createItem () {
+      await this.$store.dispatch(CREATE_VOLUNTEER, this.form)
+      this.$parent.addDone()
     }
   }
 }

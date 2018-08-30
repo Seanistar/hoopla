@@ -29,20 +29,18 @@ import {
   ADD_VOLUNTEER_ACT,
   REMOVE_VOLUNTEER_ACT
 } from './mutations.type'
-import DateFilter from '@/common/date.filter'
+// import Moment from "moment/moment";
 
 const state = {
   volunteers: [],
   volunteerEdus: [],
   volunteerActs: [],
+  lastID: 0,
   isLoading: false,
   volunteersCount: 0
 }
 
 const getters = {
-  volunteersCount (state) {
-    return state.volunteersCount
-  },
   volunteerInfo: (state) => (id) => {
     return state.volunteers.find((o) => o.id === id)
   },
@@ -50,15 +48,11 @@ const getters = {
     // console.log(param)
     return state.volunteers
   },
-  volunteerEdus (state) {
-    return state.volunteerEdus
-  },
-  volunteerActs (state) {
-    return state.volunteerActs
-  },
-  isVolunteersLoading (state) {
-    return state.isLoading
-  }
+  lastVolunteerID: state => state.lastID,
+  volunteerEdus: state => state.volunteerEdus,
+  volunteerActs: state => state.volunteerActs,
+  isVolunteersLoading: state => state.isLoading,
+  volunteersCount: state => state.volunteersCount
 }
 
 const actions = {
@@ -198,7 +192,8 @@ const mutations = {
     state.isLoading = false
   },
   [ADD_VOLUNTEER] (state, volunteer) {
-    volunteer.registered = DateFilter()
+    // volunteer.registered = Moment().format('YYYY-MM-DD HH:mm:ss')()
+    state.lastID = volunteer.id
     state.volunteers.push(volunteer)
   },
   [SET_VOLUNTEER] (state, data) {
@@ -223,7 +218,7 @@ const mutations = {
     state.isLoading = false
   },
   [ADD_VOLUNTEER_EDU] (state, edu) {
-    // edu.created = DateFilter()
+    // edu.created = Moment().format('YYYY-MM-DD HH:mm:ss')()
     state.volunteerEdus.push(edu)
   },
   [SET_VOLUNTEER_EDU] (state, data) {
@@ -248,7 +243,7 @@ const mutations = {
     state.isLoading = false
   },
   [ADD_VOLUNTEER_ACT] (state, act) {
-    // act.created = DateFilter()
+    // act.created = Moment().format('YYYY-MM-DD HH:mm:ss')()
     state.volunteerActs.push(act)
   },
   [SET_VOLUNTEER_ACT] (state, data) {

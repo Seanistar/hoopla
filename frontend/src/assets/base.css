@@ -10,11 +10,21 @@
 .bp-10 {
   padding-bottom: 10px;
 }
+.rp-10 {
+  padding-right: 10px;
+}
 .tm-10 {
   margin-top: 10px;
 }
+.tm-20 {
+  margin-top: 20px;
+}
 .bm-10 {
   margin-bottom: 10px;
+}
+.hm-25 {
+  margin-right: 25px;
+  margin-left: 25px;
 }
 .fl-r {
   float: right;
@@ -26,4 +36,14 @@
   font-size: 30px;
   font-weight: bolder;
   color: darkblue;
+}
+.alert-c {
+  position: absolute;
+  top: -130px;
+  width: 20%;
+}
+.progressing {
+  position: absolute;
+  top: 50%;
+  left: 48%;
 }

@@ -1,5 +1,8 @@
 <template>
   <div class="tp-10">
+    <v-progress-circular class="progressing" :size="50" color="primary"
+                         :indeterminate="isLoading" v-show="isLoading"
+    ></v-progress-circular>
     <v-layout row justify-center>
       <v-dialog v-model="dialog" persistent max-width="500px">
         <v-card>
@@ -45,17 +48,15 @@
       <template slot="items" slot-scope="props">
         <tr @click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'unset')}">
           <td class="text-xs-center">{{ props.item.id }}</td>
-          <td class="text-xs-center">{{ getGroupName(parseInt(props.item.grp_code)) }}</td>
+          <td class="text-xs-center">{{ props.item.grp_name }}</td>
           <td class="text-xs-center">{{ props.item.s_date }}</td>
           <td class="text-xs-center">{{ props.item.e_date }}</td>
           <td class="text-xs-center">{{ props.item.area_code }}</td>
           <td class="text-xs-center">{{ props.item.content }}</td>
         </tr>
       </template>
-      <template slot="no-data">
-        <v-alert :value="true" color="error" icon="warning">
+      <template slot="no-data" v-if="fetched">
           봉사 활동 내역이 없습니다.
-        </v-alert>
       </template>
     </v-data-table>
     <inline-buttons refs="act"/>
@@ -73,7 +74,7 @@ const DEFALUT_ITEM = {id: null, s_date: '', e_date: '', grp_code: null, gv_ids: 
 export default {
   name: 'VolunteerActs',
   components: { DatePicker, InlineButtons },
-  props: { v_id: null },
+  props: { v_id: undefined },
   computed: {
     volunteerActs: {
       get () {
@@ -83,6 +84,12 @@ export default {
         this.$store.dispatch(CREATE_VOLUNTEER_ACT, data)
       }
     },
+    volunteerInfo () {
+      return this.$store.getters.volunteerInfo(parseInt(this.v_id))
+    },
+    isLoading () {
+      return isUndefined(this.v_id) ? false : this.$store.getters.isVolunteersLoading
+    },
     groupObjects () {
       return this.$store.getters.eduCodes
     }
@@ -90,6 +97,7 @@ export default {
   data: () => ({
     selected: {},
     dialog: false,
+    fetched: false,
     dlgItem: {},
     headers: [
       { text: '번호', align: 'center', value: 'id' },
@@ -120,8 +128,8 @@ export default {
       } else if (eventType === 'edit') {
         if (isEmpty(_this.selected)) return alert('내역을 선택해주세요.')
         _this.dlgItem = _this.selected
-        _this.$refs['s_date'].setDate(_this.dlgItem.s_date)
-        _this.$refs['e_date'].setDate(_this.dlgItem.e_date)
+        _this.$refs['s_date'] && _this.$refs['s_date'].setDate(_this.dlgItem.s_date)
+        _this.$refs['e_date'] && _this.$refs['e_date'].setDate(_this.dlgItem.e_date)
       }
       _this.dialog = true
     })
@@ -130,6 +138,7 @@ export default {
     saveItem () {
       this.dialog = false
       this.dlgItem.v_id = this.v_id
+      this.dlgItem.area_code = this.volunteerInfo ? this.volunteerInfo.area_code : null
       if (isUndefined(this.selected.id)) {
         this.dlgItem.grp_name = this.getGroupName(this.dlgItem.grp_code)
         this.volunteerActs = this.dlgItem
@@ -145,8 +154,8 @@ export default {
     },
     async fetchData () {
       this.selected = {}
-      if (isUndefined(this.v_id)) return
-      await this.$store.dispatch(FETCH_VOLUNTEER_ACTS, this.v_id)
+      !isUndefined(this.v_id) && await this.$store.dispatch(FETCH_VOLUNTEER_ACTS, this.v_id)
+      this.fetched = true
     },
     getGroupName (code) {
       const obj = find(this.groupObjects, (g) => g.code === code)

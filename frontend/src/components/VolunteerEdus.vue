@@ -49,11 +49,10 @@
         </v-card>
       </v-dialog>
     </v-layout>
-    <v-data-table
-      :headers="headers"
-      :items="volunteerEdus"
-      hide-actions
-      class="elevation-1"
+    <v-progress-circular class="progressing" :size="50" color="primary"
+                         :indeterminate="isLoading" v-show="isLoading"
+    ></v-progress-circular>
+    <v-data-table :headers="headers" :items="volunteerEdus" hide-actions class="elevation-1"
     >
       <template slot="items" slot-scope="props">
         <tr @click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'unset')}">
@@ -65,10 +64,8 @@
           <td class="text-xs-left">{{ props.item.memo }}</td>
         </tr>
       </template>
-      <template slot="no-data" v-cloak>
-        <v-alert :value="true" color="error" icon="warning">
+      <template slot="no-data" v-if="fetched">
           교육 내역이 없습니다.
-        </v-alert>
       </template>
     </v-data-table>
     <inline-buttons refs="edu"/>
@@ -86,7 +83,7 @@ const DEFALUT_ITEM = {id: null, s_date: '', e_date: '', edu_code: null, edu_name
 export default {
   name: 'VolunteerEdus',
   components: { InputDialog, InlineButtons, DatePicker },
-  props: { v_id: null },
+  props: { v_id: undefined },
   computed: {
     volunteerEdus: {
       get () {
@@ -95,6 +92,12 @@ export default {
       set (data) {
         this.$store.dispatch(CREATE_VOLUNTEER_EDU, data)
       }
+    },
+    volunteerInfo () {
+      return this.$store.getters.volunteerInfo(parseInt(this.v_id))
+    },
+    isLoading () {
+      return isUndefined(this.v_id) ? false : this.$store.getters.isVolunteersLoading
     },
     eduCodes () {
       return this.$store.getters.eduCodes
@@ -114,6 +117,7 @@ export default {
   data: () => ({
     selected: {},
     dialog: false,
+    fetched: false,
     dlgItem: {},
     headers: [
       { text: '번호', align: 'center', value: 'id' },
@@ -154,6 +158,7 @@ export default {
     saveItem () {
       this.dialog = false
       this.dlgItem.v_id = this.v_id
+      this.dlgItem.area_code = this.volunteerInfo ? this.volunteerInfo.area_code : null
       if (isUndefined(this.selected.id)) {
         this.volunteerEdus = this.dlgItem
       } else {
@@ -168,8 +173,8 @@ export default {
     },
     async fetchData () {
       this.selected = {}
-      if (isUndefined(this.v_id)) return
-      await this.$store.dispatch(FETCH_VOLUNTEER_EDUS, this.v_id)
+      !isUndefined(this.v_id) && await this.$store.dispatch(FETCH_VOLUNTEER_EDUS, this.v_id)
+      this.fetched = true
     }
   }
 }
