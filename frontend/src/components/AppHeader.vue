@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-toolbar color="blue lighten-4" light tabs>
+    <v-toolbar color="blue lighten-4" light tabs app>
       <v-icon>account_balance</v-icon>
       <v-toolbar-title class="headline font-weight-medium">카톨릭 성서모임</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -36,13 +36,14 @@ export default {
         {text: '봉사자 관리', link: 'volunteers'},
         {text: '봉사자 조회', link: 'query'},
         {text: '관리자 설정', link: 'admins'},
-        {text: '알림 사항', link: 'notices'}
+        {text: '현황 집계', link: 'stats'},
+        {text: '기타 관리', link: 'others'}
       ]
     }
   },
   computed: {
     isLogin () {
-      return this.$store.getters.isLogin
+      return true // this.$store.getters.isLogin
     }
   },
   methods: {

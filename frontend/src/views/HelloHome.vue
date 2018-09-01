@@ -1,26 +1,26 @@
 <template>
-  <div>
-    <v-text-field label=""></v-text-field>
+  <div class="pt-4">
     <v-container>
+      <v-text-field label="Catholic Bible Life Movement"></v-text-field>
       <v-layout>
         <v-flex xs4>
-          <v-img src="../static/bible2.jpeg" height="400" aspect-ratio="1.5"></v-img>
+          <v-img src="../static/bible.jpeg" height="400" aspect-ratio="1.5"></v-img>
         </v-flex>
         <v-flex xs8>
-          <v-jumbotron :gradient="gradient" dark>
+          <v-responsive>
             <v-container fill-height>
               <v-layout align-center>
                 <v-flex xs12 style="padding: 0 40px">
                   <h4 class="display-1 bp-10">환영합니다.</h4>
                   <span class="subheading">주님의 은총으로 말씀 봉사의 부르심에 응답하는 봉사자들을 효과적으로 관리하고 지원하기 위한 프로그램입니다.</span><br/>
-                  <span class="subheading">봉사자들의 그룹공부, 연수현황, 그룹봉사, 특강, 피정, 전출입, 쉼, 노트검사 및 보완 교육 등을 체계적으로 정리하여 성서모임 수녀님들이 함께 공유하는 데 목적이 있습니다.</span>
+                  <span class="subheading">봉사자들의 그룹공부, 연수현황, 월교육, 재교육, 특강, 피정, 전출입, 노트검사 및 보완 교육 등을 체계적으로 정리하여 성서모임 수녀님들이 함께 공유하는 데 목적이 있습니다.</span>
                   <v-divider class="my-3"></v-divider>
                   <div class="title mb-3">관리자 계정으로 로그인하세요!</div>
                   <v-btn class="mx-0" color="brown darken-2" large outline @click="dialog = true">Login</v-btn>
                 </v-flex>
               </v-layout>
             </v-container>
-          </v-jumbotron>
+          </v-responsive>
         </v-flex>
       </v-layout>
     </v-container>

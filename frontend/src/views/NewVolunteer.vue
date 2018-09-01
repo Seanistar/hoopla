@@ -1,19 +1,13 @@
 <template>
-  <div class="tp-10">
-    <v-container>
-      <v-tabs left>
-        <v-tab v-for="(item, idx) in title" :key="idx" @click="changeTab(idx)"><strong>{{ item }}</strong></v-tab>
-      </v-tabs>
-      <v-divider class="bm-10 tm-10"></v-divider>
-      <volunteer-item v-if="tabIdx === 0" :v_id="v_id"/>
-      <volunteer-edus v-else-if="tabIdx === 1" :v_id="v_id"/>
-      <volunteer-acts v-else-if="tabIdx === 2" :v_id="v_id"/>
-    </v-container>
-    <v-alert class="alert-c" v-model="alert.show" color="warning" icon="priority_high"
-             dismissible transition="scale-transition">
-      {{ alert.message }}
-    </v-alert>
-  </div>
+  <v-container>
+    <v-tabs left align-with-title fixed-tabs>
+      <v-tab v-for="(item, idx) in title" :key="idx" @click="changeTab(idx)"><strong>{{ item }}</strong></v-tab>
+    </v-tabs>
+    <v-divider class="ma-1"></v-divider>
+    <volunteer-item v-if="tabIdx === 0" :v_id="v_id"/>
+    <volunteer-edus v-else-if="tabIdx === 1" :v_id="v_id"/>
+    <volunteer-acts v-else-if="tabIdx === 2" :v_id="v_id"/>
+  </v-container>
 </template>
 
 <script>
@@ -22,7 +16,7 @@ import VolunteerEdus from '@/components/VolunteerEdus'
 import VolunteerActs from '@/components/VolunteerActs'
 
 export default {
-  name: 'NewVolts',
+  name: 'NewVolunteer',
   components: { VolunteerItem, VolunteerEdus, VolunteerActs },
   computed: {
     lastVolunteerID () {
@@ -33,16 +27,13 @@ export default {
     tabIdx: 0,
     isAdded: false,
     v_id: undefined,
-    alert: {show: false, message: '기본 정보 설정이 필요합니다!'},
-    title: ['봉사자 기본 정보', '봉사자 교육 현황', '봉사자 활동 내역']
+    title: ['기본 정보', '교육 현황', '그룹공부 봉사', '대표 이력', '전출입 이력']
   }),
   methods: {
     changeTab (idx) {
       if (idx !== 0 && !this.isAdded) {
-        this.alert.show = true
-        setTimeout(() => {
-          this.alert.show = false
-        }, 2000)
+        this.tabIdx = null
+        return alert('기본 정보 설정이 필요합니다.')
       }
       this.tabIdx = idx
     },

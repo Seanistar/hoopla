@@ -1,7 +1,8 @@
 <template>
-  <div class="footer">
-    Produced By SEANISTAR. since August 2018
-  </div>
+  <v-footer class="pa-3" fixed>
+    <v-spacer></v-spacer>
+    <div>Produced By SEANISTAR. since August 2018</div>
+  </v-footer>
 </template>
 
 <script>
@@ -11,12 +12,4 @@ export default {
 </script>
 
 <style scoped>
-  .footer {
-    background: #f3f3f3;
-    margin-top: 3rem;
-    padding: 1rem 0;
-    position: relative;
-    bottom: 0;
-    width: 100%;
-  }
 </style>

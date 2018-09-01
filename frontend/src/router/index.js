@@ -34,6 +34,16 @@ export default new Router({
       component: () => import('@/views/Admins')
     },
     {
+      path: '/stats',
+      name: 'stats',
+      component: () => import('@/views/Stats')
+    },
+    {
+      path: '/others',
+      name: 'others',
+      component: () => import('@/views/Others')
+    },
+    {
       path: '/query',
       name: 'query',
       component: () => import('@/views/QueryVolunteer')

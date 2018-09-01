@@ -1,9 +1,9 @@
 <template>
   <v-form ref="form">
     <v-container>
-      <v-alert class="alert-c" v-model="alert.show" :color="alert.type" :icon="alert.icon" dismissible>
+      <!--<v-alert class="alert-c" v-model="alert.show" :color="alert.type" :icon="alert.icon" dismissible>
         {{ alert.message }}
-      </v-alert>
+      </v-alert>-->
       <v-layout row wrap>
         <!--첫번째 라인-->
         <v-flex xs12 sm6>
@@ -31,18 +31,18 @@
       <!--세번째 라인-->
       <v-layout wrap>
         <v-flex xs12 sm4 d-flex>
-          <v-select label="교구코드"
-            :items="la_codes" v-model="params.la_name"
+          <v-select label="교구코드" v-model="areaCode.la_code"
+                    :items="lAreaCodes" item-text="l_name" item-value="l_code"
           ></v-select>
         </v-flex>
         <v-flex xs12 sm4 d-flex>
-          <v-select label="본당코드" ref="ma_name"
-            :items="ma_codes" v-model="params.ma_name" :disabled="params.la_name === null"
+          <v-select label="본당코드" v-model="areaCode.ma_code" no-data-text="본당 자료가 없습니다."
+                    :items="mAreaCodes" item-text="m_name" item-value="m_code" :disabled="areaCode.la_code === ''"
           ></v-select>
         </v-flex>
         <v-flex xs12 sm4 d-flex>
-          <v-select label="지구코드" ref="sa_name"
-            :items="sa_codes" v-model="params.sa_name" :disabled="params.ma_name === null"
+          <v-select label="지구코드" v-model="areaCode.sa_code" no-data-text="지구 자료가 없습니다."
+                    :items="sAreaCodes" item-text="s_name" item-value="s_code" :disabled="areaCode.ma_code === ''"
           ></v-select>
         </v-flex>
       </v-layout>
@@ -108,8 +108,8 @@
           <v-btn color="black accent-2" outline class="mb-2" @click="$router.back()">취소</v-btn>
         </div>
         <div>
-          <v-btn color="orange accent-2" outline class="mb-2" @click="reset" v-if="!isEditMode">초기화</v-btn>
-          <v-btn color="indigo accent-2" outline class="mb-2" @click="submit" ref="submit">{{!isEditMode ? '추가' : '수정'}}</v-btn>
+          <v-btn color="orange accent-2" outline class="mb-2" @click="reset" v-if="false">초기화</v-btn>
+          <v-btn color="indigo accent-2" outline class="mb-2" @click="submit" :disabled="isDisabled">{{!isEditMode ? '추가' : '수정'}}</v-btn>
         </div>
       </v-layout>
     </v-container>
@@ -117,14 +117,16 @@
 </template>
 
 <script>
-import {isEmpty, isUndefined} from 'lodash/lang'
+import { isEmpty, isUndefined } from 'lodash/lang'
 import DatePicker from './control/DatePicker'
 import AppAlert from './control/AppAlert'
-import {CREATE_VOLUNTEER, UPDATE_VOLUNTEER, FETCH_VOLUNTEER_ITEM} from '@/store/actions.type'
-import {VolunteerService} from '@/common/api.service'
+import { CREATE_VOLUNTEER, UPDATE_VOLUNTEER, FETCH_VOLUNTEER_ITEM } from '@/store/actions.type'
+import { VolunteerService } from '@/common/api.service'
+import CodeMixin from '@/common/code.mixin'
 
 export default {
   name: 'VolunteerItem',
+  mixins: [ CodeMixin ],
   components: { AppAlert, DatePicker },
   props: { v_id: null },
   computed: {
@@ -150,25 +152,15 @@ export default {
       birth_date: null,
       ca_date: null,
       name: null,
-      area_code: null,
-      la_name: null, // 교구
-      ma_name: null, // 본당
-      sa_name: null, // 지구
       address: null,
       email: null,
       phone: null,
       job: null,
       degree: null,
       ca_name: null,
-      rec_date: null,
       auth_date: null,
       memo: null
     },
-    title: [
-      { text: '봉사자 기본 정보', link: '' },
-      { text: '봉사자 교육 현황', link: '' },
-      { text: '봉사자 활동 내역', link: '' }
-    ],
     rules: {
       required: value => !!value || '필수 항목입니다.',
       counter: value => value.length <= 20 || '최대 20자까지 가능합니다.',
@@ -183,14 +175,7 @@ export default {
       // name: v => v.length <= 10 || 'Name must be less than 10 characters'
     },
     degrees: ['초졸', '중졸', '고졸', '초대졸', '대졸'],
-    states: [{cd: 'ACT', nm: '활동중'}, {cd: 'BRK', nm: '쉼'}, {cd: 'STP', nm: '중단'}, {cd: 'DTH', nm: '사망'}],
-    alert: {show: false, message: '초기화 되었습니다.', icon: 'check_circle', type: 'success'},
-    la_codes: ['본부', '정릉', '수지', '부산'],
-    ma_codes: ['명동', '반포', '흑석', '상암'],
-    sa_codes: ['제5구역', '제2구역', '제3구역', '제4구역']
-    /* la_codes: [{cd: '01', nm: '본부'}, {cd: '02', nm: '정릉'}, {cd: '03', nm: '수지'}, {cd: '04', nm: '부산'}],
-    ma_codes: [{cd: '001', nm: '명동'}, {cd: '002', nm: '반포'}, {cd: '003', nm: '흑석'}, {cd: '004', nm: '상암'}],
-    sa_codes: [{cd: '005', nm: '제5구역'}, {cd: '002', nm: '제2구역'}, {cd: '003', nm: '제3구역'}, {cd: '004', nm: '제4구역'}] */
+    states: [{cd: 'ACT', nm: '활동중'}, {cd: 'BRK', nm: '쉼'}, {cd: 'STP', nm: '중단'}, {cd: 'DTH', nm: '사망'}]
   }),
   created () {
     const _this = this
@@ -219,7 +204,7 @@ export default {
           }
         })
         this.params = item
-        // const [lc, mc, sc] = item.area_code.split('-')
+        this.assignCode(item.area_code)
       })
     },
     reset () {
@@ -231,24 +216,25 @@ export default {
     },
     submit () {
       if (!this.$refs.form.validate()) {
-        this.alert = {message: '입력 데이터를 확인해주세요.', icon: 'priority_high', type: 'warning', show: true}
-        return
+        // this.alert = {message: '입력 데이터를 확인해주세요.', icon: 'priority_high', type: 'warning', show: true}
+        return alert('입력 데이터를 확인해주세요.')
       }
 
-      this.formHasErrors = false
+      /* this.formHasErrors = false
       Object.keys(this.form).forEach(f => {
         console.log(f + ' : ' + this.form[f])
         if (!this.form[f]) this.formHasErrors = true
-        // this.$refs[f].validate(true)
-      })
+        this.$refs[f].validate(true)
+      }) */
 
+      console.log(this.form)
       if (!this.isEditMode) {
-        this.alert = {message: '추가되었습니다.', icon: 'check_circle', type: 'success', show: true}
-        this.$nextTick(() => { this.$refs['submit'].disabled = true })
+        alert('추가되었습니다.')
+        this.isDisabled = true
         this.createItem()
       } else {
         this.$store.dispatch(UPDATE_VOLUNTEER, this.form)
-        this.alert = {message: '수정되었습니다.', icon: 'check_circle', type: 'success', show: true}
+        alert('수정되었습니다.')
       }
     },
     async fetchData () {

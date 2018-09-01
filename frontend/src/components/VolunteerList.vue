@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pb-5">
     <v-toolbar flat color="white">
       <h4>전체 봉사자 리스트</h4>
       <v-spacer></v-spacer>
@@ -8,7 +8,7 @@
     <v-progress-circular class="progressing" :size="50" color="primary"
                          :indeterminate="isVolunteersLoading" v-show="isVolunteersLoading"
     ></v-progress-circular>
-    <v-data-table :headers="headers" :items="volunteers" class="elevation-10" dark
+    <v-data-table :headers="headers" :items="volunteers" class="elevation-5" dark
                   :pagination.sync="pagination" :rows-per-page-items="perPage" rows-per-page-text="페이지 당 보기 개수"
                   item-key="id">
       <template slot="items" slot-scope="props">
@@ -19,14 +19,14 @@
         <td class="text-xs-center">{{ props.item.la_name }}</td>
         <td class="text-xs-center">{{ props.item.ma_name }}</td>
         <td class="text-xs-center">{{ props.item.sa_name }}</td>
-        <td class="text-xs-center">{{ props.item.birth_date }}</td>
+        <td class="text-xs-center">{{ props.item.auth_date }}</td>
         <td class="text-xs-center">{{ props.item.ca_date }}</td>
         <td class="justify-center layout px-0">
           <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
           <v-icon small @click="deleteItem(props.item)">delete</v-icon>
         </td>
       </template>
-      <template slot="pageText" slot-scope="{ pageStart, pageStop, itemsLength }">
+      <template slot="pageText" slot-scope="{pageStart, pageStop, itemsLength}">
         전체 {{itemsLength}}개 중 {{ pageStart }} ~ {{ pageStop }}
       </template>
       <template slot="no-data" v-if="fetched">
@@ -42,7 +42,6 @@
 import { mapGetters } from 'vuex'
 import { FETCH_VOLUNTEERS, CREATE_VOLUNTEER, UPDATE_VOLUNTEER, DELETE_VOLUNTEER } from '@/store/actions.type'
 
-// const _ITEM = { id: '', name: '', perm: '', registered: '' }
 export default {
   name: 'VoltList',
   data: () => ({
@@ -56,9 +55,9 @@ export default {
       { text: '세례명', value: 'caName', align: 'center', sortable: false },
       { text: '활동상태', value: 'areaCode', align: 'center' },
       { text: '소속교구', value: 'laName', align: 'center' },
-      { text: '소속본당', value: 'maName', align: 'center' },
-      { text: '소속지구', value: 'saName', align: 'center' },
-      { text: '생년월일', value: 'birthDate', align: 'center' },
+      { text: '소속지구', value: 'maName', align: 'center' },
+      { text: '소속본당', value: 'saName', align: 'center' },
+      { text: '선서일', value: 'authDate', align: 'center' },
       { text: '세례일', value: 'caDate', align: 'center' },
       { text: '편집', value: 'action', align: 'center', sortable: false }
     ],

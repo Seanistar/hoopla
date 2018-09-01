@@ -1,5 +1,5 @@
 <template>
-  <div class="tp-20 tm-20 hm-25">
+  <div class="pt-3">
     <admin-list/>
   </div>
 </template>

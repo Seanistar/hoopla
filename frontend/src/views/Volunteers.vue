@@ -1,5 +1,5 @@
 <template>
-  <div class="tp-20 hm-25">
+  <div class="pt-1">
     <volunteer-list/>
     <!--<button @click="codeTest">test</button>-->
   </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="tm-20">
+  <div class="pt-4">
     <v-container style="width: 80%">
       <v-layout row wrap>
         <v-flex xs12>

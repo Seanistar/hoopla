@@ -15,6 +15,7 @@ export const DELETE_VOLUNTEER_EDU = 'deleteVolunteerEdu'
 export const CREATE_VOLUNTEER_EDU = 'createVolunteerEdu'
 export const UPDATE_VOLUNTEER_EDU = 'updateVolunteerEdu'
 export const LOGIN_ADMIN = 'loginAdmin'
+export const QUERY_VOLUNTEERS = 'queryVolunteers'
 
 // will be obsoleted
 export const DELETE_AUTHOR = 'deleteAuthor'

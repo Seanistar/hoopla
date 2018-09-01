@@ -15,6 +15,7 @@ export const SET_AUTH = 'setAuth'
 export const SET_ADMIN = 'setAdmin'
 export const FETCH_EDU_CODES_END = 'fetchEduCodes'
 export const FETCH_AREA_CODES_END = 'fetchAreaCodes'
+export const QUERY_VOLUNTEERS_END = 'queryVolunteers'
 
 // will be obsoleted
 export const SET_TOPIC = 'setTopic'

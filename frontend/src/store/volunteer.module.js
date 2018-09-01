@@ -1,6 +1,7 @@
 import { VolunteerService } from '@/common/api.service'
 import {
   FETCH_VOLUNTEERS,
+  QUERY_VOLUNTEERS,
   CREATE_VOLUNTEER,
   UPDATE_VOLUNTEER,
   DELETE_VOLUNTEER,
@@ -17,6 +18,7 @@ import {
 import {
   FETCH_START,
   FETCH_VOLUNTEERS_END,
+  QUERY_VOLUNTEERS_END,
   ADD_VOLUNTEER,
   SET_VOLUNTEER,
   REMOVE_VOLUNTEER,
@@ -29,7 +31,6 @@ import {
   ADD_VOLUNTEER_ACT,
   REMOVE_VOLUNTEER_ACT
 } from './mutations.type'
-// import Moment from "moment/moment";
 
 const state = {
   volunteers: [],
@@ -37,7 +38,9 @@ const state = {
   volunteerActs: [],
   lastID: 0,
   isLoading: false,
-  volunteersCount: 0
+  volunteersCount: 0,
+  queryCount: 0,
+  queryResult: []
 }
 
 const getters = {
@@ -52,13 +55,15 @@ const getters = {
   volunteerEdus: state => state.volunteerEdus,
   volunteerActs: state => state.volunteerActs,
   isVolunteersLoading: state => state.isLoading,
-  volunteersCount: state => state.volunteersCount
+  volunteersCount: state => state.volunteersCount,
+  queryVolunteers: state => state.queryResult,
+  queryCount: state => state.queryCount
 }
 
 const actions = {
   [FETCH_VOLUNTEERS] (context, params) {
     context.commit(FETCH_START)
-    return VolunteerService.query(params)
+    return VolunteerService.get_all(params)
       .then(({ data }) => {
         context.commit(FETCH_VOLUNTEERS_END, data)
       })
@@ -178,6 +183,16 @@ const actions = {
       .catch((error) => {
         throw new Error(error)
       })
+  },
+  [QUERY_VOLUNTEERS] (context, params) {
+    context.commit(FETCH_START)
+    return VolunteerService.query(params)
+      .then(({ data }) => {
+        context.commit(QUERY_VOLUNTEERS_END, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
   }
 }
 
@@ -262,6 +277,12 @@ const mutations = {
       console.log('remove position : ', pos)
       state.volunteerActs.splice(pos, 1)
     }
+  },
+  [QUERY_VOLUNTEERS_END] (state, results) {
+    console.log(results)
+    state.queryResult = results
+    state.queryCount = results.length
+    state.isLoading = false
   }
 }
 

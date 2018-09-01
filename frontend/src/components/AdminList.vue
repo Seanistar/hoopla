@@ -1,32 +1,5 @@
 <template>
   <div>
-    <!--<v-layout row justify-center>
-      <v-dialog v-model="dialog" persistent max-width="500px">
-        <v-card>
-          <v-card-title>
-            <span class="headline">봉사 활동 내역</span>
-          </v-card-title>
-
-          <v-card-text>
-            <v-container grid-list-md>
-              <v-layout wrap>
-                <v-flex xs12>
-                  <v-text-field v-model="dlgItem.content" label="관리자 성명"></v-text-field>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="orange darken-1" outline flat
-                   @click="dialog = false">취소</v-btn>
-            <v-btn color="blue darken-1" outline flat
-                   @click="saveItem">저장</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </v-layout>-->
     <v-data-table :headers="headers" :items="admins" hide-actions class="elevation-5"
     >
       <template slot="items" slot-scope="props">
