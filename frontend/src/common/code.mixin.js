@@ -1,6 +1,7 @@
 import { uniqBy, concat } from 'lodash/array'
-import { filter } from 'lodash/collection'
+import { filter, find } from 'lodash/collection'
 import { startsWith } from 'lodash/string'
+// import { isUndefined } from 'lodash/lang'
 import { mapGetters } from 'vuex'
 
 const CodeMixin = {
@@ -35,21 +36,21 @@ const CodeMixin = {
   },
   watch: {
     'areaCode.la_code' (nv, ov) {
-      if (ov === null) return this.onSelect('L', nv)
+      if (ov === null) return this.changedCode('', nv) // 초기 상태
       this.params.area_code = nv
       this.areaCode.ma_code = this.areaCode.sa_code = ''
-      this.onSelect('L', nv)
+      this.changedCode('L', nv)
     },
     'areaCode.ma_code' (nv, ov) {
       if (ov === null) return
       this.params.area_code = nv
       this.areaCode.sa_code = ''
-      this.onSelect('M', nv)
+      this.changedCode('M', nv)
     },
     'areaCode.sa_code' (nv, ov) {
       if (ov === null) return
       this.params.area_code = nv
-      this.onSelect('S', nv)
+      this.changedCode('S', nv)
     }
   },
   methods: {
@@ -60,6 +61,24 @@ const CodeMixin = {
       this.areaCode.la_code = code.slice(0, 2)
       this.areaCode.ma_code = code.slice(0, 6)
       this.areaCode.sa_code = code
+    },
+    changedCode (type, val) {
+      // if it needs to use this function. should do overriding on target component
+    },
+    getCodeName (code) {
+      if (!code) return ''
+      let res = null
+      if (code.length > 6) {
+        res = find(this.sAreaCodes, (o) => o.s_code === code)
+        if (res && res.s_name) return res.s_name
+      } else if (code.length > 2) {
+        res = find(this.mAreaCodes, (o) => o.m_code === code)
+        if (res && res.m_name) return res.m_name
+      } else {
+        res = find(this.lAreaCodes, (o) => o.l_code === code)
+        if (res && res.l_name) return res.l_name
+      }
+      return ''
     }
   }
 }

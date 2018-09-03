@@ -23,9 +23,9 @@
                 <date-picker ref="e_date" refs="edu-e_date" title="교육 종료일"
                 ></date-picker>
               </v-flex>
-              <v-flex xs12>
+              <!--<v-flex xs12>
                 <v-text-field v-model="item.sv_ids" label="봉사자"></v-text-field>
-              </v-flex>
+              </v-flex>-->
               <v-flex xs12>
                 <v-text-field v-model="item.desc" label="참고 사항"></v-text-field>
               </v-flex>
@@ -37,21 +37,28 @@
                 <v-text-field v-model="item.id" label="봉사활동 ID" disabled></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-text-field v-model="item.grp_name" label="봉사 단체"></v-text-field>
+                <v-text-field v-model="item.grp_name" label="그룹봉사 단체"></v-text-field>
               </v-flex>
               <v-flex xs12 sm6>
-                <date-picker ref="s_date" refs="act-s_date" title="봉사활동 시작일"
+                <date-picker ref="s_date" refs="act-s_date" title="봉사 시작일"
                 ></date-picker>
               </v-flex>
               <v-flex xs12 sm6>
-                <date-picker ref="e_date" refs="act-e_date" title="봉사활동 종료일"
+                <date-picker ref="e_date" refs="act-e_date" title="봉사 종료일"
                 ></date-picker>
               </v-flex>
-              <!--<v-flex xs12>
-                <v-text-field v-model="item.gv_ids" label="봉사자"></v-text-field>
-              </v-flex>-->
               <v-flex xs12>
                 <v-text-field v-model="item.content" label="봉사활동 내용"></v-text-field>
+              </v-flex>
+            </v-layout>
+          </v-container>
+          <v-container grid-list-md v-if="refs === 'code'">
+            <v-layout wrap>
+              <v-flex xs12>
+                <v-text-field v-model="item.code" label="구역 코드" readonly></v-text-field>
+              </v-flex>
+              <v-flex xs12>
+                <v-text-field v-model="item.name" label="구역 이름"></v-text-field>
               </v-flex>
             </v-layout>
           </v-container>
@@ -75,10 +82,14 @@ import DateFilter from '@/common/date.filter'
 
 export default {
   name: 'InputDialog',
-  components: {DatePicker},
+  components: { DatePicker },
   props: {
     title: '',
-    refs: ''
+    refs: {
+      type: String,
+      required: true,
+      default: ''
+    }
   },
   data: () => ({
     dialog: false,
@@ -99,6 +110,16 @@ export default {
     this.$eventBus.$on('close-date-picker', (obj) => {
       console.info(obj.refs, _this.params[obj.refs] = obj.date)
     })
+  },
+  methods: {
+    showDialog (val) {
+      this.dialog = val
+    },
+    setItem (obj) {
+      Object.keys(obj).forEach(k => {
+        this.item[k] = obj[k]
+      })
+    }
   }
 }
 </script>

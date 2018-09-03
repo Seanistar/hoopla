@@ -52,6 +52,11 @@
     <v-progress-circular class="progressing" :size="50" color="primary"
                          :indeterminate="isLoading" v-show="isLoading"
     ></v-progress-circular>
+    <v-layout row justify-end>
+      <v-flex xs12 sm2 offset-sm4>
+        <inline-buttons class="pt-0 pb-1" refs="edu"/>
+      </v-flex>
+    </v-layout>
     <v-data-table :headers="headers" :items="volunteerEdus" hide-actions class="elevation-1"
     >
       <template slot="items" slot-scope="props">
@@ -60,15 +65,13 @@
           <td class="text-xs-center">{{ props.item.edu_name }}</td>
           <td class="text-xs-center">{{ props.item.s_date }}</td>
           <td class="text-xs-center">{{ props.item.e_date }}</td>
-          <td class="text-xs-center">{{ props.item.sv_ids }}</td>
-          <td class="text-xs-left">{{ props.item.memo }}</td>
+          <td class="text-xs-center">{{ props.item.memo }}</td>
         </tr>
       </template>
       <template slot="no-data" v-if="fetched">
           교육 내역이 없습니다.
       </template>
     </v-data-table>
-    <inline-buttons refs="edu"/>
   </div>
 </template>
 
@@ -79,7 +82,6 @@ import DatePicker from './control/DatePicker'
 import {isEmpty, isNull, isUndefined} from 'lodash/lang'
 import {FETCH_VOLUNTEER_EDUS, CREATE_VOLUNTEER_EDU, UPDATE_VOLUNTEER_EDU, DELETE_VOLUNTEER_EDU} from '../store/actions.type'
 
-const DEFALUT_ITEM = {id: null, s_date: '', e_date: '', edu_code: null, edu_name: '', sv_ids: '', memo: ''}
 export default {
   name: 'VolunteerEdus',
   components: { InputDialog, InlineButtons, DatePicker },
@@ -124,7 +126,6 @@ export default {
       { text: '교육 내용', align: 'center', value: 'subject' },
       { text: '교육 시작일', align: 'center', value: 's_date' },
       { text: '교육 종료일', align: 'center', value: 'e_date' },
-      { text: '지원 봉사자', align: 'center', value: 'sponsor', sortable: false },
       { text: '참고사항', align: 'center', value: 'memo', sortable: false }
     ]
   }),
@@ -140,7 +141,7 @@ export default {
     })
     this.$eventBus.$on('click-btn-edu', (eventType) => {
       if (eventType === 'add') {
-        _this.dlgItem = DEFALUT_ITEM
+        _this.dlgItem = {}
         _this.dlgItem.id = _this.volunteerEdus.length + 1
       } else if (eventType === 'remove') {
         if (isEmpty(_this.selected)) return alert('내역을 선택해주세요.')

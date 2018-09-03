@@ -98,11 +98,17 @@ export const VolunteerService = {
 }
 
 export const CodeService = {
-  query (params = {}) {
-    return ApiService.query('codes', params)
+  query_edu (params = {}) {
+    return ApiService.query('codes/edu', params)
   },
   query_area (params = {}) {
     return ApiService.query('codes/area', params)
+  },
+  update_area (params) {
+    return ApiService.update('codes/area', params)
+  },
+  delete_area (code) {
+    return ApiService.delete(`codes/area/${code}`)
   },
   test (testCode) {
     return ApiService.query(`codes/test`, { params: { code: testCode } })

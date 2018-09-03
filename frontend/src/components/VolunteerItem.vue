@@ -1,11 +1,14 @@
 <template>
   <v-form ref="form">
     <v-container>
-      <!--<v-alert class="alert-c" v-model="alert.show" :color="alert.type" :icon="alert.icon" dismissible>
-        {{ alert.message }}
-      </v-alert>-->
+      <v-layout row>
+        <v-flex xs6>
+          <date-picker ref="auth_date" refs="auth_date" title="선서일"
+          ></date-picker>
+        </v-flex>
+      </v-layout>
+
       <v-layout row wrap>
-        <!--첫번째 라인-->
         <v-flex xs12 sm6>
           <v-text-field label="성명" prepend-icon="mood" :rules="[rules.required]"
                   :clearable="true" v-model="params.name"
@@ -16,7 +19,7 @@
           <date-picker ref="birth_date" refs="birth_date" title="생년월일"
           ></date-picker>
         </v-flex>
-        <!--두번째 라인-->
+
         <v-flex xs12 sm6>
           <v-text-field label="세례명" prepend-icon="face" :rules="[rules.required]"
                         clearable v-model="params.ca_name"
@@ -28,27 +31,25 @@
         </v-flex>
       </v-layout>
 
-      <!--세번째 라인-->
       <v-layout wrap>
         <v-flex xs12 sm4 d-flex>
-          <v-select label="교구코드" v-model="areaCode.la_code"
+          <v-select label="교구 코드" v-model="areaCode.la_code"
                     :items="lAreaCodes" item-text="l_name" item-value="l_code"
           ></v-select>
         </v-flex>
         <v-flex xs12 sm4 d-flex>
-          <v-select label="본당코드" v-model="areaCode.ma_code" no-data-text="본당 자료가 없습니다."
+          <v-select label="지구 코드" v-model="areaCode.ma_code" no-data-text="본당 자료가 없습니다."
                     :items="mAreaCodes" item-text="m_name" item-value="m_code" :disabled="areaCode.la_code === ''"
           ></v-select>
         </v-flex>
         <v-flex xs12 sm4 d-flex>
-          <v-select label="지구코드" v-model="areaCode.sa_code" no-data-text="지구 자료가 없습니다."
+          <v-select label="본당 코드" v-model="areaCode.sa_code" no-data-text="지구 자료가 없습니다."
                     :items="sAreaCodes" item-text="s_name" item-value="s_code" :disabled="areaCode.ma_code === ''"
           ></v-select>
         </v-flex>
       </v-layout>
 
       <v-layout row wrap>
-        <!-- 번째 라인-->
         <v-flex xs12 sm6>
           <v-text-field label="이메일"
                   v-model="params.email" :rules="[rules.email]"
@@ -59,12 +60,12 @@
                   v-model="params.phone" mask="### - #### - ####" hint="'-' 없이 입력해주세요."
           ></v-text-field><!--prepend-icon="phone"-->
         </v-flex>
-        <!-- 번째 라인-->
+
         <v-flex xs12>
           <v-text-field label="주소" v-model="params.address"
           ></v-text-field><!--prepend-icon="home"-->
         </v-flex>
-        <!-- 번째 라인-->
+
         <v-flex xs12 sm6>
           <v-text-field label="직업" v-model="params.job"
           ></v-text-field>
@@ -83,16 +84,6 @@
            <v-radio label="여자" value="F"></v-radio>
          </v-radio-group>
         </v-flex>
-
-        <!-- 번째 라인-->
-        <v-flex xs12 sm6>
-          <date-picker ref="auth_date" refs="auth_date" title="선서일"
-          ></date-picker>
-        </v-flex>
-        <v-flex xs12 sm6>
-          <date-picker ref="rec_date" refs="rec_date" title="기록일"
-          ></date-picker>
-        </v-flex>
       </v-layout>
 
       <v-layout row wrap class="tp-20">
@@ -102,8 +93,7 @@
         ></v-textarea>
       </v-layout>
 
-      <v-divider class="tm-10 bm-10"></v-divider>
-      <v-layout class="fl-r">
+      <v-layout class="fl-r mb-5">
         <div>
           <v-btn color="black accent-2" outline class="mb-2" @click="$router.back()">취소</v-btn>
         </div>

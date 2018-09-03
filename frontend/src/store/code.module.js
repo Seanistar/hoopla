@@ -1,6 +1,6 @@
 import {CodeService} from '@/common/api.service'
-import {FETCH_EDU_CODES, FETCH_AREA_CODES} from './actions.type'
-import {FETCH_START, FETCH_EDU_CODES_END, FETCH_AREA_CODES_END} from './mutations.type'
+import {FETCH_EDU_CODES, FETCH_AREA_CODES, UPDATE_AREA_CODE, DELETE_AREA_CODE} from './actions.type'
+import {FETCH_START, FETCH_EDU_CODES_END, FETCH_AREA_CODES_END, SET_AREA_CODE, REMOVE_AREA_CODE} from './mutations.type'
 
 const state = {
   eduCodes: [],
@@ -23,7 +23,7 @@ const getters = {
 const actions = {
   [FETCH_EDU_CODES] (context, params) {
     context.commit(FETCH_START)
-    return CodeService.query(params)
+    return CodeService.query_edu(params)
       .then(({ data }) => {
         context.commit(FETCH_EDU_CODES_END, data)
       })
@@ -36,6 +36,24 @@ const actions = {
     return CodeService.query_area(params)
       .then(({ data }) => {
         context.commit(FETCH_AREA_CODES_END, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
+  [UPDATE_AREA_CODE] (context, params) {
+    return CodeService.update_area(params)
+      .then(({ data }) => {
+        context.commit(SET_AREA_CODE, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
+  [DELETE_AREA_CODE] (context, code) {
+    return CodeService.delete_area(code)
+      .then(() => {
+        context.commit(REMOVE_AREA_CODE, code)
       })
       .catch((error) => {
         throw new Error(error)
@@ -55,6 +73,19 @@ const mutations = {
   [FETCH_AREA_CODES_END] (state, codes) {
     state.areaCodes = codes
     state.isLoading = false
+  },
+  [SET_AREA_CODE] (state, obj) {
+    const pos = state.areaCodes.findIndex((o) => o.a_code === obj.a_code)
+    if (pos > -1) {
+      state.areaCodes.splice(pos, 1)
+    }
+    state.areaCodes.push(obj)
+  },
+  [REMOVE_AREA_CODE] (state, code) {
+    const pos = state.areaCodes.findIndex((o) => o.a_code === code)
+    if (pos > -1) {
+      state.areaCodes.splice(pos, 1)
+    }
   }
 }
 

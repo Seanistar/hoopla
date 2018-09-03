@@ -1,93 +1,233 @@
 <template>
   <v-container>
-    <v-layout row justify-center>
-      <v-flex xs9 sm3 d-flex>
-        <v-select label="교구 코드" v-model="areaCode.la_code"
-                  :items="lAreaCodes" item-text="l_name" item-value="l_code"
-        ></v-select>
+    <v-layout row>
+      <v-flex xs12 sm6>
+        <v-text-field label="편집할 구역을 선택하세요." readonly :value="codeName"></v-text-field>
       </v-flex>
-      <v-flex xs9 sm3 d-flex>
-        <v-select label="지구 코드" v-model="areaCode.ma_code" no-data-text="지구 자료가 없습니다."
-                  :items="mAreaCodes" item-text="m_name" item-value="m_code" :disabled="areaCode.la_code === ''"
-        ></v-select>
-      </v-flex>
-      <v-flex xs9 sm3 d-flex>
-        <v-select label="본당 코드" v-model="areaCode.sa_code" no-data-text="본당 자료가 없습니다."
-                  :items="sAreaCodes" item-text="s_name" item-value="s_code" :disabled="areaCode.ma_code === ''"
-        ></v-select>
+      <v-flex xs12 sm2 offset-sm4>
+        <inline-buttons class="pt-0 pb-1" refs="code"/>
       </v-flex>
     </v-layout>
     <v-layout row>
-      <v-flex xs10 sm10 offset-sm1>
-        <v-card>
+      <v-flex xs12 sm4 d-flex @click="selected = 'L'">
+        <v-card :raised="selected === 'L'">
           <v-list>
-            <v-radio-group v-model="selected" :mandatory="false">
-            <template v-for="(item, index) in items" v-if="item.l_code !== ''">
-              <v-list-tile :key="index" ripple>
-                <v-list-tile-action>
-                  <v-radio :value="index"></v-radio>
-                </v-list-tile-action>
-                <v-list-tile-content>
-                  <v-list-tile-title>{{ `${item.l_name} (${item.l_code})` }}</v-list-tile-title>
-                </v-list-tile-content>
-
-              <!--  <v-list-tile-action>
-                  <v-list-tile-action-text>{{ item.action }}</v-list-tile-action-text>
-                  <v-icon v-if="selected.indexOf(index) < 0" color="grey lighten-1"
-                  >
-                    star_border
-                  </v-icon>
-
-                  <v-icon v-else color="yellow darken-2"
-                  >
-                    star
-                  </v-icon>
-                </v-list-tile-action>
--->
-              </v-list-tile>
-              <v-divider v-if="index + 1 < items.length" :key="item.l_code + index"></v-divider>
-            </template>
+            <v-subheader key="header" class="text-xs-center" :class="selected === 'L' ? 'active-card' : ''">
+              <span class="full-width">교구 코드</span>
+            </v-subheader>
+            <v-radio-group v-model="areaCode.la_code" mandatory class="pl-2">
+              <template v-for="(item, index) in lAreaCodes" v-if="item.l_code !== ''">
+                <v-list-tile :key="item.l_code + index" ripple>
+                  <v-list-tile-action>
+                    <v-radio :value="item.l_code"></v-radio>
+                  </v-list-tile-action>
+                  <v-list-tile-content>
+                    <v-list-tile-title>{{ item.l_name }}</v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+              </template>
             </v-radio-group>
           </v-list>
         </v-card>
       </v-flex>
-      <v-flex xs10 sm1>
-        <inline-buttons refs="code"/>
+      <v-flex xs12 sm4 d-flex class="ml-3" @click="selected = 'M'">
+        <v-card :raised="selected === 'M'" ripple active-class="elevation-5">
+          <v-list>
+            <v-subheader key="header" class="text-xs-center" :class="selected === 'M' ? 'active-card' : ''">
+              <span class="full-width" >지구 코드</span>
+            </v-subheader>
+            <v-radio-group v-model="areaCode.ma_code" class="pl-2" v-if="areaCode.la_code !== ''">
+              <template v-for="(item, index) in mAreaCodes" v-if="item.m_code !== ''">
+                <v-list-tile :key="item.m_code + index" ripple>
+                  <v-list-tile-action>
+                    <v-radio :value="item.m_code"></v-radio>
+                  </v-list-tile-action>
+                  <v-list-tile-content>
+                    <v-list-tile-title>{{ item.m_name }}</v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+              </template>
+            </v-radio-group>
+          </v-list>
+        </v-card>
+      </v-flex>
+      <v-flex xs12 sm4 d-flex class="ml-3" @click="selected = 'S'">
+        <v-card :raised="selected === 'S'">
+          <v-list >
+            <v-subheader key="header" class="text-xs-center" :class="selected === 'S' ? 'active-card' : ''">
+              <span class="full-width">본당 코드</span>
+            </v-subheader>
+            <v-radio-group v-model="areaCode.sa_code" class="pl-2" v-if="areaCode.ma_code !== ''">
+              <template v-for="(item, index) in sAreaCodes" v-if="item.s_code !== ''">
+                <v-list-tile :key="item.s_code + index" ripple>
+                  <v-list-tile-action>
+                    <v-radio :value="item.s_code"></v-radio>
+                  </v-list-tile-action>
+                  <v-list-tile-content>
+                    <v-list-tile-title>{{ item.s_name }} ({{ item.s_code|smallAreaCode }})</v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+              </template>
+              <template v-else-if="sAreaCodes.length === 0">
+                <v-text-field label="데이터가 없습니다."></v-text-field>
+              </template>
+            </v-radio-group>
+          </v-list>
+        </v-card>
       </v-flex>
     </v-layout>
+    <input-dialog :title="codeName" refs="code" ref="code"/>
   </v-container>
 </template>
 
 <script>
 import CodeMixin from '@/common/code.mixin'
 import InlineButtons from './control/InlineButtons'
+import InputDialog from './control/InputDialog'
+import { last } from 'lodash/array'
+import { UPDATE_AREA_CODE, DELETE_AREA_CODE } from '../store/actions.type'
 
 export default {
   name: 'AreaCode',
   mixins: [ CodeMixin ],
-  components: { InlineButtons },
+  components: { InlineButtons, InputDialog },
   data: () => ({
-    items: [],
-    selected: '01'
+    selected: '',
+    codeName: ''
   }),
+  created () {
+    this.areaCode.la_code = '01'
+    this.selected = 'M'
+  },
   mounted () {
-    this.items = this.lAreaCodes
+    const _this = this
+    const $ref = this.$refs['code']
+    this.$eventBus.$on('click-btn-code', (eventType) => {
+      if (eventType === 'add') {
+        $ref && $ref.setItem({code: _this.getLastCode, name: ''})
+      } else if (eventType === 'remove') {
+        if (!_this.selected) return alert('구역을 선택해주세요.')
+        return confirm('선택 항목을 삭제하시겠습니까?') && _this.deleteItem(_this.getCode)
+      } else if (eventType === 'edit') {
+        if (!_this.selected) return alert('구역을 선택해주세요.')
+        $ref && $ref.setItem({code: _this.getCode, name: _this.getName})
+      }
+      $ref && $ref.showDialog(true)
+    })
+    this.$eventBus.$on('click-dlg-code', (item) => {
+      if (item.type === 'save') _this.saveItem(item.data)
+      $ref && $ref.showDialog(false)
+    })
+  },
+  computed: {
+    getCode () {
+      if (this.selected === 'S') {
+        return this.areaCode.sa_code
+      } else if (this.selected === 'M') {
+        return this.areaCode.ma_code
+      } else return this.areaCode.la_code
+    },
+    getName () {
+      if (this.selected === 'S') {
+        return this.getCodeName(this.areaCode.sa_code)
+      } else if (this.selected === 'M') {
+        return this.getCodeName(this.areaCode.ma_code)
+      } else return this.getCodeName(this.areaCode.la_code)
+    },
+    getLastCode () {
+      const code = this._last()
+      if (!code) return alert('구역 코드 확인이 필요합니다. 최고 관리자에게 문의해주세요.')
+
+      let [lc, mc, sc] = code.split('-')
+      if (sc) {
+        sc = this._formatted(parseInt(sc) + 1)
+        return [lc, mc, sc].join('-')
+      } else if (mc) {
+        mc = this._formatted(parseInt(mc) + 1)
+        return [lc, mc].join('-')
+      } else if (lc) {
+        lc = this._formatted(parseInt(lc) + 1, 2)
+        return lc.toString()
+      } else return ''
+    }
+  },
+  watch: {
+    selected (val) {
+      if (val === 'S') {
+        if (!this.areaCode.ma_code) {
+          this.selected = 'M'
+          return alert('지구 코드 설정이 필요합니다.')
+        }
+        let lName = this.getCodeName(this.areaCode.la_code)
+        let mName = this.getCodeName(this.areaCode.ma_code)
+        this.codeName = `${(lName ? ` (${lName}) ` : '')}교구 > ${(mName ? ` (${mName}) ` : '')}지구 > 본당 추가`
+      } else if (val === 'M') {
+        if (!this.areaCode.la_code) {
+          this.selected = 'L'
+          return alert('교구 코드 설정이 필요합니다.')
+        }
+        let name = this.getCodeName(this.areaCode.la_code)
+        this.codeName = `${(name ? ` (${name}) ` : '')}교구 > 지구 추가`
+      } else if (val === 'L') this.codeName = '교구 추가'
+    }
   },
   methods: {
-    toggle (index) {
-      const i = this.selected.indexOf(index)
-      if (i > -1) {
-        this.selected.splice(i, 1)
-      } else {
-        this.selected.push(index)
-      }
+    deleteItem (code) {
+      this.$store.dispatch(DELETE_AREA_CODE, code)
     },
-    onSelect (type, val) {
-      console.log(type, val)
+    saveItem (item) {
+      let data = {
+        lc: this.areaCode.la_code,
+        ln: this.getCodeName(this.areaCode.la_code)
+      }
+      if (this.selected === 'S') {
+        data.ac = data.sc = item.code
+        data.sn = item.name
+        data.mc = this.areaCode.ma_code
+        data.mn = this.getCodeName(this.areaCode.ma_code)
+      } else if (this.selected === 'M') {
+        data.ac = data.mc = item.code
+        data.mn = item.name
+      } else {
+        data.ac = this.areaCode.la_code
+      }
+
+      this.$store.dispatch(UPDATE_AREA_CODE, data)
+    },
+    _last () {
+      let code = null
+      if (this.selected === 'S') {
+        code = last(this.sAreaCodes).s_code
+        if (!code) code = `${this.areaCode.ma_code}-000`
+      } else if (this.selected === 'M') {
+        code = last(this.mAreaCodes).m_code
+        if (!code) code = `${this.areaCode.la_code}-000`
+      } else code = last(this.lAreaCodes).l_code
+      return code
+    },
+    _formatted (ic, n = 3) {
+      if (n === 3) {
+        return ic < 10 ? `00${ic}` : (ic < 100 ? `0${ic}` : ic)
+      } else {
+        return ic < 10 ? `0${ic}` : ic
+      }
+    }
+  },
+  filters: {
+    smallAreaCode (code) {
+      return code && code.slice(7)
     }
   }
 }
 </script>
 
 <style scoped>
+  .full-width {
+    width: 100%;
+  }
+  .active-card {
+    background-color: #2c3e50;
+    color: #c4e6f5;
+    font-weight: bold;
+  }
 </style>

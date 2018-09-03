@@ -6,7 +6,7 @@
     <v-layout row justify-center>
       <v-dialog v-model="dialog" persistent max-width="500px">
         <v-card>
-          <v-card-title>
+          <v-card-title primary-title>
             <span class="headline">봉사 활동 내역</span>
           </v-card-title>
 
@@ -43,6 +43,11 @@
         </v-card>
       </v-dialog>
     </v-layout>
+    <v-layout row justify-end>
+      <v-flex xs12 sm2 offset-sm4>
+        <inline-buttons class="pt-0 pb-1" refs="act"/>
+      </v-flex>
+    </v-layout>
     <v-data-table :headers="headers" :items="volunteerActs" hide-actions class="elevation-1"
     >
       <template slot="items" slot-scope="props">
@@ -59,7 +64,7 @@
           봉사 활동 내역이 없습니다.
       </template>
     </v-data-table>
-    <inline-buttons refs="act"/>
+    <!--<inline-buttons refs="act"/>-->
   </div>
 </template>
 
@@ -70,7 +75,6 @@ import {isEmpty, isUndefined} from 'lodash/lang'
 import {find} from 'lodash/collection'
 import {FETCH_VOLUNTEER_ACTS, CREATE_VOLUNTEER_ACT, UPDATE_VOLUNTEER_ACT, DELETE_VOLUNTEER_ACT} from '../store/actions.type'
 
-const DEFALUT_ITEM = {id: null, s_date: '', e_date: '', grp_code: null, gv_ids: '', content: ''}
 export default {
   name: 'VolunteerActs',
   components: { DatePicker, InlineButtons },
@@ -110,7 +114,8 @@ export default {
   }),
   created () {
     this.fetchData()
-
+  },
+  mounted () {
     const _this = this
     this.$eventBus.$on('close-date-picker-act-s_date', (date) => {
       _this.dlgItem.s_date = date
@@ -120,7 +125,7 @@ export default {
     })
     this.$eventBus.$on('click-btn-act', (eventType) => {
       if (eventType === 'add') {
-        _this.dlgItem = DEFALUT_ITEM
+        _this.dlgItem = {}
         _this.dlgItem.id = _this.volunteerActs.length + 1
       } else if (eventType === 'remove') {
         if (isEmpty(_this.selected)) return alert('내역을 선택해주세요.')
@@ -128,8 +133,8 @@ export default {
       } else if (eventType === 'edit') {
         if (isEmpty(_this.selected)) return alert('내역을 선택해주세요.')
         _this.dlgItem = _this.selected
-        _this.$refs['s_date'] && _this.$refs['s_date'].setDate(_this.dlgItem.s_date)
-        _this.$refs['e_date'] && _this.$refs['e_date'].setDate(_this.dlgItem.e_date)
+        _this.$refs['s_date'].setDate(_this.dlgItem.s_date)
+        _this.$refs['e_date'].setDate(_this.dlgItem.e_date)
       }
       _this.dialog = true
     })
