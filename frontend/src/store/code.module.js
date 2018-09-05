@@ -1,6 +1,7 @@
-import {CodeService} from '@/common/api.service'
-import {FETCH_EDU_CODES, FETCH_AREA_CODES, UPDATE_AREA_CODE, DELETE_AREA_CODE} from './actions.type'
-import {FETCH_START, FETCH_EDU_CODES_END, FETCH_AREA_CODES_END, SET_AREA_CODE, REMOVE_AREA_CODE} from './mutations.type'
+import { CodeService } from '@/common/api.service'
+import { FETCH_EDU_CODES, FETCH_AREA_CODES, UPDATE_AREA_CODE, DELETE_AREA_CODE } from './actions.type'
+import { FETCH_START, FETCH_EDU_CODES_END, FETCH_AREA_CODES_END, SET_AREA_CODE, REMOVE_AREA_CODE } from './mutations.type'
+import { filter } from 'lodash/collection'
 
 const state = {
   eduCodes: [],
@@ -17,6 +18,9 @@ const getters = {
   },
   isCodesLoading (state) {
     return state.isLoading
+  },
+  smallCodes (state) { // 본당 코드
+    return filter(state.areaCodes, o => o.s_code !== null)
   }
 }
 

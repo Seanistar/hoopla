@@ -33,11 +33,11 @@ router.get('/page/:id', (req, res, next) => {
 })
 
 router.put('/', (req, res, next) => {
-  const {name, ca_name, birth_date, ca_date, state, area_code, ca_id, ld_id, ad_id, email, phone, address, job, degree, auth_date, memo} = req.body
+  const {name, ca_name, br_date, ca_date, state, area_code, ca_id, ld_id, ad_id, email, phone, address, job, degree, au_date, memo} = req.body
   const sql = [
-    `INSERT INTO volunteers (name, ca_name, birth_date, ca_date, state, area_code, ca_id, ld_id, ad_id, email, phone, address, job, degree, auth_date, memo) 
+    `INSERT INTO volunteers (name, ca_name, br_date, ca_date, state, area_code, ca_id, ld_id, ad_id, email, phone, address, job, degree, au_date, memo) 
     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-    [name, ca_name, birth_date, ca_date, state, area_code, ca_id, ld_id, ad_id, email, phone, address, job, degree, auth_date, memo]
+    [name, ca_name, br_date, ca_date, state, area_code, ca_id, ld_id, ad_id, email, phone, address, job, degree, au_date, memo]
   ]
 
   db.query(...sql, (err, rows) => {
@@ -54,13 +54,13 @@ router.put('/', (req, res, next) => {
 
 router.post('/page/:id', (req, res, next) => {
   const id = req.params.id
-  const {auth_date, ca_id, name, ca_name, state, area_code, ad_id, ld_id, email, phone, address, job, degree, ca_date, birth_date, memo} = req.body
+  const {au_date, ca_id, name, ca_name, state, area_code, ad_id, ld_id, email, phone, address, job, degree, ca_date, br_date, memo} = req.body
   const sql = [
     `UPDATE volunteers 
-    SET auth_date=?, ca_id=?, name=?, ca_name=?, state=?, area_code=?, ad_id=?, ld_id=?,
-    email=?, phone=?, address=?, job=?, degree=?, ca_date=?, birth_date=?, memo=?
+    SET au_date=?, ca_id=?, name=?, ca_name=?, state=?, area_code=?, ad_id=?, ld_id=?,
+    email=?, phone=?, address=?, job=?, degree=?, ca_date=?, br_date=?, memo=?
     WHERE id=?`,
-    [auth_date, ca_id, name, ca_name, state, area_code, ad_id, ld_id, email, phone, address, job, degree, ca_date, birth_date, memo, id]
+    [au_date, ca_id, name, ca_name, state, area_code, ad_id, ld_id, email, phone, address, job, degree, ca_date, br_date, memo, id]
   ]
 
   db.query(...sql, (err, rows) => {
@@ -247,6 +247,21 @@ router.post('/query', (req, res) => {
   FROM volunteers vl LEFT JOIN area_code ac ON vl.area_code = ac.a_code
   WHERE vl.area_code like (\'${a_code}%\')`
   console.log('query... ', select, a_code)
+  db.query(select, (err, rows) => {
+    if (!err) {
+      res.status(200).send(rows)
+    } else {
+      console.log('query error : ' + err)
+      res.status(500).send('Internal Server Error')
+    }
+  })
+})
+
+router.post('/find', (req, res) => {
+  const {name} = req.body
+  const select = `SELECT vl.*, ac.s_name sa_name
+  FROM volunteers vl LEFT JOIN area_code ac ON vl.area_code = ac.a_code
+  WHERE vl.name like (\'%${name}%\')`
   db.query(select, (err, rows) => {
     if (!err) {
       res.status(200).send(rows)

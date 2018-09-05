@@ -94,6 +94,9 @@ export const VolunteerService = {
   },
   query (params) {
     return ApiService.update('volts/query', params)
+  },
+  find (params) {
+    return ApiService.update('volts/find', params)
   }
 }
 

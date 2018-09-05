@@ -3,7 +3,7 @@
     <v-container>
       <v-layout row>
         <v-flex xs6>
-          <date-picker ref="auth_date" refs="auth_date" title="선서일"
+          <date-picker ref="au_date" refs="au_date" title="선서일"
           ></date-picker>
         </v-flex>
       </v-layout>
@@ -16,7 +16,7 @@
           ></v-text-field>
         </v-flex>
         <v-flex xs12 sm6>
-          <date-picker ref="birth_date" refs="birth_date" title="생년월일"
+          <date-picker ref="br_date" refs="br_date" title="생년월일"
           ></date-picker>
         </v-flex>
 
@@ -139,7 +139,7 @@ export default {
     params: { // is equal to bible's column
       sex: 'F',
       state: 'ACT',
-      birth_date: null,
+      br_date: null,
       ca_date: null,
       name: null,
       address: null,
@@ -148,7 +148,7 @@ export default {
       job: null,
       degree: null,
       ca_name: null,
-      auth_date: null,
+      au_date: null,
       memo: null
     },
     rules: {
@@ -169,10 +169,10 @@ export default {
   }),
   created () {
     const _this = this
-    this.$eventBus.$on(`close-date-picker-birth_date`, date => (_this.params.birth_date = date))
+    this.$eventBus.$on(`close-date-picker-br_date`, date => (_this.params.br_date = date))
     this.$eventBus.$on(`close-date-picker-ca_date`, date => (_this.params.ca_date = date))
-    this.$eventBus.$on(`close-date-picker-auth_date`, date => (_this.params.auth_date = date))
-    this.$eventBus.$on(`close-date-picker-rec_date`, date => (_this.params.rec_date = date))
+    this.$eventBus.$on(`close-date-picker-au_date`, date => (_this.params.au_date = date))
+    this.$eventBus.$on(`close-date-picker-rc_date`, date => (_this.params.rc_date = date))
 
     this.isEditMode = !isUndefined(this.v_id)
     if (this.isEditMode) this.fetchData()

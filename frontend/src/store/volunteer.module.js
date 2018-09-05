@@ -2,6 +2,7 @@ import { VolunteerService } from '@/common/api.service'
 import {
   FETCH_VOLUNTEERS,
   QUERY_VOLUNTEERS,
+  FIND_VOLUNTEERS,
   CREATE_VOLUNTEER,
   UPDATE_VOLUNTEER,
   DELETE_VOLUNTEER,
@@ -19,6 +20,8 @@ import {
   FETCH_START,
   FETCH_VOLUNTEERS_END,
   QUERY_VOLUNTEERS_END,
+  FIND_VOLUNTEERS_END,
+  RESET_FIND_VOLUNTEERS,
   ADD_VOLUNTEER,
   SET_VOLUNTEER,
   REMOVE_VOLUNTEER,
@@ -40,24 +43,25 @@ const state = {
   isLoading: false,
   volunteersCount: 0,
   queryCount: 0,
-  queryResult: []
+  queryResult: [],
+  foundCount: 0,
+  foundResult: []
 }
 
 const getters = {
   volunteerInfo: (state) => (id) => {
     return state.volunteers.find((o) => o.id === id)
   },
-  volunteers (state, param) {
-    // console.log(param)
-    return state.volunteers
-  },
+  volunteers: state => state.volunteers,
   lastVolunteerID: state => state.lastID,
   volunteerEdus: state => state.volunteerEdus,
   volunteerActs: state => state.volunteerActs,
   isVolunteersLoading: state => state.isLoading,
   volunteersCount: state => state.volunteersCount,
   queryVolunteers: state => state.queryResult,
-  queryCount: state => state.queryCount
+  queryCount: state => state.queryCount,
+  foundVolunteers: state => state.foundResult,
+  foundCount: state => state.foundCount
 }
 
 const actions = {
@@ -193,6 +197,16 @@ const actions = {
       .catch((error) => {
         throw new Error(error)
       })
+  },
+  [FIND_VOLUNTEERS] (context, params) {
+    context.commit(FETCH_START)
+    return VolunteerService.find(params)
+      .then(({ data }) => {
+        context.commit(FIND_VOLUNTEERS_END, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
   }
 }
 
@@ -283,6 +297,16 @@ const mutations = {
     state.queryResult = results
     state.queryCount = results.length
     state.isLoading = false
+  },
+  [FIND_VOLUNTEERS_END] (state, results) {
+    console.log(results)
+    state.foundResult = results
+    state.foundCount = results.length
+    state.isLoading = false
+  },
+  [RESET_FIND_VOLUNTEERS] (state) {
+    state.foundResult = []
+    state.foundCount = 0
   }
 }
 

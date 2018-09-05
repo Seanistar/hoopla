@@ -6,28 +6,32 @@
     <v-layout row justify-center>
       <v-dialog v-model="dialog" persistent max-width="500px">
         <v-card>
-          <v-card-title primary-title>
-            <span class="headline">봉사 활동 내역</span>
+          <v-card-title primary-title class="pb-0">
+            <span class="title">봉사 활동 내역</span>
           </v-card-title>
 
           <v-card-text>
-            <v-container grid-list-md>
+            <v-container grid-list-md class="pa-2">
               <v-layout wrap>
                 <v-flex xs12 sm6>
-                  <date-picker ref="s_date" refs="act-s_date" title="봉사활동 시작일"
-                  ></date-picker>
+                  <date-picker ref="s_date" refs="act-s_date" title="봉사활동 시작일"></date-picker>
                 </v-flex>
                 <v-flex xs12 sm6>
-                  <date-picker ref="e_date" refs="act-e_date" title="봉사활동 종료일"
-                  ></date-picker>
+                  <date-picker ref="e_date" refs="act-e_date" title="봉사활동 종료일"></date-picker>
                 </v-flex>
                 <v-flex xs12>
                   <v-select label="봉사 단체" v-model="dlgItem.grp_code"
-                            :items="groupObjects" item-text="name" item-value="code"
+                            :items="groupCodes" item-text="name" item-value="code"
                   ></v-select>
                 </v-flex>
+                <v-flex xs12 sm6>
+                  <v-text-field label="그룹 수" type="number" v-model="dlgItem.grp_count"></v-text-field>
+                </v-flex>
+                <v-flex xs12 sm6>
+                  <v-text-field label="구성원 수" type="number" v-model="dlgItem.numbers"></v-text-field>
+                </v-flex>
                 <v-flex xs12>
-                  <v-text-field v-model="dlgItem.content" label="봉사 활동"></v-text-field>
+                  <v-text-field label="활동 내역" v-model="dlgItem.content"></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -54,6 +58,8 @@
         <tr @click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'unset')}">
           <td class="text-xs-center">{{ props.item.id }}</td>
           <td class="text-xs-center">{{ props.item.grp_name }}</td>
+          <td class="text-xs-center">{{ props.item.grp_count }}</td>
+          <td class="text-xs-center">{{ props.item.numbers }}</td>
           <td class="text-xs-center">{{ props.item.s_date }}</td>
           <td class="text-xs-center">{{ props.item.e_date }}</td>
           <td class="text-xs-center">{{ props.item.area_code }}</td>
@@ -71,9 +77,9 @@
 <script>
 import InlineButtons from './control/InlineButtons'
 import DatePicker from './control/DatePicker'
-import {isEmpty, isUndefined} from 'lodash/lang'
-import {find} from 'lodash/collection'
-import {FETCH_VOLUNTEER_ACTS, CREATE_VOLUNTEER_ACT, UPDATE_VOLUNTEER_ACT, DELETE_VOLUNTEER_ACT} from '../store/actions.type'
+import { isEmpty, isUndefined } from 'lodash/lang'
+import { find, filter } from 'lodash/collection'
+import { FETCH_VOLUNTEER_ACTS, CREATE_VOLUNTEER_ACT, UPDATE_VOLUNTEER_ACT, DELETE_VOLUNTEER_ACT } from '../store/actions.type'
 
 export default {
   name: 'VolunteerActs',
@@ -94,8 +100,8 @@ export default {
     isLoading () {
       return isUndefined(this.v_id) ? false : this.$store.getters.isVolunteersLoading
     },
-    groupObjects () {
-      return this.$store.getters.eduCodes
+    groupCodes () {
+      return filter(this.$store.getters.eduCodes, o => o.type === 'A')
     }
   },
   data: () => ({
@@ -106,8 +112,10 @@ export default {
     headers: [
       { text: '번호', align: 'center', value: 'id' },
       { text: '봉사 단체', align: 'center', value: 'grp_name' },
-      { text: '활동 시작일', align: 'center', value: 's_date' },
-      { text: '활동 종료일', align: 'center', value: 'e_date' },
+      { text: '그룹 수', align: 'center', value: 'grp_count' },
+      { text: '구성원 수', align: 'center', value: 'numbers' },
+      { text: '시작일', align: 'center', value: 's_date' },
+      { text: '종료일', align: 'center', value: 'e_date' },
       { text: '구역코드', align: 'center', value: 'area_code', sortable: false },
       { text: '활동내용', align: 'center', value: 'content', sortable: false }
     ]
@@ -163,7 +171,7 @@ export default {
       this.fetched = true
     },
     getGroupName (code) {
-      const obj = find(this.groupObjects, (g) => g.code === code)
+      const obj = find(this.groupCodes, (g) => g.code === code)
       return !isEmpty(obj) ? obj.name : ''
     }
   }

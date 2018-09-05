@@ -26,6 +26,7 @@ export const UPDATE_VOLUNTEER_EDU = 'updateVolunteerEdu'
 
 // query volunteer
 export const QUERY_VOLUNTEERS = 'queryVolunteers'
+export const FIND_VOLUNTEERS = 'findVolunteers'
 
 // administration
 export const LOGIN_ADMIN = 'loginAdmin'

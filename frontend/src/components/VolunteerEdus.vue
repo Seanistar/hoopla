@@ -3,12 +3,12 @@
     <v-layout row justify-center>
       <v-dialog v-model="dialog" persistent max-width="500px">
         <v-card>
-          <v-card-title>
-            <span class="headline">성경 공부 내역</span>
+          <v-card-title class="pb-0">
+            <span class="title">성경 공부 내역</span>
           </v-card-title>
 
           <v-card-text>
-            <v-container grid-list-md>
+            <v-container grid-list-md class="pa-2">
               <v-layout wrap>
                 <v-flex xs12 sm6>
                   <v-text-field v-model="dlgItem.id" label="ID" disabled></v-text-field>
@@ -28,9 +28,6 @@
                 <v-flex xs12 sm6>
                   <date-picker ref="e_date" refs="edu-e_date" title="교육 종료일"
                   ></date-picker>
-                </v-flex>
-                <v-flex xs12>
-                  <v-text-field v-model="dlgItem.sv_ids" label="봉사자"></v-text-field>
                 </v-flex>
                 <v-flex xs12>
                   <v-text-field v-model="dlgItem.memo" label="참고 사항"></v-text-field>
@@ -79,8 +76,9 @@
 import InlineButtons from './control/InlineButtons'
 import InputDialog from './control/InputDialog'
 import DatePicker from './control/DatePicker'
-import {isEmpty, isNull, isUndefined} from 'lodash/lang'
-import {FETCH_VOLUNTEER_EDUS, CREATE_VOLUNTEER_EDU, UPDATE_VOLUNTEER_EDU, DELETE_VOLUNTEER_EDU} from '../store/actions.type'
+import { isEmpty, isNull, isUndefined } from 'lodash/lang'
+import { filter } from 'lodash/collection'
+import { FETCH_VOLUNTEER_EDUS, CREATE_VOLUNTEER_EDU, UPDATE_VOLUNTEER_EDU, DELETE_VOLUNTEER_EDU } from '../store/actions.type'
 
 export default {
   name: 'VolunteerEdus',
@@ -102,7 +100,7 @@ export default {
       return isUndefined(this.v_id) ? false : this.$store.getters.isVolunteersLoading
     },
     eduCodes () {
-      return this.$store.getters.eduCodes
+      return filter(this.$store.getters.eduCodes, o => o.type === 'E')
     }
   },
   watch: {
@@ -126,7 +124,7 @@ export default {
       { text: '교육 내용', align: 'center', value: 'subject' },
       { text: '교육 시작일', align: 'center', value: 's_date' },
       { text: '교육 종료일', align: 'center', value: 'e_date' },
-      { text: '참고사항', align: 'center', value: 'memo', sortable: false }
+      { text: '참고 사항', align: 'center', value: 'memo', sortable: false }
     ]
   }),
   created () {

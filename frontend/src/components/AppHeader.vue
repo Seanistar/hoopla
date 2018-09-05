@@ -34,8 +34,9 @@ export default {
       items: [
         {text: '성서와 함께', link: 'home'},
         {text: '봉사자 관리', link: 'volunteers'},
-        {text: '봉사자 조회', link: 'query'},
-        {text: '관리자 설정', link: 'admins'},
+        {text: '봉사자 조회', link: 'queries'},
+        {text: '본당 현황 보고', link: 'reports'},
+        // {text: '관리자 설정', link: 'admins'},
         {text: '현황 집계', link: 'stats'},
         {text: '기타 관리', link: 'others'}
       ]

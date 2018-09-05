@@ -19,7 +19,7 @@
         <td class="text-xs-center">{{ props.item.la_name }}</td>
         <td class="text-xs-center">{{ props.item.ma_name }}</td>
         <td class="text-xs-center">{{ props.item.sa_name }}</td>
-        <td class="text-xs-center">{{ props.item.auth_date }}</td>
+        <td class="text-xs-center">{{ props.item.au_date }}</td>
         <td class="text-xs-center">{{ props.item.ca_date }}</td>
         <td class="justify-center layout px-0">
           <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>

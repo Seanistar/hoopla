@@ -34,19 +34,24 @@ export default new Router({
       component: () => import('@/views/Admins')
     },
     {
-      path: '/stats',
-      name: 'stats',
-      component: () => import('@/views/Stats')
-    },
-    {
       path: '/others',
       name: 'others',
       component: () => import('@/views/Others')
     },
     {
-      path: '/query',
-      name: 'query',
-      component: () => import('@/views/QueryVolunteer')
+      path: '/queries',
+      name: 'queries',
+      component: () => import('@/views/Queries')
+    },
+    {
+      path: '/reports',
+      name: 'reports',
+      component: () => import('@/views/Reports')
+    },
+    {
+      path: '/stats',
+      name: 'stats',
+      component: () => import('@/views/Stats')
     },
     {
       path: '/notices',

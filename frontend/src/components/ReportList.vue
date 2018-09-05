@@ -1,71 +1,26 @@
 <template>
   <div class="pt-4">
-    <v-form ref="form">
-      <v-container style="width: 85%">
-        <v-layout row wrap class="tm-10" style="border: 3px solid silver; padding: 15px">
-          <v-flex xs12 sm4 d-flex>
-            <v-select label="교구코드" v-model="areaCode.la_code"
-                      :items="lAreaCodes" item-text="l_name" item-value="l_code"
-            ></v-select>
-          </v-flex>
-          <v-flex xs12 sm4 d-flex>
-            <v-select label="본당코드" v-model="areaCode.ma_code" no-data-text="본당 자료가 없습니다."
-                      :items="mAreaCodes" item-text="m_name" item-value="m_code" :disabled="areaCode.la_code === ''"
-            ></v-select>
-          </v-flex>
-          <v-flex xs12 sm4 d-flex>
-            <v-select label="지구코드" v-model="areaCode.sa_code" no-data-text="지구 자료가 없습니다."
-                      :items="sAreaCodes" item-text="s_name" item-value="s_code" :disabled="areaCode.ma_code === ''"
-            ></v-select>
-          </v-flex>
-
-          <v-flex xs12 sm6>
-            <v-select label="그룹공부" v-model="params.group_edu" chips multiple
-                      :items="eduCodes" item-text="name" item-value="code"
-            ></v-select>
-          </v-flex>
-          <v-flex xs12 sm6>
-            <v-select label="그룹봉사" v-model="params.group_vlt" chips multiple
-                      :items="eduCodes" item-text="name" item-value="code"
-            ></v-select>
-          </v-flex>
-
-          <v-flex xs12>
-            <v-layout align-center justify-end row>
-              <v-btn color="orange accent-2" outline class="mb-2" @click="reset">초기화</v-btn>
-              <v-btn color="indigo accent-2" outline class="mb-2" @click="submit">조회</v-btn>
-            </v-layout>
+    <v-container style="width: 85%">
+        <v-layout row wrap>
+          <v-flex xs12 sm3>
+          <v-combobox label="소속 본당"
+            v-model="model" :items="items" item-value="code" item-text="name" :search-input.sync="search"
+            persistent-hint clearable hint="본당을 변경하려면 다시 선택하세요."
+          >
+            <template slot="no-data">
+              <v-list-tile>
+                <v-list-tile-content>
+                  <v-list-tile-title>
+                    "<strong>{{ search }}</strong>" 본당이 없습니다. 관리자에게 문의해주세요.
+                  </v-list-tile-title>
+                </v-list-tile-content>
+              </v-list-tile>
+            </template>
+          </v-combobox>
           </v-flex>
         </v-layout>
-
-        <!--<v-layout row wrap>
-          <v-flex xs12 sm6>
-            <v-radio-group v-model="params.sex" row>
-              <span style="color: rgba(0,0,0,0.54)"><v-icon>wc</v-icon></span>&nbsp;&nbsp;:&nbsp;&nbsp;
-              <v-radio label="남자" value="M"></v-radio>
-              <v-radio label="여자" value="F"></v-radio>
-            </v-radio-group>
-          </v-flex>
-          <v-flex xs12>
-            그룹공부, 그룹봉사, 성서연수, 노트검사, 성서사십주간-읽기안내, 성서사십주간-심화
-          </v-flex>
-          <v-flex xs12 sm6>
-            <date-picker ref="birth_date" refs="birth_date" title="생년월일"
-            ></date-picker>
-          </v-flex>
-          <v-flex xs12 sm6>
-            <date-picker ref="ca_date" refs="ca_date" title="세례일"
-            ></date-picker>
-          </v-flex>
-          <v-flex xs12 sm6>
-            <date-picker ref="auth_date" refs="auth_date" title="선서일"
-            ></date-picker>
-          </v-flex>
-        </v-layout>-->
-      </v-container>
-    </v-form>
-
-    <v-divider class="my-3"></v-divider>
+    </v-container>
+    <!--<v-divider class="my-3"></v-divider>-->
     <v-container class="elevation-1" style="width: 80%">
       <v-layout>
         <v-flex xs12 pb-2>
@@ -96,6 +51,8 @@
           </template>
         </v-data-table>
     </v-container>
+    <people-dialog :visible="peopleFinder" @close-find-people="onPeopleFind"/>
+    <church-dialog :visible="churchFinder" @close-find-church="onChurchFind"/>
   </div>
 </template>
 
@@ -104,22 +61,38 @@ import DatePicker from '@/components/control/DatePicker'
 import { QUERY_VOLUNTEERS } from '@/store/actions.type'
 import { mapGetters } from 'vuex'
 import CodeMixin from '@/common/code.mixin'
+import PeopleDialog from '@/components/control/FindPeopleDialog'
+import ChurchDialog from '@/components/control/FindChurchDialog'
+import { map, orderBy } from 'lodash/collection'
 
 export default {
   name: 'QueryVolunteer',
   mixins: [ CodeMixin ],
-  components: { DatePicker },
+  components: { DatePicker, PeopleDialog, ChurchDialog },
   computed: {
     ...mapGetters([
       'eduCodes',
       'isVolunteersLoading',
+      'queryVolunteers',
       'queryCount',
-      'queryVolunteers'
+      'smallCodes'
     ])
   },
+  watch: {
+    model (val) {
+      if (val.length > 5) {
+        this.$nextTick(() => this.model.pop())
+      }
+    }
+  },
   data: () => ({
+    items: [],
+    model: '',
+    search: null,
     queried: false,
     selected: {},
+    peopleFinder: false,
+    churchFinder: false,
     params: { // is equal to bible's column
       sex: 'F',
       state: 'ACT',
@@ -144,6 +117,13 @@ export default {
       { text: '그룹봉사 횟수', value: 'actCount', align: 'center' }
     ]
   }),
+  created () {
+    const list = map(this.smallCodes, o => {
+      return {code: o.s_code, name: o.s_name}
+    })
+    this.items = orderBy(list, ['name'])
+    console.log(this.items)
+  },
   methods: {
     reset () {
       this.resetCode()
@@ -154,6 +134,14 @@ export default {
 
       this.$store.dispatch(QUERY_VOLUNTEERS, {a_code: this.params.area_code})
       this.queried = true
+    },
+    onPeopleFind (data) {
+      console.log('found people...', data)
+      this.peopleFinder = false
+    },
+    onChurchFind (data) {
+      console.log('found church...', data)
+      this.churchFinder = false
     }
   }
 }
