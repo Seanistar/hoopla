@@ -2,12 +2,12 @@
   <v-layout row justify-center>
     <v-dialog v-model="dialog" scrollable persistent max-width="600px">
       <v-card>
-        <v-card-title class="pb-1">
+        <v-card-title class="pl-4 pb-2">
           <v-text-field v-model="name" label="본당 이름 입력" clearable hint="이름을 입력하고 엔터키를 누르세요." @keyup.enter="findOne"></v-text-field>
           <v-btn slot="activator" color="primary" outline dark @click.stop="findOne">본당 찾기</v-btn>
         </v-card-title>
         <v-divider></v-divider>
-        <v-card-text style="height: 400px; padding: 15px">
+        <v-card-text style="height: 400px" class="px-4">
             <v-data-table :headers="headers" :items="matches"
                           hide-actions no-data-text="이름을 입력하여 본당을 찾으세요." class="elevation-2">
               <template slot="headers" slot-scope="props">
@@ -33,7 +33,7 @@
             </v-data-table>
         </v-card-text>
         <v-divider></v-divider>
-        <v-card-actions>
+        <v-card-actions class="mr-3 pt-3 pb-4">
           <v-spacer></v-spacer>
           <v-btn color="orange darken-1" outline flat
                  @click="dialog = false">취소</v-btn>

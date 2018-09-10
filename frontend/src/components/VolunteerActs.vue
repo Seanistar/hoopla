@@ -1,5 +1,5 @@
 <template>
-  <div class="tp-10">
+  <v-container>
     <v-progress-circular class="progressing" :size="50" color="primary"
                          :indeterminate="isLoading" v-show="isLoading"
     ></v-progress-circular>
@@ -21,7 +21,7 @@
                 </v-flex>
                 <v-flex xs12>
                   <v-select label="봉사 단체" v-model="dlgItem.grp_code"
-                            :items="groupCodes" item-text="name" item-value="code"
+                            :items="actCodes" item-text="name" item-value="code"
                   ></v-select>
                 </v-flex>
                 <v-flex xs12 sm6>
@@ -71,14 +71,14 @@
       </template>
     </v-data-table>
     <!--<inline-buttons refs="act"/>-->
-  </div>
+  </v-container>
 </template>
 
 <script>
 import InlineButtons from './control/InlineButtons'
 import DatePicker from './control/DatePicker'
 import { isEmpty, isUndefined } from 'lodash/lang'
-import { find, filter } from 'lodash/collection'
+import { find } from 'lodash/collection'
 import { FETCH_VOLUNTEER_ACTS, CREATE_VOLUNTEER_ACT, UPDATE_VOLUNTEER_ACT, DELETE_VOLUNTEER_ACT } from '../store/actions.type'
 
 export default {
@@ -100,8 +100,8 @@ export default {
     isLoading () {
       return isUndefined(this.v_id) ? false : this.$store.getters.isVolunteersLoading
     },
-    groupCodes () {
-      return filter(this.$store.getters.eduCodes, o => o.type === 'A')
+    actCodes () {
+      return this.$store.getters.actCodes
     }
   },
   data: () => ({
@@ -171,7 +171,7 @@ export default {
       this.fetched = true
     },
     getGroupName (code) {
-      const obj = find(this.groupCodes, (g) => g.code === code)
+      const obj = find(this.actCodes, (g) => g.code === code)
       return !isEmpty(obj) ? obj.name : ''
     }
   }

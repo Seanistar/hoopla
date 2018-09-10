@@ -240,14 +240,16 @@ router.delete('/act/:id', (req, res) => {
  * volunteer querying
  */
 router.post('/query', (req, res) => {
-  const {a_code} = req.body
-  const select = `SELECT vl.*, ac.l_name la_name, ac.m_name ma_name, ac.s_name sa_name,
+  const {a_code, au_date} = req.body
+  let sql = `SELECT vl.*, ac.l_name la_name, ac.m_name ma_name, ac.s_name sa_name,
   (SELECT COUNT(DISTINCT id) FROM edus WHERE v_id = vl.id) edu_count,
   (SELECT COUNT(DISTINCT id) FROM acts WHERE v_id = vl.id) act_count 
   FROM volunteers vl LEFT JOIN area_code ac ON vl.area_code = ac.a_code
-  WHERE vl.area_code like (\'${a_code}%\')`
-  console.log('query... ', select, a_code)
-  db.query(select, (err, rows) => {
+  WHERE 1 = 1`
+  if (a_code) sql += ` AND vl.area_code like (\'${a_code}%\')`
+  if (au_date) sql += ` AND YEAR(vl.au_date) >= ${au_date}`
+  console.log('query... ', sql, a_code, au_date)
+  db.query(sql, (err, rows) => {
     if (!err) {
       res.status(200).send(rows)
     } else {

@@ -1,14 +1,15 @@
 <template>
-  <v-container>
-    <v-tabs left align-with-title fixed-tabs>
+  <v-container pt-3>
+    <v-tabs left align-with-title fixed-tabs class="elevation-4">
       <v-tab v-for="(item, idx) in title" :key="idx" @click="tabIdx = idx">
         <strong>{{ item }}</strong>
       </v-tab>
     </v-tabs>
-    <v-divider class="ma-1"></v-divider>
-    <volunteer-item v-if="tabIdx === 0" :v_id="id"/>
-    <volunteer-edus v-else-if="tabIdx === 1" :v_id="id"/>
-    <volunteer-acts v-else-if="tabIdx === 2" :v_id="id"/>
+    <v-layout pt-1>
+      <volunteer-item v-if="tabIdx === 0" :v_id="id"/>
+      <volunteer-edus v-else-if="tabIdx === 1" :v_id="id"/>
+      <volunteer-acts v-else-if="tabIdx === 2" :v_id="id"/>
+    </v-layout>
   </v-container>
 </template>
 

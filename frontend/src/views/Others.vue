@@ -1,17 +1,14 @@
 <template>
-  <div>
-    <v-container>
-      <v-tabs left align-with-title fixed-tabs>
-        <v-tab v-for="(item, idx) in title" :key="idx" @click="tabIdx = idx">
-          <strong>{{ item }}</strong>
-        </v-tab>
-      </v-tabs>
-      <v-divider class="ma-1"></v-divider>
+  <v-container pt-3>
+    <v-tabs left align-with-title fixed-tabs class="elevation-4">
+      <v-tab v-for="(item, idx) in title" :key="idx" @click="tabIdx = idx">
+        <strong>{{ item }}</strong>
+      </v-tab>
+    </v-tabs>
+    <v-layout pt-1>
       <area-code v-if="tabIdx === 0"/>
-      <!--<volunteer-edus v-else-if="tabIdx === 1" :v_id="v_id"/>
-      <volunteer-acts v-else-if="tabIdx === 2" :v_id="v_id"/>-->
-    </v-container>
-  </div>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
@@ -22,7 +19,7 @@ export default {
   components: { AreaCode },
   data: () => ({
     tabIdx: 0,
-    title: ['구역 코드', '교육 과목', '그룹공부 봉사', '보기 설정']
+    title: ['구역 코드', '교육 과목', '그룹 공부 봉사', '보기 설정']
   })
 }
 </script>

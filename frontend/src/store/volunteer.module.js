@@ -20,6 +20,7 @@ import {
   FETCH_START,
   FETCH_VOLUNTEERS_END,
   QUERY_VOLUNTEERS_END,
+  SET_QUERY_INFO,
   FIND_VOLUNTEERS_END,
   RESET_FIND_VOLUNTEERS,
   ADD_VOLUNTEER,
@@ -43,6 +44,7 @@ const state = {
   isLoading: false,
   volunteersCount: 0,
   queryCount: 0,
+  queryInfo: {cond: {}, good: {}},
   queryResult: [],
   foundCount: 0,
   foundResult: []
@@ -60,6 +62,7 @@ const getters = {
   volunteersCount: state => state.volunteersCount,
   queryVolunteers: state => state.queryResult,
   queryCount: state => state.queryCount,
+  queryInfo: state => state.queryInfo,
   foundVolunteers: state => state.foundResult,
   foundCount: state => state.foundCount
 }
@@ -228,7 +231,7 @@ const mutations = {
   [SET_VOLUNTEER] (state, data) {
     const pos = state.volunteers.findIndex((o) => o.id === data.id)
     if (pos > -1) {
-      console.log('set position : ', pos)
+      console.log('set position : ', pos, data)
       Object.assign(state.volunteers[pos], data)
     } else {
       console.log('no pos and add position : ', pos)
@@ -276,7 +279,7 @@ const mutations = {
     state.volunteerActs.push(act)
   },
   [SET_VOLUNTEER_ACT] (state, data) {
-    const pos = state.volunteerEdus.findIndex((o) => o.id === data.id)
+    const pos = state.volunteerActs.findIndex((o) => o.id === data.id)
     if (pos > -1) {
       console.log('set position : ', pos)
       Object.assign(state.volunteerActs[pos], data)
@@ -297,6 +300,11 @@ const mutations = {
     state.queryResult = results
     state.queryCount = results.length
     state.isLoading = false
+  },
+  [SET_QUERY_INFO] (state, data) {
+    console.log(data)
+    state.queryInfo.cond = data.cond
+    state.queryInfo.good = data.good
   },
   [FIND_VOLUNTEERS_END] (state, results) {
     console.log(results)

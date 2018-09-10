@@ -44,9 +44,20 @@ export default new Router({
       component: () => import('@/views/Queries')
     },
     {
+      path: '/queries/view',
+      name: 'view-query',
+      component: () => import('@/views/ViewQuery')
+    },
+    {
       path: '/reports',
       name: 'reports',
       component: () => import('@/views/Reports')
+    },
+    {
+      path: '/reports/item/:id?',
+      name: 'edit-report',
+      props: true,
+      component: () => import('@/views/EditReport')
     },
     {
       path: '/stats',

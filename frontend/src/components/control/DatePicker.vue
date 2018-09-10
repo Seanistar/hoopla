@@ -17,7 +17,7 @@
         :label="title"
         hint="년-월-일 형식"
         prepend-icon="event"
-        readonly
+        readonly hide-details
       ></v-text-field>
       <v-date-picker ref="picker" v-model="date"
                      no-title locale="ko-kr" :show-current="false"
@@ -25,7 +25,7 @@
                      min="1918-01-01"
       >
         <v-spacer></v-spacer>
-        <v-btn flat outline color="primary" @click="date = ''; menu = false">취소</v-btn>
+        <v-btn flat outline color="primary" @click="menu = false">취소</v-btn>
         <v-btn flat outline color="primary" @click.prevent="save">확인</v-btn>
       </v-date-picker>
     </v-menu>
@@ -51,10 +51,7 @@ export default {
   methods: {
     save () {
       this.$refs.menu.save(this.date)
-      this.$eventBus.$emit(`close-date-picker-${this.refs}`, this.date)
-    },
-    reset () {
-      this.date = null
+      this.$emit(`close-date-picker`, {type: this.refs, date: this.date})
     },
     setDate (date) {
       this.date = date

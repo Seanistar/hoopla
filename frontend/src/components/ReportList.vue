@@ -1,11 +1,11 @@
 <template>
-  <div class="pt-4">
-    <v-container style="width: 85%">
-        <v-layout row wrap>
-          <v-flex xs12 sm3>
+  <div class="pt-3">
+    <v-container class="elevation-5" style="width: 85%">
+      <v-layout row wrap pb-1 align-baseline>
+        <v-flex xs12 sm3>
           <v-combobox label="소속 본당"
-            v-model="model" :items="items" item-value="code" item-text="name" :search-input.sync="search"
-            persistent-hint clearable hint="본당을 변경하려면 다시 선택하세요."
+                      v-model="model" :items="items" item-value="code" item-text="name"
+                      :search-input.sync="search" clearable
           >
             <template slot="no-data">
               <v-list-tile>
@@ -17,65 +17,56 @@
               </v-list-tile>
             </template>
           </v-combobox>
-          </v-flex>
-        </v-layout>
-    </v-container>
-    <!--<v-divider class="my-3"></v-divider>-->
-    <v-container class="elevation-1" style="width: 80%">
-      <v-layout>
-        <v-flex xs12 pb-2>
-          조회 결과 수 : {{queryCount}} 건
+        </v-flex>
+        <v-flex xs12 sm9>
+          <v-layout justify-end>
+            <v-btn color="deep-orange accent-2" outline dark class="mb-2" @click="deleteReport">보고 삭제</v-btn>
+            <v-btn color="indigo accent-2" outline dark class="mb-2" @click="newReport">신규 보고</v-btn>
+          </v-layout>
         </v-flex>
       </v-layout>
-      <v-progress-circular class="progressing" :size="50" color="primary"
-                           :indeterminate="isVolunteersLoading" v-show="queried && isVolunteersLoading"
-      ></v-progress-circular>
-        <v-data-table :headers="headers" :items="queryVolunteers" hide-actions no-data-text="조회 조건을 선택하세요."
-        >
-          <template slot="items" slot-scope="props">
-            <tr @click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'unset')}">
-              <td class="text-xs-center">{{ props.item.id }}</td>
-              <td class="text-xs-center">{{ props.item.name }}</td>
-              <td class="text-xs-center">{{ props.item.ca_name }}</td>
-              <td class="text-xs-center">{{ props.item.sex === 'F' ? '여성' : '남성'}}</td>
-              <td class="text-xs-center">{{ props.item.la_name }}</td>
-              <td class="text-xs-center">{{ props.item.ma_name }}</td>
-              <td class="text-xs-center">{{ props.item.sa_name }}</td>
-              <td class="text-xs-center">{{ props.item.job }}</td>
-              <td class="text-xs-center">{{ props.item.edu_count }}</td>
-              <td class="text-xs-center">{{ props.item.act_count }}</td>
-            </tr>
-          </template>
-          <template slot="no-data" v-if="queried">
-            <div class="text-xs-center">결과 내역이 없습니다.</div>
-          </template>
-        </v-data-table>
+
+      <v-data-table :headers="headers" :items="foundVolunteers" hide-actions
+                    class="elevation-1"
+      >
+        <template slot="headers" slot-scope="props">
+          <tr>
+            <th v-for="header in props.headers" :key="header.text"
+                class="body-2 font-weight-regular align-center"
+            >{{ header.text }}
+            </th>
+          </tr>
+        </template>
+        <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+        <template slot="items" slot-scope="props">
+          <tr @click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'unset')}">
+            <td class="text-xs-center">{{ props.item.id }}</td>
+            <td class="text-xs-center">{{ props.item.name }}</td>
+            <td class="text-xs-center">{{ props.item.ca_name }}</td>
+          </tr>
+        </template>
+        <template slot="no-data">
+          <div class="text-xs-center">현황 내역이 없습니다.</div>
+        </template>
+      </v-data-table>
     </v-container>
-    <people-dialog :visible="peopleFinder" @close-find-people="onPeopleFind"/>
-    <church-dialog :visible="churchFinder" @close-find-church="onChurchFind"/>
   </div>
 </template>
 
 <script>
-import DatePicker from '@/components/control/DatePicker'
-import { QUERY_VOLUNTEERS } from '@/store/actions.type'
 import { mapGetters } from 'vuex'
-import CodeMixin from '@/common/code.mixin'
-import PeopleDialog from '@/components/control/FindPeopleDialog'
-import ChurchDialog from '@/components/control/FindChurchDialog'
-import { map, orderBy } from 'lodash/collection'
+import { map, find, orderBy } from 'lodash/collection'
 
 export default {
-  name: 'QueryVolunteer',
-  mixins: [ CodeMixin ],
-  components: { DatePicker, PeopleDialog, ChurchDialog },
+  name: 'ReportList',
   computed: {
     ...mapGetters([
+      'smallCodes',
+      'adminInfo',
       'eduCodes',
       'isVolunteersLoading',
-      'queryVolunteers',
-      'queryCount',
-      'smallCodes'
+      'foundVolunteers',
+      'foundCount'
     ])
   },
   watch: {
@@ -89,32 +80,15 @@ export default {
     items: [],
     model: '',
     search: null,
-    queried: false,
     selected: {},
-    peopleFinder: false,
-    churchFinder: false,
-    params: { // is equal to bible's column
-      sex: 'F',
-      state: 'ACT',
-      ca_date: null,
-      group_edu: null,
-      group_vlt: null,
-      note_done: null,
-      bible_exe: null,
-      bible_40_read: null,
-      bible_40_deep: null
-    },
     headers: [
-      { text: 'ID', value: 'id', align: 'center' },
-      { text: '성명', value: 'name', align: 'center' },
-      { text: '세례명', value: 'caName', align: 'center' },
-      { text: '성별', value: 'sex', align: 'center' },
-      { text: '교구명', value: 'laName', align: 'center' },
-      { text: '본당명', value: 'maName', align: 'center' },
-      { text: '지구명', value: 'saName', align: 'center' },
-      { text: '직업', value: 'job', align: 'center' },
-      { text: '그룹공부 횟수', value: 'eduCount', align: 'center' },
-      { text: '그룹봉사 횟수', value: 'actCount', align: 'center' }
+      { text: '작성 연도', value: 'year' },
+      { text: '작성자', value: 'name' },
+      { text: '연락처', value: 'phone' },
+      { text: '작성일', value: 'date' },
+      { text: '현황보고서', value: 'state' },
+      { text: '명단리스트', value: 'volts' },
+      { text: '봉사보고서', value: 'acts' }
     ]
   }),
   created () {
@@ -122,26 +96,17 @@ export default {
       return {code: o.s_code, name: o.s_name}
     })
     this.items = orderBy(list, ['name'])
-    console.log(this.items)
+
+    const res = find(list, o => o.code === this.adminInfo.area_code)
+    if (res) this.model = res.name
   },
   methods: {
-    reset () {
-      this.resetCode()
-      this.params.group_edu = this.params.group_vlt = null
+    newReport () {
+      this.$router.push({name: 'edit-report'})
     },
-    submit () {
-      if (!this.params.area_code) return alert('검색할 구역코드를 설정하세요.')
-
-      this.$store.dispatch(QUERY_VOLUNTEERS, {a_code: this.params.area_code})
-      this.queried = true
-    },
-    onPeopleFind (data) {
-      console.log('found people...', data)
-      this.peopleFinder = false
-    },
-    onChurchFind (data) {
-      console.log('found church...', data)
-      this.churchFinder = false
+    deleteReport () {
+      if (!this.selected.id) return alert('삭제할 내역을 선택해주세요!')
+      confirm('이 항목을 삭제하시겠습니까?')
     }
   }
 }

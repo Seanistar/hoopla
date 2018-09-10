@@ -89,6 +89,7 @@ Vue.use(Vuetify, {
 })
 Vue.filter('timestamp', DateFilter['timestamp'])
 Vue.filter('datestamp', DateFilter['datestamp'])
+Vue.filter('yearstamp', DateFilter['yearstamp'])
 Vue.prototype.$eventBus = new Vue()
 
 ApiService.init()

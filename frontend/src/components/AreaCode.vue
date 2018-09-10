@@ -31,7 +31,7 @@
         </v-card>
       </v-flex>
       <v-flex xs12 sm4 d-flex class="ml-3" @click="selected = 'M'">
-        <v-card :raised="selected === 'M'" ripple active-class="elevation-5">
+        <v-card :raised="selected === 'M'">
           <v-list>
             <v-subheader key="header" class="text-xs-center" :class="selected === 'M' ? 'active-card' : ''">
               <span class="full-width" >지구 코드</span>
@@ -76,7 +76,7 @@
         </v-card>
       </v-flex>
     </v-layout>
-    <input-dialog :title="codeName" refs="code" ref="code"/>
+    <input-dialog ref="code" :title="codeName" refs="codes" />
   </v-container>
 </template>
 

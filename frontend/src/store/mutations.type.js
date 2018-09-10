@@ -23,6 +23,7 @@ export const REMOVE_VOLUNTEER_ACT = 'removeVolunteerAct'
 export const QUERY_VOLUNTEERS_END = 'queryVolunteers'
 export const FIND_VOLUNTEERS_END = 'findVolunteers'
 export const RESET_FIND_VOLUNTEERS = 'resetFindVolunteers'
+export const SET_QUERY_INFO = 'setQueryInfo'
 
 // administration
 export const SET_AUTH = 'setAuth'

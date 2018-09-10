@@ -12,7 +12,10 @@ const CodeMixin = {
       sa_code: null
     },
     params: { // is equal to bible's column
-      area_code: null
+      area_code: null,
+      la_name: '',
+      ma_name: '',
+      sa_name: ''
     }
   }),
   computed: {
@@ -35,22 +38,17 @@ const CodeMixin = {
     }
   },
   watch: {
-    'areaCode.la_code' (nv, ov) {
-      if (ov === null) return this.changedCode('', nv) // 초기 상태
+    'areaCode.la_code' (nv) {
       this.params.area_code = nv
-      this.areaCode.ma_code = this.areaCode.sa_code = ''
-      this.changedCode('L', nv)
+      this.params.la_name = this.getCodeName(nv)
     },
-    'areaCode.ma_code' (nv, ov) {
-      if (ov === null) return
+    'areaCode.ma_code' (nv) {
       this.params.area_code = nv
-      this.areaCode.sa_code = ''
-      this.changedCode('M', nv)
+      this.params.ma_name = this.getCodeName(nv)
     },
-    'areaCode.sa_code' (nv, ov) {
-      if (ov === null) return
+    'areaCode.sa_code' (nv) {
       this.params.area_code = nv
-      this.changedCode('S', nv)
+      this.params.sa_name = this.getCodeName(nv)
     }
   },
   methods: {
@@ -58,6 +56,7 @@ const CodeMixin = {
       this.areaCode.la_code = this.areaCode.ma_code = this.areaCode.sa_code = ''
     },
     assignCode (code) {
+      this.resetCode()
       this.areaCode.la_code = code.slice(0, 2)
       this.areaCode.ma_code = code.slice(0, 6)
       this.areaCode.sa_code = code

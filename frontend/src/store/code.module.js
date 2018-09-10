@@ -11,7 +11,13 @@ const state = {
 
 const getters = {
   eduCodes (state) {
-    return state.eduCodes
+    return filter(state.eduCodes, o => o.type === 'E')
+  },
+  actCodes (state) {
+    return filter(state.eduCodes, o => o.type === 'A')
+  },
+  trnCodes (state) {
+    return filter(state.eduCodes, o => o.type === 'T')
   },
   areaCodes (state) {
     return state.areaCodes

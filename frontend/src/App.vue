@@ -34,6 +34,6 @@ export default {
 
 <style>
 #app {
-  margin: 2px 2px;
+  margin: 0px 2px;
 }
 </style>

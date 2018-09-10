@@ -1,9 +1,9 @@
 <template>
   <v-form ref="form">
     <v-container>
-      <v-layout row>
+      <v-layout row pb-2>
         <v-flex xs6>
-          <date-picker ref="au_date" refs="au_date" title="선서일"
+          <date-picker ref="au_date" title="선서일" @close-date-picker="onPicked" refs="au_date"
           ></date-picker>
         </v-flex>
       </v-layout>
@@ -16,7 +16,7 @@
           ></v-text-field>
         </v-flex>
         <v-flex xs12 sm6>
-          <date-picker ref="br_date" refs="br_date" title="생년월일"
+          <date-picker ref="br_date" title="생년월일" @close-date-picker="onPicked" refs="br_date"
           ></date-picker>
         </v-flex>
 
@@ -26,7 +26,7 @@
           ></v-text-field>
         </v-flex>
         <v-flex xs12 sm6>
-          <date-picker ref="ca_date" refs="ca_date" title="세례일"
+          <date-picker ref="ca_date" title="세례일" @close-date-picker="onPicked" refs="ca_date"
           ></date-picker>
         </v-flex>
       </v-layout>
@@ -112,6 +112,7 @@ import DatePicker from './control/DatePicker'
 import AppAlert from './control/AppAlert'
 import { CREATE_VOLUNTEER, UPDATE_VOLUNTEER, FETCH_VOLUNTEER_ITEM } from '@/store/actions.type'
 import { VolunteerService } from '@/common/api.service'
+import { ACTIVITY_STATES } from '../common/const.info'
 import CodeMixin from '@/common/code.mixin'
 
 export default {
@@ -165,15 +166,9 @@ export default {
       // name: v => v.length <= 10 || 'Name must be less than 10 characters'
     },
     degrees: ['초졸', '중졸', '고졸', '초대졸', '대졸'],
-    states: [{cd: 'ACT', nm: '활동중'}, {cd: 'BRK', nm: '쉼'}, {cd: 'STP', nm: '중단'}, {cd: 'DTH', nm: '사망'}]
+    states: ACTIVITY_STATES
   }),
   created () {
-    const _this = this
-    this.$eventBus.$on(`close-date-picker-br_date`, date => (_this.params.br_date = date))
-    this.$eventBus.$on(`close-date-picker-ca_date`, date => (_this.params.ca_date = date))
-    this.$eventBus.$on(`close-date-picker-au_date`, date => (_this.params.au_date = date))
-    this.$eventBus.$on(`close-date-picker-rc_date`, date => (_this.params.rc_date = date))
-
     this.isEditMode = !isUndefined(this.v_id)
     if (this.isEditMode) this.fetchData()
   },
@@ -196,6 +191,10 @@ export default {
         this.params = item
         this.assignCode(item.area_code)
       })
+    },
+    onPicked (obj) {
+      console.log('picked date...', obj.type, obj.date)
+      this.params[obj.type] = obj.date
     },
     reset () {
       this.formHasErrors = false
@@ -226,6 +225,7 @@ export default {
         this.$store.dispatch(UPDATE_VOLUNTEER, this.form)
         alert('수정되었습니다.')
       }
+      this.$router.push({name: 'volunteers'})
     },
     async fetchData () {
       await this.$store.dispatch(FETCH_VOLUNTEER_ITEM, this.v_id)
