@@ -8,18 +8,24 @@
     </v-tabs>
     <v-layout pt-1>
       <query-edus v-if="tabIdx === 0" :r_id="id"/>
-      <query-acts v-else-if="tabIdx === 1" :r_id="id"/>
+      <query-bibles v-else-if="tabIdx === 1" :r_id="id"/>
+      <query-notes v-else-if="tabIdx === 2" :r_id="id"/>
+      <query-acts v-else-if="tabIdx === 3" :r_id="id"/>
     </v-layout>
+    <float-button/>
   </v-container>
 </template>
 
 <script>
 import QueryEdus from '@/components/QueryEdus'
+import QueryBibles from '@/components/QueryBibles'
 import QueryActs from '@/components/QueryActs'
+import QueryNotes from '@/components/QueryNotes'
+import FloatButton from '@/components/control/FloatButton'
 
 export default {
   name: 'PartQuery',
-  components: { QueryEdus, QueryActs },
+  components: { QueryEdus, QueryNotes, QueryBibles, QueryActs, FloatButton },
   props: { id: null },
   watch: {
     tabIdx (idx) {
@@ -27,10 +33,10 @@ export default {
   },
   data: () => ({
     tabIdx: 0,
-    titles: ['봉사자 교육 현황', '그룹공부 봉사 현황']
+    titles: ['기본 교육 현황', '성서 연수 현황', '노트 검사 현황', '그룹 봉사 현황']
   })
 }
 </script>
 
-<style>
+<style scoped>
 </style>

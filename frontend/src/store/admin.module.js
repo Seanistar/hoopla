@@ -4,7 +4,7 @@ import { SET_ADMIN } from './mutations.type'
 
 const state = {
   isLogin: false,
-  adminInfo: { area_code: '01-001-001' }
+  adminInfo: { area_code: '01-01-01' }
 }
 
 const getters = {

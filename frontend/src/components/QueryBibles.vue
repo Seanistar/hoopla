@@ -17,17 +17,11 @@
       <template slot="headers" slot-scope="props">
         <tr>
           <th rowspan="2" style="width: 10%" class="subheading font-weight-bold">연도</th>
-          <th colspan="6" style="width: 90%" class="subheading font-weight-bold">교육 참석 현황</th>
-          <!--<th colspan="9" style="width: 60%" class="subheading font-weight-bold">성서 연수 현황</th>-->
+          <th colspan="9" style="width: 90%" class="subheading font-weight-bold">성서 연수 현황</th>
         </tr>
         <tr>
-          <th class="body-1 font-weight-bold" style="width: 15%">월교육</th>
-          <th class="body-1 font-weight-bold" style="width: 15%">성서40주간<br>읽기안내</th>
-          <th class="body-1 font-weight-bold" style="width: 15%">성서40주간<br>심화</th>
-          <th class="body-1 font-weight-bold" style="width: 15%">재교육</th>
-          <th class="body-1 font-weight-bold" style="width: 15%">피정</th>
-          <th class="body-1 font-weight-bold" style="width: 15%">기타교육</th>
-          <!--<th class="body-1 font-weight-bold" v-for="item in headers" :key="item.code">{{item.name|subject}}</th>-->
+          <th class="body-1 font-weight-bold"  style="width: 10%"
+              v-for="item in headers" :key="item.code">{{item.name|subject}}</th>
         </tr>
       </template>
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
@@ -46,11 +40,14 @@
 </template>
 
 <script>
+import { filter } from 'lodash/collection'
+
 export default {
-  name: 'QueryEdus',
+  name: 'QueryBibles',
   computed: {
     headers () {
-      return this.$store.getters.trnCodes
+      const codes = this.$store.getters.eduCodes
+      return filter(codes, o => o.code > 80)
     }
   },
   data: () => ({

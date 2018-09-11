@@ -1,6 +1,6 @@
 <template>
   <v-container>
-      <v-layout row wrap align-center pb-1>
+      <v-layout row wrap align-center pb-2>
         <v-flex xs12 sm9>
           <v-layout row>
             <v-subheader class="subheading" style="width: 25%">
@@ -18,7 +18,7 @@
           </v-layout>
         </v-flex>
         <v-flex xs12 sm3>
-          <menu-buttons class="pt-0 pb-1" refs="state" @click-menu="onClickMenu"/>
+          <menu-buttons class="pt-0 pb-1" refs="state" @click-menu="onClickMenu" v-show="false"/>
         </v-flex>
       </v-layout>
       <v-data-table :headers="headers" :items="items" hide-actions

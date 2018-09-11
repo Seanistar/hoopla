@@ -23,9 +23,9 @@
                 <date-picker ref="e_date" refs="edu-e_date" title="교육 종료일"
                 ></date-picker>
               </v-flex>
-              <!--<v-flex xs12>
+              <v-flex xs12>
                 <v-text-field v-model="item.sv_ids" label="봉사자"></v-text-field>
-              </v-flex>-->
+              </v-flex>
               <v-flex xs12>
                 <v-text-field v-model="item.desc" label="참고 사항"></v-text-field>
               </v-flex>

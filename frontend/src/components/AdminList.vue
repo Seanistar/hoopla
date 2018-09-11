@@ -13,12 +13,12 @@
         </tr>
       </template>
     </v-data-table>
-    <inline-buttons refs="admin"/>
+    <menu-buttons refs="admin"/>
   </div>
 </template>
 
 <script>
-import InlineButtons from './control/InlineButtons'
+import MenuButtons from './control/MenuButtons'
 // import DatePicker from './control/DatePicker'
 import {isEmpty} from 'lodash/lang'
 // import {FETCH_VOLUNTEER_ACTS, CREATE_VOLUNTEER_ACT, UPDATE_VOLUNTEER_ACT, DELETE_VOLUNTEER_ACT} from '../store/actions.type'
@@ -26,7 +26,7 @@ import {isEmpty} from 'lodash/lang'
 // const DEFALUT_ITEM = {id: null, area_code: null, name: null, ca_name: null, registered: null}
 export default {
   name: 'AdminList',
-  components: { InlineButtons },
+  components: { MenuButtons },
   data: () => ({
     selected: {},
     headers: [

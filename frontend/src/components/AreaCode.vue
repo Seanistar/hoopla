@@ -5,7 +5,7 @@
         <v-text-field label="편집할 구역을 선택하세요." readonly :value="codeName"></v-text-field>
       </v-flex>
       <v-flex xs12 sm2 offset-sm4>
-        <inline-buttons class="pt-0 pb-1" refs="code"/>
+        <menu-buttons class="pt-0 pb-1" refs="code"/>
       </v-flex>
     </v-layout>
     <v-layout row>
@@ -76,24 +76,25 @@
         </v-card>
       </v-flex>
     </v-layout>
-    <input-dialog ref="code" :title="codeName" refs="codes" />
+    <item-dialog ref="code" :visible="inputDlg" @close-input-item="onInputItem" refs="codes" />
   </v-container>
 </template>
 
 <script>
 import CodeMixin from '@/common/code.mixin'
-import InlineButtons from './control/InlineButtons'
-import InputDialog from './control/InputDialog'
+import MenuButtons from './control/MenuButtons'
+import ItemDialog from './control/InputItemDialog'
 import { last } from 'lodash/array'
 import { UPDATE_AREA_CODE, DELETE_AREA_CODE } from '../store/actions.type'
 
 export default {
   name: 'AreaCode',
   mixins: [ CodeMixin ],
-  components: { InlineButtons, InputDialog },
+  components: { MenuButtons, ItemDialog },
   data: () => ({
     selected: '',
-    codeName: ''
+    codeName: '',
+    inputDlg: false
   }),
   created () {
     this.areaCode.la_code = '01'
@@ -172,6 +173,26 @@ export default {
     }
   },
   methods: {
+    onClickMenu (type) {
+      if (type === 'add') {
+        this.$refs['codes'].setItem({code: this.getLastCode, name: ''})
+        this.inputDlg = true
+        return
+      }
+      if (!this.selected.id) return alert('구역을 선택해주세요!')
+      if (type === 'remove') confirm('선택한 항목을 삭제하시겠습니까?') && this.deleteItem(this.getCode)
+      else { // update
+        this.$refs['codes'].setItem({code: this.getCode, name: this.getName})
+        this.inputDlg = true
+      }
+    },
+    onInputItem (data) {
+      this.inputDlg = false
+      if (data === undefined) return
+
+      console.log('input item...', data)
+      this.saveItem(data)
+    },
     deleteItem (code) {
       this.$store.dispatch(DELETE_AREA_CODE, code)
     },
@@ -205,7 +226,7 @@ export default {
       } else code = last(this.lAreaCodes).l_code
       return code
     },
-    _formatted (ic, n = 3) {
+    _formatted (ic, n = 2) {
       if (n === 3) {
         return ic < 10 ? `00${ic}` : (ic < 100 ? `0${ic}` : ic)
       } else {
@@ -215,7 +236,7 @@ export default {
   },
   filters: {
     smallAreaCode (code) {
-      return code && code.slice(7)
+      return code && code.slice(6)
     }
   }
 }

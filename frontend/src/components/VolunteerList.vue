@@ -1,5 +1,5 @@
 <template>
-  <v-container px-1>
+  <v-container class="elevation-5" style="width: 85%">
     <v-layout row align-end pb-2>
       <v-flex xs12 sm3>
         <v-combobox label="소속 본당"

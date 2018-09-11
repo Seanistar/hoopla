@@ -58,7 +58,7 @@ const CodeMixin = {
     assignCode (code) {
       this.resetCode()
       this.areaCode.la_code = code.slice(0, 2)
-      this.areaCode.ma_code = code.slice(0, 6)
+      this.areaCode.ma_code = code.slice(0, 5)
       this.areaCode.sa_code = code
     },
     changedCode (type, val) {
@@ -67,7 +67,7 @@ const CodeMixin = {
     getCodeName (code) {
       if (!code) return ''
       let res = null
-      if (code.length > 6) {
+      if (code.length > 5) {
         res = find(this.sAreaCodes, (o) => o.s_code === code)
         if (res && res.s_name) return res.s_name
       } else if (code.length > 2) {

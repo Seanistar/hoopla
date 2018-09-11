@@ -77,6 +77,35 @@
               </v-flex>
             </v-layout>
           </v-container>
+          <v-container grid-list-md v-else-if="refs === 'edus'">
+            <v-layout wrap>
+              <v-flex xs6>
+                <v-text-field v-model="item.name" @focus="finder = true" hide-details label="이름"></v-text-field>
+              </v-flex>
+              <v-flex xs6>
+                <v-text-field v-model="item.ca_name" hide-details label="세례명"></v-text-field>
+              </v-flex>
+              <v-flex xs12>
+                <v-select label="교육 항목" v-model="item.edu_code" hide-details
+                          :items="eduCodes" item-text="name" item-value="code"
+                ></v-select>
+              </v-flex>
+              <v-flex xs6>
+                <date-picker ref="s_date" title="교육 시작일" @close-date-picker="onPicked" refs="s_date"
+                ></date-picker>
+              </v-flex>
+              <v-flex xs6>
+                <date-picker ref="e_date" title="교육 종료일" @close-date-picker="onPicked" refs="e_date"
+                ></date-picker>
+              </v-flex>
+              <v-flex xs12>
+                <v-text-field v-model="item.gv_id" @focus="finder = true" hide-details label="봉사자 이름"></v-text-field>
+              </v-flex>
+              <v-flex xs12>
+                <v-text-field v-model="item.memo" hide-details label="참고 사항"></v-text-field>
+              </v-flex>
+            </v-layout>
+          </v-container>
           <v-container grid-list-md v-else-if="refs === 'codes'">
             <v-layout wrap>
               <v-flex xs12>
@@ -118,13 +147,19 @@ export default {
   },
   computed: {
     title () {
-      return this.refs === 'volts' ? '봉사자 정보' : '봉사활동 정보'
+      if (this.refs === 'volts') return '봉사자 정보'
+      else if (this.refs === 'acts') return '봉사활동 정보'
+      else if (this.refs === 'codes') return '구역코드 정보'
+      else if (this.refs === 'edus') return '교육 정보'
     },
     voltCode () {
       return this.item.id ? `${this.item.area_code}-${this.item.id}` : '코드 확인이 필요합니다!'
     },
     groups () {
       return this.$store.getters.actCodes
+    },
+    eduCodes () {
+      return this.$store.getters.eduCodes
     },
     dialog: {
       get () {

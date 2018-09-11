@@ -11,9 +11,8 @@
         </v-layout>
       </v-flex>
       <v-flex xs6>
-        <!--<inline-buttons class="pt-0 pb-1" refs="state"/>-->
         <v-layout justify-end>
-          <v-btn color="black accent-2" outline dark class="mb-2" @click="$router.back()">리스트로 가기</v-btn>
+          <!--<v-btn color="black accent-2" outline dark class="mb-2" @click="$router.back()">리스트로 가기</v-btn>-->
           <v-btn color="indigo accent-2" outline dark class="mb-2" @click="updateState">현황 저장</v-btn>
         </v-layout>
       </v-flex>
@@ -34,7 +33,7 @@
           <th v-for="i in 8" :key="i">{{ i % 2 === 0 ? '인원' : '그룹'}}</th>
         </tr>
         <tr v-for="(item, index) in trnCodes" :key="index">
-            <td :id="item.code">{{item.name}}</td>
+            <td :id="item.code">{{item.name|subject}}</td>
             <td v-for="j in 8" :key="j">
               <input type="number" style="width: 100%; text-align: center">
             </td>
@@ -84,11 +83,11 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import InlineButtons from './control/InlineButtons'
+import MenuButtons from './control/MenuButtons'
 
 export default {
   name: 'ReportStates',
-  components: { InlineButtons },
+  components: { MenuButtons },
   computed: {
     ...mapGetters([
       'trnCodes'
@@ -119,6 +118,12 @@ export default {
     },
     cancel () {
 
+    }
+  },
+  filters: {
+    subject (name) {
+      const [tr, nm] = name.split('-')
+      return nm ? nm.trim() : tr.trim()
     }
   }
 }

@@ -17,7 +17,7 @@ const getters = {
     return filter(state.eduCodes, o => o.type === 'A')
   },
   trnCodes (state) {
-    return filter(state.eduCodes, o => o.type === 'T')
+    return filter(state.eduCodes, o => o.type === 'E' && o.code > 80)
   },
   areaCodes (state) {
     return state.areaCodes

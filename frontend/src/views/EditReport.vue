@@ -11,6 +11,7 @@
       <report-volunteers v-else-if="tabIdx === 1" :r_id="id"/>
       <report-acts v-else-if="tabIdx === 2" :r_id="id"/>
     </v-layout>
+    <float-button/>
   </v-container>
 </template>
 
@@ -18,10 +19,11 @@
 import ReportStates from '@/components/ReportStates'
 import ReportVolunteers from '@/components/ReportVolunteers'
 import ReportActs from '@/components/ReportActs'
+import FloatButton from '@/components/control/FloatButton'
 
 export default {
   name: 'EditReport',
-  components: { ReportStates, ReportVolunteers, ReportActs },
+  components: { ReportStates, ReportVolunteers, ReportActs, FloatButton },
   props: { id: null },
   watch: {
     tabIdx (idx) {

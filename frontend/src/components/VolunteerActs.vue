@@ -1,59 +1,14 @@
 <template>
   <v-container>
-    <v-progress-circular class="progressing" :size="50" color="primary"
-                         :indeterminate="isLoading" v-show="isLoading"
-    ></v-progress-circular>
-    <v-layout row justify-center>
-      <v-dialog v-model="dialog" persistent max-width="500px">
-        <v-card>
-          <v-card-title primary-title class="pb-0">
-            <span class="title">봉사 활동 내역</span>
-          </v-card-title>
-
-          <v-card-text>
-            <v-container grid-list-md class="pa-2">
-              <v-layout wrap>
-                <v-flex xs12 sm6>
-                  <date-picker ref="s_date" refs="act-s_date" title="봉사활동 시작일"></date-picker>
-                </v-flex>
-                <v-flex xs12 sm6>
-                  <date-picker ref="e_date" refs="act-e_date" title="봉사활동 종료일"></date-picker>
-                </v-flex>
-                <v-flex xs12>
-                  <v-select label="봉사 단체" v-model="dlgItem.grp_code"
-                            :items="actCodes" item-text="name" item-value="code"
-                  ></v-select>
-                </v-flex>
-                <v-flex xs12 sm6>
-                  <v-text-field label="그룹 수" type="number" v-model="dlgItem.grp_count"></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm6>
-                  <v-text-field label="구성원 수" type="number" v-model="dlgItem.numbers"></v-text-field>
-                </v-flex>
-                <v-flex xs12>
-                  <v-text-field label="활동 내역" v-model="dlgItem.content"></v-text-field>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="orange darken-1" outline flat
-                   @click="dialog = false">취소</v-btn>
-            <v-btn color="blue darken-1" outline flat
-                   @click="saveItem">저장</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </v-layout>
     <v-layout row justify-end>
       <v-flex xs12 sm2 offset-sm4>
-        <inline-buttons class="pt-0 pb-1" refs="act"/>
+        <menu-buttons class="pt-0 pb-1" refs="acts" @click-menu="onClickMenu"/>
       </v-flex>
     </v-layout>
-    <v-data-table :headers="headers" :items="volunteerActs" hide-actions class="elevation-1"
+    <v-data-table :headers="headers" :items="volunteerActs"
+                  hide-actions class="elevation-1" :loading="fetched && isLoading"
     >
+      <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
         <tr @click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'unset')}">
           <td class="text-xs-center">{{ props.item.id }}</td>
@@ -70,20 +25,20 @@
           봉사 활동 내역이 없습니다.
       </template>
     </v-data-table>
-    <!--<inline-buttons refs="act"/>-->
+    <item-dialog ref="acts" :visible="inputDlg" @close-input-item="onInputItem" refs="acts"/>
   </v-container>
 </template>
 
 <script>
-import InlineButtons from './control/InlineButtons'
+import MenuButtons from './control/MenuButtons'
 import DatePicker from './control/DatePicker'
-import { isEmpty, isUndefined } from 'lodash/lang'
-import { find } from 'lodash/collection'
+import ItemDialog from './control/InputItemDialog'
+import { isUndefined } from 'lodash/lang'
 import { FETCH_VOLUNTEER_ACTS, CREATE_VOLUNTEER_ACT, UPDATE_VOLUNTEER_ACT, DELETE_VOLUNTEER_ACT } from '../store/actions.type'
 
 export default {
   name: 'VolunteerActs',
-  components: { DatePicker, InlineButtons },
+  components: { DatePicker, MenuButtons, ItemDialog },
   props: { v_id: undefined },
   computed: {
     volunteerActs: {
@@ -106,9 +61,8 @@ export default {
   },
   data: () => ({
     selected: {},
-    dialog: false,
+    inputDlg: false,
     fetched: false,
-    dlgItem: {},
     headers: [
       { text: '번호', align: 'center', value: 'id' },
       { text: '봉사 단체', align: 'center', value: 'grp_name' },
@@ -116,49 +70,14 @@ export default {
       { text: '구성원 수', align: 'center', value: 'numbers' },
       { text: '시작일', align: 'center', value: 's_date' },
       { text: '종료일', align: 'center', value: 'e_date' },
-      { text: '구역코드', align: 'center', value: 'area_code', sortable: false },
-      { text: '활동내용', align: 'center', value: 'content', sortable: false }
+      { text: '활동 본당', align: 'center', value: 'area_code', sortable: false },
+      { text: '활동 내용', align: 'center', value: 'content', sortable: false }
     ]
   }),
   created () {
     this.fetchData()
   },
-  mounted () {
-    const _this = this
-    this.$eventBus.$on('close-date-picker-act-s_date', (date) => {
-      _this.dlgItem.s_date = date
-    })
-    this.$eventBus.$on('close-date-picker-act-e_date', (date) => {
-      _this.dlgItem.e_date = date // TODO: check it that s_date must be previous e_date
-    })
-    this.$eventBus.$on('click-btn-act', (eventType) => {
-      if (eventType === 'add') {
-        _this.dlgItem = {}
-        _this.dlgItem.id = _this.volunteerActs.length + 1
-      } else if (eventType === 'remove') {
-        if (isEmpty(_this.selected)) return alert('내역을 선택해주세요.')
-        return confirm('선택 항목을 삭제하시겠습니까?') && _this.deleteActItem(_this.selected.id)
-      } else if (eventType === 'edit') {
-        if (isEmpty(_this.selected)) return alert('내역을 선택해주세요.')
-        _this.dlgItem = _this.selected
-        _this.$refs['s_date'].setDate(_this.dlgItem.s_date)
-        _this.$refs['e_date'].setDate(_this.dlgItem.e_date)
-      }
-      _this.dialog = true
-    })
-  },
   methods: {
-    saveItem () {
-      this.dialog = false
-      this.dlgItem.v_id = this.v_id
-      this.dlgItem.area_code = this.volunteerInfo ? this.volunteerInfo.area_code : null
-      if (isUndefined(this.selected.id)) {
-        this.dlgItem.grp_name = this.getGroupName(this.dlgItem.grp_code)
-        this.volunteerActs = this.dlgItem
-      } else {
-        this.updateActItem(this.dlgItem)
-      }
-    },
     updateActItem (item) {
       this.$store.dispatch(UPDATE_VOLUNTEER_ACT, item)
     },
@@ -170,9 +89,27 @@ export default {
       !isUndefined(this.v_id) && await this.$store.dispatch(FETCH_VOLUNTEER_ACTS, this.v_id)
       this.fetched = true
     },
-    getGroupName (code) {
-      const obj = find(this.actCodes, (g) => g.code === code)
-      return !isEmpty(obj) ? obj.name : ''
+    onClickMenu (type) {
+      if (type === 'add') {
+        this.$refs['acts'].reset()
+        // this.$refs['acts'].setItem({id: this.volunteerActs.length + 1})
+        this.inputDlg = true
+        return
+      }
+      if (!this.selected.id) return alert('봉사 내역을 선택해주세요!')
+      if (type === 'remove') confirm('선택한 봉사 내역을 삭제하시겠습니까?') && this.deleteActItem(this.selected.id)
+      else { // update
+        this.$refs['acts'].setItem(this.selected)
+        this.inputDlg = true
+      }
+    },
+    onInputItem (data) {
+      this.inputDlg = false
+      if (data === undefined) return
+
+      console.log('input item...', data)
+      if (isUndefined(this.selected.id)) this.volunteerActs = data
+      else this.updateActItem(data)
     }
   }
 }

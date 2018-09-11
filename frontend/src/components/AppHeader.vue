@@ -2,7 +2,7 @@
   <div>
     <v-toolbar color="blue lighten-4" light tabs app>
       <v-icon>account_balance</v-icon>
-      <v-toolbar-title class="headline font-weight-medium">카톨릭 성서모임</v-toolbar-title>
+      <v-toolbar-title class="headline font-weight-medium">가톨릭성서모임</v-toolbar-title>
       <v-spacer></v-spacer>
       <!--<v-btn icon>
         <v-icon>search</v-icon>
