@@ -1,11 +1,12 @@
 <template>
   <v-container>
-    <v-layout row wrap align-end pb-2>
+    <v-layout row wrap align-end>
       <v-flex xs6>
-        <v-layout row wrap>
-          <v-flex xs8>
+        <v-layout row wrap >
+          <v-flex xs7>
             <v-subheader class="subheading"><span class="mr-3">작성자 :</span>
-              <v-text-field label="Amount" value="김대건 안드레아" single-line></v-text-field>
+              <v-text-field value="김대건 안드레아" clearable single-line></v-text-field>
+              <!--<span>김대건 안드레아</span>-->
             </v-subheader>
           </v-flex>
         </v-layout>
@@ -13,13 +14,13 @@
       <v-flex xs6>
         <v-layout justify-end>
           <!--<v-btn color="black accent-2" outline dark class="mb-2" @click="$router.back()">리스트로 가기</v-btn>-->
-          <v-btn color="indigo accent-2" outline dark class="mb-2" @click="updateState">현황 저장</v-btn>
+          <v-btn color="indigo accent-2" outline dark  @click="updateState">현황 저장</v-btn>
         </v-layout>
       </v-flex>
     </v-layout>
 
-    <v-layout row>
-      <table style="width:100%; border: 2px black solid;">
+    <v-layout row mt-2>
+      <table style="width:100%; border: 2px grey solid;">
         <tr>
           <th style="width: 20%"></th>
           <th colspan="4" style="width: 40%" class="subheading font-weight-bold">그룹 공부 현황</th>
@@ -38,7 +39,7 @@
               <input type="number" style="width: 100%; text-align: center">
             </td>
         </tr>
-        <tr style="border-top: 2px black solid;">
+        <tr style="border-top: 2px grey solid;">
           <td>합계</td>
           <td v-for="i in 8" :key="i">
             <input type="number" readonly style="width: 100%; text-align: center">
@@ -47,8 +48,8 @@
       </table>
     </v-layout>
 
-    <v-layout row mt-5>
-      <table style="width:100%; border: 2px black solid;">
+    <v-layout row mt-4>
+      <table style="width:100%; border: 2px grey solid;">
         <tr>
           <th colspan="2" style="width: 20%">성서 40주간</th>
           <th colspan="2" style="width: 20%">월모임</th>
@@ -131,8 +132,9 @@ export default {
 
 <style scoped>
   table, th, td {
-    border: 1px solid black;
+    border: 1px solid grey;
     border-collapse: collapse;
+    color: dimgrey;
   }
   th, td {
     padding: 5px;

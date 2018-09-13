@@ -13,7 +13,7 @@
         </tr>
       </template>
     </v-data-table>
-    <menu-buttons refs="admin"/>
+    <menu-buttons class="pt-0 pb-1" refs="admin" @click-menu="onClickMenu"/>
   </div>
 </template>
 

@@ -12,8 +12,8 @@
       <template slot="items" slot-scope="props">
         <tr @click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'unset')}">
           <td class="text-xs-center">{{ props.item.id }}</td>
-          <td class="text-xs-center">{{ props.item.grp_name }}</td>
-          <td class="text-xs-center">{{ props.item.grp_count }}</td>
+          <td class="text-xs-center">{{ props.item.act_name }}</td>
+          <td class="text-xs-center">{{ props.item.groups }}</td>
           <td class="text-xs-center">{{ props.item.numbers }}</td>
           <td class="text-xs-center">{{ props.item.s_date }}</td>
           <td class="text-xs-center">{{ props.item.e_date }}</td>
@@ -65,8 +65,8 @@ export default {
     fetched: false,
     headers: [
       { text: '번호', align: 'center', value: 'id' },
-      { text: '봉사 단체', align: 'center', value: 'grp_name' },
-      { text: '그룹 수', align: 'center', value: 'grp_count' },
+      { text: '봉사 구분', align: 'center', value: 'act_name' },
+      { text: '그룹 수', align: 'center', value: 'groups' },
       { text: '구성원 수', align: 'center', value: 'numbers' },
       { text: '시작일', align: 'center', value: 's_date' },
       { text: '종료일', align: 'center', value: 'e_date' },

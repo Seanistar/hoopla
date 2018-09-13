@@ -1,5 +1,5 @@
 <template>
-  <v-container pa-0 mt-4>
+  <v-container>
     <v-layout row wrap pb-2>
       <v-flex xs2>
         <v-subheader class="body-2"><span class="mr-3">선서연도 :</span>
@@ -40,14 +40,11 @@
 </template>
 
 <script>
-import { filter } from 'lodash/collection'
-
 export default {
   name: 'QueryBibles',
   computed: {
     headers () {
-      const codes = this.$store.getters.eduCodes
-      return filter(codes, o => o.code > 80)
+      return this.$store.getters.trnCodes
     }
   },
   data: () => ({

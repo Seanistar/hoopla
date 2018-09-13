@@ -168,8 +168,8 @@ router.delete('/edu/:id', (req, res) => {
  * volunteer activities
  */
 router.get('/act/:id', (req, res) => {
-  const select = `SELECT a.*, c.name grp_name 
-  FROM acts a LEFT JOIN edu_code c ON a.grp_code=c.code WHERE v_id=?`
+  const select = `SELECT a.*, c.name act_name 
+  FROM acts a LEFT JOIN edu_code c ON a.act_code=c.code WHERE v_id=?`
   db.query(select, req.params.id, (err, rows) => {
     if (!err) {
       res.status(200).send(rows)
@@ -181,11 +181,11 @@ router.get('/act/:id', (req, res) => {
 })
 
 router.put('/act', (req, res, next) => {
-  const {v_id, grp_code, s_date, e_date, area_code, content} = req.body
+  const {v_id, act_code, s_date, e_date, area_code, content} = req.body
   const sql = [
-    `INSERT INTO acts (v_id, grp_code, s_date, e_date, area_code, content) 
+    `INSERT INTO acts (v_id, act_code, s_date, e_date, area_code, content) 
     VALUES (?,?,?,?,?,?)`,
-    [v_id, grp_code, s_date, e_date, area_code, content]
+    [v_id, act_code, s_date, e_date, area_code, content]
   ]
 
   db.query(...sql, (err, rows) => {
@@ -201,12 +201,12 @@ router.put('/act', (req, res, next) => {
 
 router.post('/act/:id', (req, res, next) => {
   const id = req.params.id
-  const {v_id, grp_code, s_date, e_date, area_code, content} = req.body
+  const {v_id, act_code, s_date, e_date, area_code, content} = req.body
   const sql = [
     `UPDATE acts 
-    SET v_id=?, grp_code=?, s_date=?, e_date=?, area_code=?, content=?
+    SET v_id=?, act_code=?, s_date=?, e_date=?, area_code=?, content=?
     WHERE id=?`,
-    [v_id, grp_code, s_date, e_date, area_code, content, id]
+    [v_id, act_code, s_date, e_date, area_code, content, id]
   ]
 
   db.query(...sql, (err, rows) => {

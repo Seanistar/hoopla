@@ -1,13 +1,13 @@
 <template>
   <v-container>
-    <v-layout row wrap align-center pb-1>
+    <v-layout row wrap align-center mb-2>
       <v-flex xs6>
           <v-subheader class="subheading"><span class="mr-3">대표 봉사자 :</span>
-            <v-flex xs6><v-text-field label="Amount" value="김대건 안드레아" single-line></v-text-field></v-flex>
+            <v-flex xs5><v-text-field value="김대건 안드레아" clearable single-line></v-text-field></v-flex>
           </v-subheader>
       </v-flex>
       <v-flex xs6>
-        <menu-buttons class="pt-0 pb-1" refs="acts" @click-menu="onClickMenu"/>
+        <menu-buttons class="pt-0 pb-0" refs="acts" @click-menu="onClickMenu"/>
       </v-flex>
     </v-layout>
     <v-data-table :headers="headers" :items="items" hide-actions
@@ -27,8 +27,8 @@
           <td class="text-xs-center">{{ props.item.idx }}</td>
           <td class="text-xs-center">{{ props.item.name }}</td>
           <td class="text-xs-center">{{ props.item.ca_name }}</td>
-          <td class="text-xs-center">{{ props.item.grp_name }}</td>
-          <td class="text-xs-center">{{ props.item.grp_count }}</td>
+          <td class="text-xs-center">{{ props.item.act_name }}</td>
+          <td class="text-xs-center">{{ props.item.groups }}</td>
           <td class="text-xs-center">{{ props.item.numbers }}</td>
           <td class="text-xs-center">{{ props.item.s_date }}</td>
         </tr>
@@ -61,8 +61,8 @@ export default {
       { text: '순서', value: 'idx' },
       { text: '이름', value: 'name' },
       { text: '세례명', value: 'ca_name' },
-      { text: '봉사 그룹명', value: 'grp_name' },
-      { text: '그룹 수', value: 'grp_count' },
+      { text: '봉사 활동명', value: 'act_name' },
+      { text: '그룹 수', value: 'groups' },
       { text: '총 인원', value: 'numbers' },
       { text: '시작한 날', value: 's_date' }
     ]

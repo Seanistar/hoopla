@@ -5,7 +5,7 @@
         <v-text-field label="편집할 구역을 선택하세요." readonly :value="codeName"></v-text-field>
       </v-flex>
       <v-flex xs12 sm2 offset-sm4>
-        <menu-buttons class="pt-0 pb-1" refs="code"/>
+        <menu-buttons class="pt-0 pb-1" refs="codes" @click-menu="onClickMenu"/>
       </v-flex>
     </v-layout>
     <v-layout row>
@@ -76,7 +76,7 @@
         </v-card>
       </v-flex>
     </v-layout>
-    <item-dialog ref="code" :visible="inputDlg" @close-input-item="onInputItem" refs="codes" />
+    <item-dialog ref="codes" :visible="inputDlg" @close-input-item="onInputItem" refs="codes" />
   </v-container>
 </template>
 
@@ -99,26 +99,6 @@ export default {
   created () {
     this.areaCode.la_code = '01'
     this.selected = 'M'
-  },
-  mounted () {
-    const _this = this
-    const $ref = this.$refs['code']
-    this.$eventBus.$on('click-btn-code', (eventType) => {
-      if (eventType === 'add') {
-        $ref && $ref.setItem({code: _this.getLastCode, name: ''})
-      } else if (eventType === 'remove') {
-        if (!_this.selected) return alert('구역을 선택해주세요.')
-        return confirm('선택 항목을 삭제하시겠습니까?') && _this.deleteItem(_this.getCode)
-      } else if (eventType === 'edit') {
-        if (!_this.selected) return alert('구역을 선택해주세요.')
-        $ref && $ref.setItem({code: _this.getCode, name: _this.getName})
-      }
-      $ref && $ref.showDialog(true)
-    })
-    this.$eventBus.$on('click-dlg-code', (item) => {
-      if (item.type === 'save') _this.saveItem(item.data)
-      $ref && $ref.showDialog(false)
-    })
   },
   computed: {
     getCode () {
@@ -179,7 +159,7 @@ export default {
         this.inputDlg = true
         return
       }
-      if (!this.selected.id) return alert('구역을 선택해주세요!')
+      if (!this.getCode) return alert('구역을 선택해주세요!')
       if (type === 'remove') confirm('선택한 항목을 삭제하시겠습니까?') && this.deleteItem(this.getCode)
       else { // update
         this.$refs['codes'].setItem({code: this.getCode, name: this.getName})

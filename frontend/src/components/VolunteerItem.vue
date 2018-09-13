@@ -1,6 +1,7 @@
 <template>
-  <v-form ref="form">
-    <v-container>
+  <v-container>
+    <v-layout pa-4 class="elevation-3">
+    <v-form ref="form">
       <v-layout row pb-2>
         <v-flex xs6>
           <date-picker ref="au_date" title="선서일" @close-date-picker="onPicked" refs="au_date"
@@ -102,8 +103,9 @@
           <v-btn color="indigo accent-2" outline class="mb-2" @click="submit" :disabled="isDisabled">{{!isEditMode ? '추가' : '수정'}}</v-btn>
         </div>
       </v-layout>
-    </v-container>
-  </v-form>
+    </v-form>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>

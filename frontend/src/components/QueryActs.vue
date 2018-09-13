@@ -1,5 +1,5 @@
 <template>
-  <v-container pa-0 mt-4>
+  <v-container>
     <v-layout row wrap pb-2>
       <v-flex xs2>
         <v-subheader class="body-2"><span class="mr-3">선서연도 :</span>
@@ -36,7 +36,7 @@
         </tr>
       </template>
       <template slot="no-data">
-        <div class="text-xs-center">현황 내역이 없습니다.</div>
+        <tr class="text-xs-center"><td colspan="10">현황 내역이 없습니다.</td></tr>
       </template>
     </v-data-table>
   </v-container>
