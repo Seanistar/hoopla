@@ -6,7 +6,7 @@
           <v-expansion-panel popout class="elevation-5">
             <v-expansion-panel-content
               v-for="(item, i) in items" :key="i">
-              <div slot="header"><span>{{item.title}}</span><span class="fl-r rp-10">{{item.date}}</span></div>
+              <div slot="header"><span>{{item.title}}</span><span class="f pr-3">{{item.date}}</span></div>
               <v-card>
                 <v-card-text>{{item.desc}}</v-card-text>
               </v-card>

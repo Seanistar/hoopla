@@ -4,5 +4,6 @@ import { isNull } from 'lodash/lang'
 export default {
   timestamp: (val) => !isNull(val) ? Moment(val).format('YYYY-MM-DD HH:mm:ss') : '',
   datestamp: (val) => !isNull(val) ? Moment(val).format('YYYY-MM-DD') : '',
+  monthstamp: (val) => !isNull(val) ? Moment(val).format('YYYY-MM') : '',
   yearstamp: (val) => !isNull(val) ? Moment(val).format('YYYY') : ''
 }

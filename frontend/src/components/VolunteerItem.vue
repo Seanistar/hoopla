@@ -87,14 +87,14 @@
         </v-flex>
       </v-layout>
 
-      <v-layout row wrap class="tp-20">
+      <v-layout row wrap pt-2>
         <v-textarea label="메모사항"
           box auto-grow
           v-model="params.memo"
         ></v-textarea>
       </v-layout>
 
-      <v-layout class="fl-r mb-5">
+      <v-layout justify-end mb-2>
         <div>
           <v-btn color="black accent-2" outline class="mb-2" @click="$router.back()">취소</v-btn>
         </div>

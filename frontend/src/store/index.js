@@ -5,6 +5,7 @@ import scrap from './scrap.module'
 import admin from './admin.module'
 import volunteer from './volunteer.module'
 import code from './code.module'
+import report from './report.module'
 
 Vue.use(Vuex)
 
@@ -14,6 +15,7 @@ export default new Vuex.Store({
     scrap,
     admin,
     volunteer,
-    code
+    code,
+    report
   }
 })

@@ -1,23 +1,30 @@
 <template>
-  <v-container class="elevation-5" style="width: 85%">
-    <v-layout row align-end pb-2>
-      <v-flex xs12 sm3>
-        <v-combobox label="소속 본당"
-                    v-model="model" :items="items" item-value="code" item-text="name"
-                    :search-input.sync="search" clearable
-        >
-          <template slot="no-data">
-            <v-list-tile>
-              <v-list-tile-content>
-                <v-list-tile-title>
-                  "<strong>{{ search }}</strong>" 본당이 없습니다. 관리자에게 문의해주세요.
-                </v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-          </template>
-        </v-combobox>
+  <v-container class="elevation-5 w-85 pt-2">
+    <v-layout row align-baseline pb-0>
+      <v-flex xs6>
+        <v-layout row align-baseline>
+          <v-flex xs2>
+            <v-subheader class="body-2 pr-0 w-50">소속본당 : </v-subheader>
+          </v-flex>
+          <v-flex xs5>
+            <v-combobox class="body-2"
+                        v-model="model" :items="items" item-value="code" item-text="name"
+                        :search-input.sync="search" clearable single-line
+            >
+              <template slot="no-data">
+                <v-list-tile>
+                  <v-list-tile-content>
+                    <v-list-tile-title>
+                      "<strong>{{ search }}</strong>" 본당이 없습니다. 관리자에게 문의해주세요.
+                    </v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+              </template>
+            </v-combobox>
+          </v-flex>
+        </v-layout>
       </v-flex>
-      <v-flex xs12 sm9>
+      <v-flex xs6>
         <v-layout justify-end>
           <v-btn color="indigo accent-2" outline dark class="mb-3" @click="newVolunteer">신규 봉사자</v-btn>
         </v-layout>
@@ -49,7 +56,7 @@
           <td class="text-xs-center">{{ props.item.au_date }}</td>
           <td class="text-xs-center">{{ props.item.ca_date }}</td>
           <td class="justify-center layout px-0">
-            <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
+            <v-icon small class="mr-3" @click="editItem(props.item)">edit</v-icon>
             <v-icon small @click="deleteItem(props.item)">delete</v-icon>
           </td>
         </tr>

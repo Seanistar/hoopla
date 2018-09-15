@@ -1,25 +1,29 @@
 <template>
-  <v-container>
-      <v-layout row wrap align-center mb-2>
-        <v-flex xs12 sm9>
-          <v-layout row>
-            <v-subheader class="subheading" style="width: 25%">
-              <span class="mr-3">총 봉사자수 :</span>
-              <v-flex xs4><v-text-field value="0" suffix="명" single-line></v-text-field></v-flex>
+  <v-container pt-2>
+      <v-layout row wrap align-center mb-1>
+        <v-flex x2>
+          <v-subheader class="subheading font-weight-bold pl-0">신사베드로어디오아아지본당
+          </v-subheader>
+        </v-flex>
+        <v-flex xs8>
+          <v-layout row justify-end>
+            <v-subheader class="body-2 w-27 pr-0">
+              <span class="mr-2">총 봉사자수 :</span>
+              <input value="0000" class="pa-1 text-xs-right input-box mr-1">명
             </v-subheader>
-            <v-subheader class="subheading" style="width: 30%">
-              <span class="mr-3">활동 봉사자수 :</span>
-              <v-flex xs4><v-text-field value="0" suffix="명" single-line></v-text-field></v-flex>
+            <v-subheader class="body-2 w-27 pr-0">
+              <span class="mr-2">활동 봉사자수 :</span>
+              <input value="0000" class="pa-1 text-xs-right input-box mr-1">명
             </v-subheader>
-            <v-subheader class="subheading" style="width: 30%">
-              <span class="mr-3">쉬는 봉사자수 :</span>
-              <v-flex xs4><v-text-field value="0" suffix="명" single-line></v-text-field></v-flex>
+            <v-subheader class="body-2 w-27 pr-0">
+              <span class="mr-2">쉬는 봉사자수 :</span>
+              <input value="0000" class="pa-1 text-xs-right input-box mr-1">명
             </v-subheader>
           </v-layout>
         </v-flex>
-        <v-flex xs12 sm3>
+        <!--<v-flex xs12 sm3>
           <menu-buttons class="pt-0 pb-0" refs="state" @click-menu="onClickMenu" v-show="false"/>
-        </v-flex>
+        </v-flex>-->
       </v-layout>
       <v-data-table :headers="headers" :items="items" hide-actions
                     class="elevation-1"
@@ -108,4 +112,10 @@ export default {
 </script>
 
 <style scoped>
+  .input-box {
+    width: 26%;
+  }
+  .w-27 {
+    width: 27.5%;
+  }
 </style>

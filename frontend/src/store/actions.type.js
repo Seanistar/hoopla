@@ -32,6 +32,15 @@ export const FIND_VOLUNTEERS = 'findVolunteers'
 export const LOGIN_ADMIN = 'loginAdmin'
 export const CHECK_AUTH = 'checkAuth'
 
+// state report for small area
+export const FETCH_REPORTS = 'fetchReports'
+export const FETCH_REPORT_STATE = 'fetchReportState'
+export const FETCH_REPORT_VOLTS = 'fetchReportVolts'
+export const FETCH_REPORT_ACTS = 'fetchReportActs'
+export const DELETE_REPORT = 'deleteReport'
+export const CREATE_REPORT = 'createReport'
+export const UPDATE_REPORT = 'updateReport'
+
 // will be obsoleted
 export const DELETE_AUTHOR = 'deleteAuthor'
 export const CREATE_AUTHOR = 'createAuthor'

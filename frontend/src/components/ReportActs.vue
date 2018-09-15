@@ -1,12 +1,16 @@
 <template>
-  <v-container>
-    <v-layout row wrap align-center mb-2>
-      <v-flex xs6>
-          <v-subheader class="subheading"><span class="mr-3">대표 봉사자 :</span>
-            <v-flex xs5><v-text-field value="김대건 안드레아" clearable single-line></v-text-field></v-flex>
-          </v-subheader>
+  <v-container pt-2>
+    <v-layout row wrap align-center mb-1>
+      <v-flex xs3>
+        <v-subheader class="subheading font-weight-bold px-0">신사베드로어디오하지본당
+        </v-subheader>
       </v-flex>
-      <v-flex xs6>
+      <v-flex xs7>
+        <v-subheader class="body-2 justify-end"><span class="mr-2">대표 봉사자 :</span>
+          <input value="김대건 안드레아" class="pa-1 input-box">
+        </v-subheader>
+      </v-flex>
+      <v-flex xs2>
         <menu-buttons class="pt-0 pb-0" refs="acts" @click-menu="onClickMenu"/>
       </v-flex>
     </v-layout>

@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-3">
+  <div class="pt-0">
     <report-list/>
   </div>
 </template>

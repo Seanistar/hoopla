@@ -6,13 +6,13 @@ const db = require('../common/db.mysql')
 /****************************************************************
  * volunteer information
  */
-router.get('/', (req, res, next) => {
+router.get('', (req, res, next) => {
   const select = 'SELECT vl.*, ac.l_name la_name, ac.m_name ma_name, ac.s_name sa_name FROM volunteers vl LEFT JOIN area_code ac ON vl.area_code = ac.a_code'
   db.query(select, (err, rows) => {
     if (!err) {
       res.status(200).send(rows)
     } else {
-      console.log('query error : ' + err)
+      console.warn('query error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })
@@ -26,7 +26,7 @@ router.get('/page/:id', (req, res, next) => {
     if (!err) {
       res.status(200).send(rows)
     } else {
-      console.log('query error : ' + err)
+      console.warn('query error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })
@@ -46,7 +46,7 @@ router.put('/', (req, res, next) => {
       res.status(200).send({success: true, lastId: rows.insertId})
       // res.redirect(`/scrap/${rows.insertId}`)
     } else {
-      console.log('query error : ' + err)
+      console.warn('query error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })
@@ -85,7 +85,7 @@ router.delete('/:id', (req, res) => {
     if (!err) {
       res.status(200).send({success: true})
     } else {
-      console.log('query error : ' + err)
+      console.warn('query error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })
@@ -102,7 +102,7 @@ router.get('/edu/:id', (req, res) => {
     if (!err) {
       res.status(200).send(rows)
     } else {
-      console.log('query error : ' + err)
+      console.warn('query error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })
@@ -121,7 +121,7 @@ router.put('/edu', (req, res, next) => {
       console.log('edu has been inserted')
       res.status(200).send({success: true, lastId: rows.insertId})
     } else {
-      console.log('query error : ' + err)
+      console.warn('query error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })
@@ -141,7 +141,7 @@ router.post('/edu/:id', (req, res, next) => {
     if (!err) {
       res.status(200).send({success: true})
     } else {
-      console.log('query error : ' + err)
+      console.warn('query error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })
@@ -158,7 +158,7 @@ router.delete('/edu/:id', (req, res) => {
     if (!err) {
       res.status(200).send({success: true})
     } else {
-      console.log('query error : ' + err)
+      console.warn('query error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })
@@ -174,7 +174,7 @@ router.get('/act/:id', (req, res) => {
     if (!err) {
       res.status(200).send(rows)
     } else {
-      console.log('query error : ' + err)
+      console.warn('query error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })
@@ -187,13 +187,12 @@ router.put('/act', (req, res, next) => {
     VALUES (?,?,?,?,?,?)`,
     [v_id, act_code, s_date, e_date, area_code, content]
   ]
-
   db.query(...sql, (err, rows) => {
     if (!err) {
       console.log('act has been inserted')
       res.status(200).send({success: true, lastId: rows.insertId})
     } else {
-      console.log('query error : ' + err)
+      console.warn('query error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })
@@ -208,12 +207,11 @@ router.post('/act/:id', (req, res, next) => {
     WHERE id=?`,
     [v_id, act_code, s_date, e_date, area_code, content, id]
   ]
-
   db.query(...sql, (err, rows) => {
     if (!err) {
       res.status(200).send({success: true})
     } else {
-      console.log('query error : ' + err)
+      console.warn('query error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })
@@ -225,12 +223,11 @@ router.delete('/act/:id', (req, res) => {
     res.status(505).send('no id parameter')
   }
   const sql = [`DELETE FROM acts WHERE id=?`, req.params.id]
-
   db.query(...sql, (err, rows) => {
     if (!err) {
       res.status(200).send({success: true})
     } else {
-      console.log('query error : ' + err)
+      console.warn('query error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })
@@ -239,8 +236,8 @@ router.delete('/act/:id', (req, res) => {
 /****************************************************************
  * volunteer querying
  */
-router.post('/query', (req, res) => {
-  const {a_code, au_date, v_name, sa_code} = req.body
+router.get('/query', (req, res) => {
+  const {a_code, au_date, v_name, sa_code} = req.query
   let sql = `SELECT vl.*, ac.l_name la_name, ac.m_name ma_name, ac.s_name sa_name,
   (SELECT COUNT(DISTINCT id) FROM edus WHERE v_id = vl.id) edu_count,
   (SELECT COUNT(DISTINCT id) FROM acts WHERE v_id = vl.id) act_count 
@@ -255,14 +252,14 @@ router.post('/query', (req, res) => {
     if (!err) {
       res.status(200).send(rows)
     } else {
-      console.log('query error : ' + err)
+      console.warn('query error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })
 })
 
-router.post('/find', (req, res) => {
-  const {name} = req.body
+router.get('/find', (req, res) => {
+  const {name} = req.query
   const select = `SELECT vl.*, ac.s_name sa_name
   FROM volunteers vl LEFT JOIN area_code ac ON vl.area_code = ac.a_code
   WHERE vl.name like (\'%${name}%\')`
@@ -270,7 +267,7 @@ router.post('/find', (req, res) => {
     if (!err) {
       res.status(200).send(rows)
     } else {
-      console.log('query error : ' + err)
+      console.warn('query error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })

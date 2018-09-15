@@ -1,5 +1,5 @@
 <template>
-  <div class="fl-r tp-10">
+  <v-layout justify-end pt-0>
     <v-tooltip bottom>
       <v-btn fab outline dark small
              color="cyan" slot="activator"
@@ -27,7 +27,7 @@
       </v-btn>
       <span>추가</span>
     </v-tooltip>
-  </div>
+  </v-layout>
 </template>
 
 <script>

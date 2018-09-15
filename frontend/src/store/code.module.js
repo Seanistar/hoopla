@@ -11,7 +11,7 @@ const state = {
 
 const getters = {
   eduCodes (state) {
-    return filter(state.eduCodes, o => o.code > 100)
+    return filter(state.eduCodes, o => o.code > 50)
   },
   actCodes (state) {
     return filter(state.eduCodes, o => o.type === 'A')

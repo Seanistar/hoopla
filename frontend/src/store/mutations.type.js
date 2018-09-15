@@ -36,6 +36,13 @@ export const SET_AREA_CODE = 'setAreaCode'
 export const ADD_AREA_CODE = 'addAreaCode'
 export const REMOVE_AREA_CODE = 'removeAreaCode'
 
+// reports
+export const FETCH_REPORTS_END = 'fetchReports'
+export const FETCH_REPORT_STATE_END = 'fetchReportState'
+export const SET_REPORT = 'setReport'
+export const ADD_REPORT = 'addReport'
+export const REMOVE_REPORT = 'removeReport'
+
 // will be obsoleted
 export const SET_TOPIC = 'setTopic'
 export const FETCH_TOPICS_END = 'setTopics'

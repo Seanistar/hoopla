@@ -39,6 +39,7 @@ import {
   VTooltip,
   VRadioGroup,
   VDatePicker,
+  VSnackbar,
   VExpansionPanel,
   VProgressCircular,
   transitions
@@ -79,6 +80,7 @@ Vue.use(Vuetify, {
     VTooltip,
     VRadioGroup,
     VDatePicker,
+    VSnackbar,
     VExpansionPanel,
     VProgressCircular,
     transitions
@@ -89,6 +91,7 @@ Vue.use(Vuetify, {
 })
 Vue.filter('timestamp', DateFilter['timestamp'])
 Vue.filter('datestamp', DateFilter['datestamp'])
+Vue.filter('monthstamp', DateFilter['monthstamp'])
 Vue.filter('yearstamp', DateFilter['yearstamp'])
 Vue.prototype.$eventBus = new Vue()
 

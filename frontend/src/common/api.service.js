@@ -93,10 +93,28 @@ export const VolunteerService = {
     return ApiService.delete(`volts/act/${id}`)
   },
   query (params) {
-    return ApiService.update('volts/query', params)
+    return ApiService.query('volts/query', params)
   },
   find (params) {
-    return ApiService.update('volts/find', params)
+    return ApiService.query('volts/find', params)
+  }
+}
+
+export const ReportService = {
+  query (code) {
+    return ApiService.query('reports', {params: {code}})
+  },
+  get (id) {
+    return ApiService.get('reports/page', id)
+  },
+  create (data) {
+    return ApiService.create('reports', {data})
+  },
+  update (id, data) {
+    return ApiService.update(`reports/${id}`, {data})
+  },
+  delete (id) {
+    return ApiService.delete(`reports/${id}`)
   }
 }
 

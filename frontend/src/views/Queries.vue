@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-3">
+  <div class="pt-0">
     <query-list ref="que"/>
   </div>
 </template>
