@@ -1,47 +1,34 @@
 import { VolunteerService } from '@/common/api.service'
 import {
-  FETCH_VOLUNTEERS,
+  FETCH_VOLUNTEERS, CREATE_VOLUNTEER, UPDATE_VOLUNTEER, DELETE_VOLUNTEER, FETCH_VOLUNTEER_ITEM,
   QUERY_VOLUNTEERS,
   FIND_VOLUNTEERS,
-  CREATE_VOLUNTEER,
-  UPDATE_VOLUNTEER,
-  DELETE_VOLUNTEER,
-  FETCH_VOLUNTEER_ITEM,
-  FETCH_VOLUNTEER_EDUS,
-  DELETE_VOLUNTEER_ACT,
-  CREATE_VOLUNTEER_ACT,
-  UPDATE_VOLUNTEER_ACT,
-  FETCH_VOLUNTEER_ACTS,
-  DELETE_VOLUNTEER_EDU,
-  CREATE_VOLUNTEER_EDU,
-  UPDATE_VOLUNTEER_EDU
+  FETCH_VOLUNTEER_EDUS, CREATE_VOLUNTEER_EDU, UPDATE_VOLUNTEER_EDU, DELETE_VOLUNTEER_EDU,
+  FETCH_VOLUNTEER_ACTS, CREATE_VOLUNTEER_ACT, UPDATE_VOLUNTEER_ACT, DELETE_VOLUNTEER_ACT,
+  FETCH_VOLUNTEER_LEADER, CREATE_VOLUNTEER_LEADER,
+  FETCH_VOLUNTEER_HISTORY, CREATE_VOLUNTEER_HISTORY
 } from './actions.type'
 import {
   FETCH_START,
-  FETCH_VOLUNTEERS_END,
-  QUERY_VOLUNTEERS_END,
-  SET_QUERY_INFO,
-  FIND_VOLUNTEERS_END,
-  RESET_FIND_VOLUNTEERS,
-  ADD_VOLUNTEER,
-  SET_VOLUNTEER,
-  REMOVE_VOLUNTEER,
-  FETCH_VOLUNTEER_EDUS_END,
-  SET_VOLUNTEER_EDU,
-  ADD_VOLUNTEER_EDU,
-  REMOVE_VOLUNTEER_EDU,
-  FETCH_VOLUNTEER_ACTS_END,
-  SET_VOLUNTEER_ACT,
-  ADD_VOLUNTEER_ACT,
-  REMOVE_VOLUNTEER_ACT
+  FETCH_VOLUNTEERS_END, ADD_VOLUNTEER, SET_VOLUNTEER, REMOVE_VOLUNTEER,
+  START_QUERYING, QUERY_VOLUNTEERS_END, SET_QUERY_INFO,
+  START_FINDING, FIND_VOLUNTEERS_END, RESET_FIND_VOLUNTEERS,
+  FETCH_VOLUNTEER_EDUS_END, SET_VOLUNTEER_EDU, ADD_VOLUNTEER_EDU, REMOVE_VOLUNTEER_EDU,
+  FETCH_VOLUNTEER_ACTS_END, SET_VOLUNTEER_ACT, ADD_VOLUNTEER_ACT, REMOVE_VOLUNTEER_ACT,
+  FETCH_VOLUNTEER_LEADER_END, ADD_VOLUNTEER_LEADER,
+  FETCH_VOLUNTEER_HISTORY_END, ADD_VOLUNTEER_HISTORY
 } from './mutations.type'
 
 const state = {
   volunteers: [],
   volunteerEdus: [],
   volunteerActs: [],
-  lastID: 0,
+  volunteerHistory: [],
+  volunteerLeader: [],
+  newID: 0,
   isLoading: false,
+  isFinding: false,
+  isQuerying: false,
   volunteersCount: 0,
   queryCount: 0,
   queryInfo: {cond: {}, good: {}},
@@ -55,10 +42,14 @@ const getters = {
     return state.volunteers.find((o) => o.id === id)
   },
   volunteers: state => state.volunteers,
-  lastVolunteerID: state => state.lastID,
+  newVolunteerID: state => state.newID,
   volunteerEdus: state => state.volunteerEdus,
   volunteerActs: state => state.volunteerActs,
+  volunteerLeader: state => state.volunteerLeader,
+  volunteerHistory: state => state.volunteerHistory,
   isVolunteersLoading: state => state.isLoading,
+  isQuerying: state => state.isQuerying,
+  isFinding: state => state.isFinding,
   volunteersCount: state => state.volunteersCount,
   queryVolunteers: state => state.queryResult,
   queryCount: state => state.queryCount,
@@ -70,7 +61,7 @@ const getters = {
 const actions = {
   [FETCH_VOLUNTEERS] (context, params) {
     context.commit(FETCH_START)
-    return VolunteerService.get_all(params)
+    return VolunteerService.queries(params)
       .then(({ data }) => {
         context.commit(FETCH_VOLUNTEERS_END, data)
       })
@@ -90,8 +81,9 @@ const actions = {
   [CREATE_VOLUNTEER] (context, volunteer) {
     return VolunteerService.create(volunteer)
       .then(({ data }) => {
-        volunteer.id = data.lastId
+        volunteer.id = data.newID
         context.commit(ADD_VOLUNTEER, volunteer)
+        return Promise.resolve(data.newID)
       })
       .catch((error) => {
         throw new Error(error)
@@ -128,7 +120,7 @@ const actions = {
   [CREATE_VOLUNTEER_EDU] (context, edu) {
     return VolunteerService.create_edu(edu)
       .then(({ data }) => {
-        edu.id = data.lastId
+        edu.id = data.newID
         context.commit(ADD_VOLUNTEER_EDU, edu)
       })
       .catch((error) => {
@@ -166,7 +158,7 @@ const actions = {
   [CREATE_VOLUNTEER_ACT] (context, act) {
     return VolunteerService.create_act(act)
       .then(({ data }) => {
-        act.id = data.lastId
+        act.id = data.newID
         context.commit(ADD_VOLUNTEER_ACT, act)
       })
       .catch((error) => {
@@ -192,7 +184,7 @@ const actions = {
       })
   },
   [QUERY_VOLUNTEERS] (context, params) {
-    context.commit(FETCH_START)
+    context.commit(START_QUERYING)
     return VolunteerService.query(params)
       .then(({ data }) => {
         context.commit(QUERY_VOLUNTEERS_END, data)
@@ -202,10 +194,48 @@ const actions = {
       })
   },
   [FIND_VOLUNTEERS] (context, params) {
-    context.commit(FETCH_START)
+    context.commit(START_FINDING)
     return VolunteerService.find(params)
       .then(({ data }) => {
         context.commit(FIND_VOLUNTEERS_END, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
+  [FETCH_VOLUNTEER_LEADER] (context, id) {
+    context.commit(FETCH_START)
+    return VolunteerService.query_leader(id)
+      .then(({ data }) => {
+        context.commit(FETCH_VOLUNTEER_LEADER_END, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
+  [CREATE_VOLUNTEER_LEADER] (context, ldr) {
+    return VolunteerService.create_leader(ldr)
+      .then(() => {
+        context.commit(ADD_VOLUNTEER_LEADER, ldr)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
+  [FETCH_VOLUNTEER_HISTORY] (context, id) {
+    context.commit(FETCH_START)
+    return VolunteerService.query_history(id)
+      .then(({ data }) => {
+        context.commit(FETCH_VOLUNTEER_HISTORY_END, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
+  [CREATE_VOLUNTEER_HISTORY] (context, hst) {
+    return VolunteerService.create_history(hst)
+      .then(() => {
+        context.commit(ADD_VOLUNTEER_HISTORY, hst)
       })
       .catch((error) => {
         throw new Error(error)
@@ -218,6 +248,12 @@ const mutations = {
   [FETCH_START] (state) {
     state.isLoading = true
   },
+  [START_FINDING] (state) {
+    state.isFinding = true
+  },
+  [START_QUERYING] (state) {
+    state.isQuerying = true
+  },
   [FETCH_VOLUNTEERS_END] (state, volunteers) {
     state.volunteers = volunteers
     state.volunteersCount = volunteers.length
@@ -225,7 +261,7 @@ const mutations = {
   },
   [ADD_VOLUNTEER] (state, volunteer) {
     // volunteer.registered = Moment().format('YYYY-MM-DD HH:mm:ss')()
-    state.lastID = volunteer.id
+    state.newID = volunteer.id
     state.volunteers.push(volunteer)
   },
   [SET_VOLUNTEER] (state, data) {
@@ -246,6 +282,9 @@ const mutations = {
     }
   },
   [FETCH_VOLUNTEER_EDUS_END] (state, edus) {
+    for (let i = 0; i < edus.length; i++) {
+      edus[i].idx = i + 1
+    }
     state.volunteerEdus = edus
     state.isLoading = false
   },
@@ -271,6 +310,9 @@ const mutations = {
     }
   },
   [FETCH_VOLUNTEER_ACTS_END] (state, acts) {
+    for (let i = 0; i < acts.length; i++) {
+      acts[i].idx = i + 1
+    }
     state.volunteerActs = acts
     state.isLoading = false
   },
@@ -299,10 +341,10 @@ const mutations = {
     console.log(results)
     state.queryResult = results
     state.queryCount = results.length
-    state.isLoading = false
+    state.isQuerying = false
   },
   [SET_QUERY_INFO] (state, data) {
-    console.log(data)
+    // console.log(data)
     state.queryInfo.cond = data.cond
     state.queryInfo.good = data.good
   },
@@ -310,11 +352,31 @@ const mutations = {
     console.log(results)
     state.foundResult = results
     state.foundCount = results.length
-    state.isLoading = false
+    state.isFinding = false
   },
   [RESET_FIND_VOLUNTEERS] (state) {
     state.foundResult = []
     state.foundCount = 0
+  },
+  [FETCH_VOLUNTEER_LEADER_END] (state, ldr) {
+    for (let i = 0; i < ldr.length; i++) {
+      ldr[i].idx = i + 1
+    }
+    state.volunteerLeader = ldr
+    state.isLoading = false
+  },
+  [ADD_VOLUNTEER_LEADER] (state, ldr) {
+    state.volunteerLeader.push(ldr)
+  },
+  [FETCH_VOLUNTEER_HISTORY_END] (state, hst) {
+    for (let i = 0; i < hst.length; i++) {
+      hst[i].idx = i + 1
+    }
+    state.volunteerHistory = hst
+    state.isLoading = false
+  },
+  [ADD_VOLUNTEER_HISTORY] (state, hst) {
+    state.volunteerHistory.push(hst)
   }
 }
 

@@ -16,6 +16,26 @@ router.get('/', (req, res) => {
   })
 })
 
+router.get('/acts', async (req, res) => {
+  const ldr = await getLeader(req.query.code)
+  console.log('leader is...', ldr.name, ldr.ca_name)
+  const sql = [`
+    SELECT a.*, v.name, v.ca_name, v.ca_id, e.name act_name 
+    FROM acts a
+    LEFT JOIN volunteers v ON a.v_id = v.id
+    LEFT JOIN edu_code e ON e.code = a.act_code
+    WHERE a.area_code=?`,
+    [req.query.code]]
+  db.query(...sql, (err, rows) => {
+    if (!err) {
+      res.status(200).send(rows)
+    } else {
+      console.warn('query error : ' + err)
+      res.status(500).send('Internal Server Error')
+    }
+  })
+})
+
 router.get('/page/:id', (req, res) => {
   queryResult(req.params.id)
     .then(data => {
@@ -168,8 +188,8 @@ const updateData = (table, obj, id) => {
         ?,?,?,?,?,?,?,?,?,?,
         ?,?,?,?,?,?,?,?,?,?)
         ON DUPLICATE KEY UPDATE
-        tt_dg=?, tt_dp=?, tt_ng=?, tt_np=?, 
-        dg_70=?, dp_70=?, ng_70=?, np_70=?, dg_71=?, dp_72=?, ng_72=?, np_72=?, 
+        tt_dg=?, tt_dp=?, tt_ng=?, tt_np=?, dg_70=?, dp_70=?, ng_70=?, np_70=?,
+        dg_71=?, dp_71=?, ng_71=?, np_71=?, dg_72=?, dp_72=?, ng_72=?, np_72=?, 
         dg_73=?, dp_73=?, ng_73=?, np_73=?, dg_74=?, dp_74=?, ng_74=?, np_74=?, 
         dg_75=?, dp_75=?, ng_75=?, np_75=?, dg_76=?, dp_76=?, ng_76=?, np_76=?, 
         dg_77=?, dp_77=?, ng_77=?, np_77=?, dg_78=?, dp_78=?, ng_78=?, np_78=?`,
@@ -199,8 +219,8 @@ const updateData = (table, obj, id) => {
         ?,?,?,?,?,?,?,?,?,?,
         ?,?,?,?,?,?,?,?,?,?)
         ON DUPLICATE KEY UPDATE
-        tt_dg=?, tt_dp=?, tt_ng=?, tt_np=?, 
-        dg_90=?, dp_90=?, ng_90=?, np_90=?, dg_91=?, dp_92=?, ng_92=?, np_92=?, 
+        tt_dg=?, tt_dp=?, tt_ng=?, tt_np=?, dg_90=?, dp_90=?, ng_90=?, np_90=?, 
+        dg_91=?, dp_91=?, ng_91=?, np_91=?, dg_92=?, dp_92=?, ng_92=?, np_92=?, 
         dg_93=?, dp_93=?, ng_93=?, np_93=?, dg_94=?, dp_94=?, ng_94=?, np_94=?, 
         dg_95=?, dp_95=?, ng_95=?, np_95=?, dg_96=?, dp_96=?, ng_96=?, np_96=?, 
         dg_97=?, dp_97=?, ng_97=?, np_97=?, dg_98=?, dp_98=?, ng_98=?, np_98=?`,
@@ -274,4 +294,21 @@ const deleteData = (table, id) => {
   })
 }
 
+const getLeader = (a_code) => {
+  return new _promise(function(resolve, reject) {
+    const sql = [`
+      SELECT name, ca_name
+      FROM leaders l LEFT JOIN volunteers v ON v.id = l.v_id 
+      WHERE l.work = 'Y' AND l.area_code = ?`, [a_code]]
+    return db.query(...sql, (err, rows) => {
+      if (!err) {
+        console.log('query has done')
+        resolve(rows[0])
+      } else {
+        console.warn('query error : ' + err)
+        reject(err)
+      }
+    })
+  })
+}
 module.exports = router

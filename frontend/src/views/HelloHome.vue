@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container>
+    <v-container pt-0>
       <v-text-field label="Catholic Bible Life Movement"></v-text-field>
       <v-layout>
         <v-flex xs4>

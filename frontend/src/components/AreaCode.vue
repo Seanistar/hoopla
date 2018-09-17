@@ -155,14 +155,14 @@ export default {
   methods: {
     onClickMenu (type) {
       if (type === 'add') {
-        this.$refs['codes'].setItem({code: this.getLastCode, name: ''})
+        this.$refs.codes.setItem({code: this.getLastCode, name: ''})
         this.inputDlg = true
         return
       }
       if (!this.getCode) return alert('구역을 선택해주세요!')
       if (type === 'remove') confirm('선택한 항목을 삭제하시겠습니까?') && this.deleteItem(this.getCode)
       else { // update
-        this.$refs['codes'].setItem({code: this.getCode, name: this.getName})
+        this.$refs.codes.setItem({code: this.getCode, name: this.getName})
         this.inputDlg = true
       }
     },

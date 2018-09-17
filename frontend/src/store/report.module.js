@@ -1,17 +1,17 @@
-import { ReportService } from '@/common/api.service'
+import { ReportService, VolunteerService } from '@/common/api.service'
 import {
   FETCH_REPORTS,
   FETCH_REPORT_STATE,
-  CREATE_REPORT,
-  UPDATE_REPORT,
-  DELETE_REPORT
+  FETCH_REPORT_ACTS,
+  CREATE_REPORT, UPDATE_REPORT, DELETE_REPORT,
+  CREATE_REPORT_ACT, UPDATE_REPORT_ACT, DELETE_REPORT_ACT
 } from './actions.type'
 import {
   FETCH_START,
   FETCH_REPORTS_END,
-  ADD_REPORT,
-  SET_REPORT,
-  REMOVE_REPORT
+  FETCH_REPORT_ACTS_END,
+  ADD_REPORT, SET_REPORT, REMOVE_REPORT,
+  SET_REPORT_ACT, ADD_REPORT_ACT, REMOVE_REPORT_ACT
 } from './mutations.type'
 import DateFilter from '@/common/date.filter'
 
@@ -20,7 +20,8 @@ const state = {
   reportCode: '',
   reportInfo: {},
   isLoading: false,
-  reportCount: 0
+  reportCount: 0,
+  reportActs: []
 }
 
 const getters = {
@@ -28,7 +29,8 @@ const getters = {
   reportInfo: state => state.reportInfo,
   reports: state => state.reports,
   isReportsLoading: state => state.isLoading,
-  reportCode: state => state.reportCode
+  reportCode: state => state.reportCode,
+  reportActs: state => state.reportActs
 }
 
 const actions = {
@@ -46,6 +48,16 @@ const actions = {
     return ReportService.get(plug)
       .then(({ data }) => {
         context.commit(SET_REPORT, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
+  [FETCH_REPORT_ACTS] (context, code) {
+    context.commit(FETCH_START, code)
+    return ReportService.query_acts(code)
+      .then(({ data }) => {
+        context.commit(FETCH_REPORT_ACTS_END, data)
       })
       .catch((error) => {
         throw new Error(error)
@@ -79,6 +91,34 @@ const actions = {
       .catch((error) => {
         throw new Error(error)
       })
+  },
+  [CREATE_REPORT_ACT] (context, act) {
+    return VolunteerService.create_act(act)
+      .then(({ data }) => {
+        act.id = data.lastId
+        context.commit(ADD_REPORT_ACT, act)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
+  [UPDATE_REPORT_ACT] (context, params) {
+    return VolunteerService.update_act(params)
+      .then(({ data }) => {
+        context.commit(SET_REPORT_ACT, params)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
+  [DELETE_REPORT_ACT] (context, plug) {
+    return VolunteerService.delete_act(plug)
+      .then(({ data }) => {
+        context.commit(REMOVE_REPORT_ACT, plug)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
   }
 }
 
@@ -91,6 +131,13 @@ const mutations = {
   [FETCH_REPORTS_END] (state, reports) {
     state.reports = reports
     state.reportsCount = reports.length
+    state.isLoading = false
+  },
+  [FETCH_REPORT_ACTS_END] (state, acts) {
+    for (let i = 0; i < acts.length; i++) {
+      acts[i].idx = i + 1/**/
+    }
+    state.reportActs = acts
     state.isLoading = false
   },
   [ADD_REPORT] (state, report) {
@@ -106,6 +153,26 @@ const mutations = {
     if (pos > -1) {
       console.log('remove position : ', pos)
       state.reports.splice(pos, 1)
+    }
+  },
+  [ADD_REPORT_ACT] (state, act) {
+    state.reportActs.push(act)
+  },
+  [SET_REPORT_ACT] (state, data) {
+    const pos = state.reportActs.findIndex((o) => o.id === data.id)
+    if (pos > -1) {
+      console.log('set position : ', pos)
+      Object.assign(state.reportActs[pos], data)
+    } else {
+      console.log('no pos and add position : ', pos)
+      state.reportActs.push(data)
+    }
+  },
+  [REMOVE_REPORT_ACT] (state, id) {
+    const pos = state.reportActs.findIndex((o) => o.id === id)
+    if (pos > -1) {
+      console.log('remove position : ', pos)
+      state.reportActs.splice(pos, 1)
     }
   }
 }

@@ -1,16 +1,15 @@
 <template>
-  <v-container class="elevation-5 w-85 pt-2">
+  <v-container class="elevation-5 pt-2">
     <v-layout row align-baseline pb-0>
       <v-flex xs6>
         <v-layout row align-baseline>
           <v-flex xs2>
-            <v-subheader class="body-2 pr-0 w-50">소속본당 : </v-subheader>
+            <v-subheader class="body-2 pr-0">소속본당 : </v-subheader>
           </v-flex>
           <v-flex xs5>
-            <v-combobox class="body-2"
-                        v-model="model" :items="items" item-value="code" item-text="name"
-                        :search-input.sync="search" clearable single-line
-            >
+            <v-combobox class="body-2" v-model="model"
+                        :items="items" item-value="code" item-text="name"
+                        :search-input.sync="search" clearable single-line>
               <template slot="no-data">
                 <v-list-tile>
                   <v-list-tile-content>
@@ -33,8 +32,7 @@
 
     <v-data-table :headers="headers" :items="volunteers" class="elevation-5"
                   :pagination.sync="pagination" :rows-per-page-items="perPage" rows-per-page-text="페이지 당 보기 개수"
-                  item-key="id" :loading="isVolunteersLoading && !fetched"
-    >
+                  item-key="id" :loading="isVolunteersLoading && !fetched">
       <template slot="headers" slot-scope="props">
         <tr>
           <th v-for="header in props.headers" :key="header.text"
@@ -45,7 +43,7 @@
       </template>
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <tr>
+        <tr @dblclick="editItem(props.item)">
           <td class="text-xs-center">{{ props.item.id }}</td>
           <td class="text-xs-center">{{ props.item.name }}</td>
           <td class="text-xs-center">{{ props.item.ca_name }}</td>
@@ -56,8 +54,8 @@
           <td class="text-xs-center">{{ props.item.au_date }}</td>
           <td class="text-xs-center">{{ props.item.ca_date }}</td>
           <td class="justify-center layout px-0">
-            <v-icon small class="mr-3" @click="editItem(props.item)">edit</v-icon>
-            <v-icon small @click="deleteItem(props.item)">delete</v-icon>
+            <v-icon small class="mr-3" @click.self="editItem(props.item)">edit</v-icon>
+            <v-icon small @click.self="deleteItem(props.item)">delete</v-icon>
           </td>
         </tr>
       </template>
@@ -75,16 +73,15 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { FETCH_VOLUNTEERS, CREATE_VOLUNTEER, UPDATE_VOLUNTEER, DELETE_VOLUNTEER } from '@/store/actions.type'
+import { FETCH_VOLUNTEERS, DELETE_VOLUNTEER } from '@/store/actions.type'
 import { map, find, orderBy } from 'lodash/collection'
 
 export default {
-  name: 'VoltList',
+  name: 'VolunteerList',
   data: () => ({
     items: [],
     model: '',
     search: null,
-    dialog: false,
     fetched: false,
     perPage: [10, 25, {text: '$vuetify.dataIterator.rowsPerPageAll', value: -1}],
     pagination: { sortBy: 'id' },
@@ -99,47 +96,29 @@ export default {
       { text: '선서일', value: 'auth_date' },
       { text: '세례일', value: 'ca_date' },
       { text: '편집', value: 'edit', sortable: false }
-    ],
-    editedIndex: -1,
-    editedItem: {},
-    defaultItem: { id: null, name: '' }
+    ]
   }),
   computed: {
     ...mapGetters([
       'smallCodes',
       'adminInfo',
+      'volunteers',
       'volunteersCount',
       'isVolunteersLoading'
     ]),
-    volunteers: {
-      get () {
-        return this.$store.state.volunteer.volunteers
-      },
-      set (value) {
-        this.$store.dispatch(CREATE_VOLUNTEER, value)
-      }
-    },
     activityState () {
       return { ACT: '활동중', STP: '중단', BRK: '쉼', DTH: '사망' }
-    },
-    formTitle () {
-      return this.editedIndex === -1 ? '봉사자 추가' : '봉사자 수정'
     }
   },
   watch: {
-    dialog (val) {
-      val || this.close()
-    },
     model (val) {
-      if (val.length > 5) {
+      if (val && val.length > 5) {
         this.$nextTick(() => this.model.pop())
       }
     }
   },
   created () {
-    const list = map(this.smallCodes, o => {
-      return {code: o.s_code, name: o.s_name}
-    })
+    const list = map(this.smallCodes, o => { return {code: o.s_code, name: o.s_name} })
     this.items = orderBy(list, ['name'])
 
     const res = find(list, o => o.code === this.adminInfo.area_code)
@@ -154,28 +133,13 @@ export default {
       this.fetched = true
     },
     newVolunteer () {
-      this.$router.push({name: 'new-volunteer'})
+      this.$router.push({name: 'edit-volunteer'})
     },
     editItem (item) {
       this.$router.push({name: 'edit-volunteer', params: {id: item.id, item: item}})
     },
     deleteItem (item) {
       confirm('이 항목을 삭제하시겠습니까?') && this.$store.dispatch(DELETE_VOLUNTEER, item.id)
-    },
-    close () {
-      this.dialog = false
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      }, 10)
-    },
-    save () {
-      if (this.editedIndex > -1) {
-        this.$store.dispatch(UPDATE_VOLUNTEER, this.editedItem)
-      } else {
-        this.volunteers = this.editedItem
-      }
-      this.close()
     }
   }
 }

@@ -12,7 +12,7 @@ export default {
   components: { QueryList },
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      vm.$refs['que'].setLastInfo()
+      vm.$refs.que.setLastInfo()
     })
   }
 }

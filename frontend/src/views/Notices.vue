@@ -1,21 +1,19 @@
 <template>
-  <div class="pt-4">
-    <v-container style="width: 80%">
-      <v-layout row wrap>
-        <v-flex xs12>
-          <v-expansion-panel popout class="elevation-5">
-            <v-expansion-panel-content
-              v-for="(item, i) in items" :key="i">
-              <div slot="header"><span>{{item.title}}</span><span class="f pr-3">{{item.date}}</span></div>
-              <v-card>
-                <v-card-text>{{item.desc}}</v-card-text>
-              </v-card>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-flex>
-      </v-layout>
-    </v-container>
-  </div>
+  <v-container w-80>
+    <v-layout row wrap>
+      <v-flex xs12>
+        <v-expansion-panel popout class="elevation-5">
+          <v-expansion-panel-content
+            v-for="(item, i) in items" :key="i">
+            <div slot="header"><span>{{item.title}}</span><span class="f pr-3">{{item.date}}</span></div>
+            <v-card>
+              <v-card-text>{{item.desc}}</v-card-text>
+            </v-card>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>

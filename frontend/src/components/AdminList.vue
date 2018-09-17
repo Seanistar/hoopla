@@ -3,7 +3,7 @@
     <v-data-table :headers="headers" :items="admins" hide-actions class="elevation-5"
     >
       <template slot="items" slot-scope="props">
-        <tr @click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'unset')}">
+        <tr @click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
           <td class="text-xs-center">{{ props.item.id }}</td>
           <td class="text-xs-center">{{ props.item.admin_id }}</td>
           <td class="text-xs-center">{{ props.item.name }}</td>

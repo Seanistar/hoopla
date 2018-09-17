@@ -53,8 +53,8 @@ export const AdminService = {
 }
 
 export const VolunteerService = {
-  get_all (params = {}) {
-    return ApiService.query('volts', params)
+  queries (code) {
+    return ApiService.query('volts', {params: {code}})
   },
   get (id) {
     return ApiService.get('volts/page', id)
@@ -92,17 +92,32 @@ export const VolunteerService = {
   delete_act (id) {
     return ApiService.delete(`volts/act/${id}`)
   },
-  query (params) {
-    return ApiService.query('volts/query', params)
+  query (data) {
+    return ApiService.query('volts/query', {params: data})
   },
-  find (params) {
-    return ApiService.query('volts/find', params)
+  find (data) {
+    return ApiService.query('volts/find', {params: data})
+  },
+  query_leader (id) {
+    return ApiService.get(`volts/leader`, id)
+  },
+  create_leader (data) {
+    return ApiService.create('volts/leader', data)
+  },
+  query_history (id) {
+    return ApiService.get(`volts/history`, id)
+  },
+  create_history (data) {
+    return ApiService.create('volts/history', data)
   }
 }
 
 export const ReportService = {
   query (code) {
     return ApiService.query('reports', {params: {code}})
+  },
+  query_acts (code) {
+    return ApiService.query('reports/acts', {params: {code}})
   },
   get (id) {
     return ApiService.get('reports/page', id)

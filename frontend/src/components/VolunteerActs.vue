@@ -1,30 +1,35 @@
 <template>
-  <v-container>
-    <v-layout row justify-end>
-      <v-flex xs12 sm2 offset-sm4>
-        <menu-buttons class="pt-0 pb-1" refs="acts" @click-menu="onClickMenu"/>
+  <v-container pt-4 pb-3 mt-2 elevation-3>
+    <v-layout pb-2 pl-2>
+      <v-flex xs12>
+        <div>전체 봉사 : {{volunteerActs.length}} 건</div>
       </v-flex>
     </v-layout>
     <v-data-table :headers="headers" :items="volunteerActs"
-                  hide-actions class="elevation-1" :loading="fetched && isLoading"
-    >
+                  class="elevation-1 mb-2" hide-actions
+                  :loading="fetched && isLoading">
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <tr @click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'unset')}">
-          <td class="text-xs-center">{{ props.item.id }}</td>
-          <td class="text-xs-center">{{ props.item.act_name }}</td>
-          <td class="text-xs-center">{{ props.item.groups }}</td>
-          <td class="text-xs-center">{{ props.item.numbers }}</td>
-          <td class="text-xs-center">{{ props.item.s_date }}</td>
-          <td class="text-xs-center">{{ props.item.e_date }}</td>
-          <td class="text-xs-center">{{ props.item.area_code }}</td>
-          <td class="text-xs-center">{{ props.item.content }}</td>
+        <tr @click="selected = props.item" @dblclick="onClickMenu('update')"
+            :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
+          <td class="text-xs-center w-10">{{ props.item.idx }}</td>
+          <td class="text-xs-center w-15">{{ props.item.act_name }}</td>
+          <td class="text-xs-center w-10">{{ props.item.numbers }}</td>
+          <td class="text-xs-center w-15">{{ props.item.s_date }}</td>
+          <td class="text-xs-center w-15">{{ props.item.e_date }}</td>
+          <td class="text-xs-center w-15">{{ props.item.s_name }} 본당</td>
+          <td class="text-xs-center w-20">{{ props.item.content }}</td>
         </tr>
       </template>
       <template slot="no-data" v-if="fetched">
-          봉사 활동 내역이 없습니다.
+        <tr class="text-xs-center"><td colspan="8">봉사 활동 내역이 없습니다.</td></tr>
       </template>
     </v-data-table>
+    <v-layout row justify-end>
+      <v-flex xs12 sm2 offset-sm4>
+        <menu-buttons class="pt-0" refs="acts" @click-menu="onClickMenu"/>
+      </v-flex>
+    </v-layout>
     <item-dialog ref="acts" :visible="inputDlg" @close-input-item="onInputItem" refs="acts"/>
   </v-container>
 </template>
@@ -64,42 +69,43 @@ export default {
     inputDlg: false,
     fetched: false,
     headers: [
-      { text: '번호', align: 'center', value: 'id' },
-      { text: '봉사 구분', align: 'center', value: 'act_name' },
-      { text: '그룹 수', align: 'center', value: 'groups' },
-      { text: '구성원 수', align: 'center', value: 'numbers' },
-      { text: '시작일', align: 'center', value: 's_date' },
-      { text: '종료일', align: 'center', value: 'e_date' },
-      { text: '활동 본당', align: 'center', value: 'area_code', sortable: false },
-      { text: '활동 내용', align: 'center', value: 'content', sortable: false }
+      { text: '번호', value: 'idx' },
+      { text: '봉사 그룹', value: 'act_name' },
+      { text: '구성원 수', value: 'numbers' },
+      { text: '시작일', value: 's_date' },
+      { text: '종료일', value: 'e_date' },
+      { text: '활동 구역', value: 's_name' },
+      { text: '활동 내용', value: 'content', sortable: false }
     ]
   }),
   created () {
+    this.headers.map(h => { h.class = ['text-xs-center', 'body-1'] })
     this.fetchData()
   },
   methods: {
+    async fetchData () {
+      this.selected = {}
+      !isUndefined(this.v_id) && await this.$store.dispatch(FETCH_VOLUNTEER_ACTS, this.v_id)
+      this.fetched = true
+    },
     updateActItem (item) {
       this.$store.dispatch(UPDATE_VOLUNTEER_ACT, item)
     },
     deleteActItem (id) {
       this.$store.dispatch(DELETE_VOLUNTEER_ACT, id)
     },
-    async fetchData () {
-      this.selected = {}
-      !isUndefined(this.v_id) && await this.$store.dispatch(FETCH_VOLUNTEER_ACTS, this.v_id)
-      this.fetched = true
-    },
     onClickMenu (type) {
       if (type === 'add') {
-        this.$refs['acts'].reset()
-        // this.$refs['acts'].setItem({id: this.volunteerActs.length + 1})
+        this.$refs.acts.setItem(Object.assign({id: this.v_id}, this.$parent.getCore()))
         this.inputDlg = true
         return
       }
       if (!this.selected.id) return alert('봉사 내역을 선택해주세요!')
       if (type === 'remove') confirm('선택한 봉사 내역을 삭제하시겠습니까?') && this.deleteActItem(this.selected.id)
       else { // update
-        this.$refs['acts'].setItem(this.selected)
+        this.selected.act_code = parseInt(this.selected.act_code)
+        Object.assign(this.selected, this.$parent.getCore())
+        this.$refs.acts.setItem(this.selected)
         this.inputDlg = true
       }
     },
@@ -107,6 +113,7 @@ export default {
       this.inputDlg = false
       if (data === undefined) return
 
+      if (isUndefined(data.v_id)) data.v_id = data.id
       console.log('input item...', data)
       if (isUndefined(this.selected.id)) this.volunteerActs = data
       else this.updateActItem(data)
@@ -116,4 +123,7 @@ export default {
 </script>
 
 <style scoped>
+  .w-15 {
+    width: 15%;
+  }
 </style>

@@ -3,7 +3,7 @@
     <v-layout row wrap align-end>
       <v-flex xs12>
         <v-layout row wrap pb-0>
-          <v-subheader class="subheading font-weight-bold w-16 px-0">{{states.ro.s_name}} 본당
+          <v-subheader class="subheading font-weight-bold w-16 pl-1 pr-0">{{states.ro.s_name}} 본당
           </v-subheader>
           <v-subheader class="body-2 w-24 pr-0"><span class="mr-2">작성자 :</span>
             <input v-model="states.ro.name" tag="rb"
@@ -25,7 +25,7 @@
     </v-layout>
 
     <v-layout row pt-2>
-      <table class="table-line w-100">
+      <table class="table-line w-100 elevation-5">
         <tr>
           <th class="w-20"></th>
           <th colspan="4" class="w-40">그룹 공부 현황</th>
@@ -64,7 +64,7 @@
     </v-layout>
 
     <v-layout row mt-4>
-      <table class="table-line w-100">
+      <table class="table-line w-100 elevation-5">
         <tr>
           <th colspan="2" class="w-20">성서 40주간</th>
           <th colspan="2" class="w-20">월모임</th>
@@ -122,22 +122,18 @@
 import { mapGetters } from 'vuex'
 import MenuButtons from './control/MenuButtons'
 import { FETCH_REPORT_STATE, CREATE_REPORT, UPDATE_REPORT } from '@/store/actions.type'
-import { reduce, find } from 'lodash/collection'
+import { reduce } from 'lodash/collection'
 import { pick, omit } from 'lodash/object'
 // import { isEqual, cloneDeep } from 'lodash/lang'
 
 export default {
   name: 'ReportStates',
   components: { MenuButtons },
-  props: {
-    r_id: undefined
-  },
+  props: { r_id: undefined },
   computed: {
     ...mapGetters([
       'trnCodes',
       'stdCodes',
-      'smallCodes',
-      'adminInfo',
       'reportInfo'
     ]),
     topics () {
@@ -203,9 +199,7 @@ export default {
   created () {
     if (this.r_id) this.fetch()
     else {
-      let sc = sessionStorage.getItem('SMALL-CODE')
-      if (!sc) sc = this.adminInfo.area_code
-      const res = find(this.smallCodes, o => o.s_code === sc)
+      const res = this.$parent.getSmall()
       if (res) {
         this.states.ro.s_name = res.s_name
         this.states.ro.s_code = res.s_code

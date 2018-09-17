@@ -1,5 +1,5 @@
 <template>
-  <v-container pt-3>
+  <v-container pt-0>
     <v-tabs left align-with-title fixed-tabs class="elevation-4">
       <v-tab v-for="(item, idx) in title" :key="idx" @click="changeTab(idx)"><strong>{{ item }}</strong></v-tab>
     </v-tabs>
@@ -8,6 +8,7 @@
       <volunteer-edus v-else-if="tabIdx === 1" :v_id="v_id"/>
       <volunteer-acts v-else-if="tabIdx === 2" :v_id="v_id"/>
     </v-layout>
+    <float-button/>
   </v-container>
 </template>
 
@@ -15,13 +16,14 @@
 import VolunteerItem from '@/components/VolunteerItem'
 import VolunteerEdus from '@/components/VolunteerEdus'
 import VolunteerActs from '@/components/VolunteerActs'
+import FloatButton from '@/components/control/FloatButton'
 
 export default {
   name: 'NewVolunteer',
-  components: { VolunteerItem, VolunteerEdus, VolunteerActs },
+  components: { FloatButton, VolunteerItem, VolunteerEdus, VolunteerActs },
   computed: {
-    lastVolunteerID () {
-      return this.$store.getters.lastVolunteerID
+    newVolunteerID () {
+      return this.$store.getters.newVolunteerID
     }
   },
   data: () => ({
@@ -40,7 +42,7 @@ export default {
     },
     addDone () {
       this.isAdded = true
-      console.log(this.v_id = this.lastVolunteerID)
+      console.log(this.v_id = this.newVolunteerID)
     }
   }
 }

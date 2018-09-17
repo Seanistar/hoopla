@@ -18,6 +18,14 @@ export const DELETE_VOLUNTEER_ACT = 'deleteVolunteerAct'
 export const CREATE_VOLUNTEER_ACT = 'createVolunteerAct'
 export const UPDATE_VOLUNTEER_ACT = 'updateVolunteerAct'
 
+// volunteer's leaders
+export const FETCH_VOLUNTEER_LEADER = 'fetchVolunteerLeader'
+export const CREATE_VOLUNTEER_LEADER = 'createVolunteerLeader'
+
+// volunteer's history
+export const FETCH_VOLUNTEER_HISTORY = 'fetchVolunteerHistory'
+export const CREATE_VOLUNTEER_HISTORY = 'createVolunteerHistory'
+
 // volunteer's activity for the group study
 export const FETCH_VOLUNTEER_EDUS = 'fetchVolunteerEdus'
 export const DELETE_VOLUNTEER_EDU = 'deleteVolunteerEdu'
@@ -35,11 +43,14 @@ export const CHECK_AUTH = 'checkAuth'
 // state report for small area
 export const FETCH_REPORTS = 'fetchReports'
 export const FETCH_REPORT_STATE = 'fetchReportState'
-export const FETCH_REPORT_VOLTS = 'fetchReportVolts'
-export const FETCH_REPORT_ACTS = 'fetchReportActs'
 export const DELETE_REPORT = 'deleteReport'
 export const CREATE_REPORT = 'createReport'
 export const UPDATE_REPORT = 'updateReport'
+export const FETCH_REPORT_VOLTS = 'fetchReportVolts'
+export const FETCH_REPORT_ACTS = 'fetchReportActs'
+export const DELETE_REPORT_ACT = 'deleteReportAct'
+export const CREATE_REPORT_ACT = 'createReportAct'
+export const UPDATE_REPORT_ACT = 'updateReportAct'
 
 // will be obsoleted
 export const DELETE_AUTHOR = 'deleteAuthor'

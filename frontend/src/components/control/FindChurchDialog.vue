@@ -3,7 +3,9 @@
     <v-dialog v-model="dialog" scrollable persistent max-width="600px">
       <v-card>
         <v-card-title class="pl-4 pb-2">
-          <v-text-field v-model="name" label="본당 이름 입력" clearable hint="이름을 입력하고 엔터키를 누르세요." @keyup.enter="findOne"></v-text-field>
+          <v-text-field label="본당 이름 입력" v-model="name" clearable id="church"
+                        hint="이름을 입력하고 엔터키를 누르세요." @keyup.enter="findOne">
+          </v-text-field>
           <v-btn slot="activator" color="primary" outline dark @click.stop="findOne">본당 찾기</v-btn>
         </v-card-title>
         <v-divider></v-divider>
@@ -20,7 +22,8 @@
               </template>
               <v-progress-linear slot="progress" color="blue" indeterminate="finding"></v-progress-linear>
               <template slot="items" slot-scope="props">
-                <tr @click="selected = props.item" :style="{backgroundColor: (selected.s_code === props.item.s_code ? 'orange' : 'unset')}">
+                <tr @click="selected = props.item" @dblclick="closeDialog"
+                    :style="{backgroundColor: (selected.s_code === props.item.s_code ? 'orange' : 'white')}">
                   <td class="text-xs-center">{{ props.item.s_code }}</td>
                   <td class="text-xs-center">{{ props.item.s_name }}</td>
                   <td class="text-xs-center">{{ props.item.m_name }}</td>
@@ -81,11 +84,16 @@ export default {
   watch: {
     'item.name' () {
       this.finding = false
+    },
+    dialog (val) {
+      val && this.$nextTick(() => {
+        document.getElementById('church').focus()
+      })
     }
   },
   methods: {
     closeDialog () {
-      this.$emit('close-find-church', {data: this.selected})
+      this.$emit('close-find-church', this.selected)
       this.reset()
     },
     findOne () {
@@ -95,7 +103,7 @@ export default {
       setTimeout(() => {
         this.matches = filter(this.smallCodes, o => o.s_name.search(this.name) >= 0)
         this.finding = true
-      }, 100)
+      }, 10)
     },
     reset () {
       this.name = ''

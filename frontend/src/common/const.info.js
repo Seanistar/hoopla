@@ -4,3 +4,10 @@ export const ACTIVITY_STATES = [
   {cd: 'STP', nm: '중단'},
   {cd: 'DTH', nm: '사망'}
 ]
+
+export const LEADER_STATES = [
+  {cd: '', nm: '선택없음'},
+  {cd: 'S', nm: '본당'},
+  {cd: 'M', nm: '지구'},
+  {cd: 'L', nm: '교구'}
+]

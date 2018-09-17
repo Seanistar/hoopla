@@ -5,17 +5,17 @@
     >
       <template slot="headers" slot-scope="props">
         <tr>
-          <th rowspan="2" style="width: 10%" class="body-2 font-weight-bold">연도</th>
-          <th colspan="9" style="width: 90%" class="body-2 font-weight-bold">성서 연수 현황</th>
+          <th rowspan="2" class="body-2 font-weight-bold w-10">연도</th>
+          <th colspan="9" class="body-2 font-weight-bold w-90">성서 연수 현황</th>
         </tr>
         <tr>
-          <th class="body-1 font-weight-medium"  style="width: 10%"
+          <th class="body-1 font-weight-medium w-10"
               v-for="item in headers" :key="item.code">{{item.name|subject}}</th>
         </tr>
       </template>
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <tr @click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'unset')}">
+        <tr @click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
           <td class="text-xs-center">{{ props.item.id }}</td>
           <td class="text-xs-center">{{ props.item.name }}</td>
           <td class="text-xs-center">{{ props.item.ca_name }}</td>

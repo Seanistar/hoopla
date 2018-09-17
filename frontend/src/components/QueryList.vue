@@ -1,10 +1,10 @@
 <template>
   <div>
     <v-form ref="form">
-      <v-container style="width: 85%" class="elevation-4">
+      <v-container class="elevation-4 py-1 w-85">
         <v-layout row wrap pl-2>
           <v-flex xs12 sm3>
-            <v-select label="교구" v-model="areaCode.la_code" hide-details
+            <v-select label="교구" v-model="areaCode.la_code" hide-details class="body-1"
                       :items="lAreaCodes" item-text="l_name" item-value="l_code"
             ></v-select>
           </v-flex>
@@ -41,8 +41,7 @@
           <v-flex xs3>
             <v-combobox label="본당이름"
                         v-model="small.model" :items="small.items" item-value="code" item-text="name"
-                        :search-input.sync="small.search" @input="onBlur" clearable
-            >
+                        :search-input.sync="small.search" @input="onBlur" clearable>
               <template slot="no-data">
                 <v-list-tile>
                   <v-list-tile-content>
@@ -64,18 +63,20 @@
       </v-container>
     </v-form>
     <v-divider class="my-3"></v-divider>
-    <v-container class="elevation-2" style="width: 85%">
-      <v-layout>
-        <v-flex xs12 pb-2>
-          조회 결과 수 : {{queryCount}} 건
+    <v-container class="elevation-2 w-85">
+      <v-btn fixed dark fab style="top: 40%" right color="pink"><v-icon>add</v-icon></v-btn>
+      <v-layout pb-2>
+        <v-flex xs12>
+          <div>조회 결과 수 : {{queryCount}} 건</div>
         </v-flex>
       </v-layout>
-      <v-data-table :headers="headers" :items="queryVolunteers" :loading="queried && isVolunteersLoading"
+      <v-data-table :headers="headers" :items="queryVolunteers" :loading="queried && isQuerying"
                     hide-actions no-data-text="조회 조건을 선택하세요."
       >
         <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
         <template slot="items" slot-scope="props">
-          <tr @click="onSelectResult(props.item)" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'unset')}">
+          <tr @click="selected = props.item" @dblclick="onClickResult(props.item)"
+              :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
             <td class="text-xs-center">{{ props.item.id }}</td>
             <td class="text-xs-center">{{ props.item.name }}</td>
             <td class="text-xs-center">{{ props.item.ca_name }}</td>
@@ -92,8 +93,8 @@
         </template>
       </v-data-table>
     </v-container>
-    <people-dialog :visible="peopleFinder" @close-find-people="onPeopleFind"/>
-    <church-dialog :visible="churchFinder" @close-find-church="onChurchFind"/>
+    <people-dialog :visible="peopleFinder" @close-find-people="onPeopleFound"/>
+    <church-dialog :visible="churchFinder" @close-find-church="onChurchFound"/>
   </div>
 </template>
 
@@ -116,7 +117,7 @@ export default {
     ...mapGetters([
       'eduCodes',
       'smallCodes',
-      'isVolunteersLoading',
+      'isQuerying',
       'queryInfo',
       'queryCount',
       'queryVolunteers'
@@ -194,16 +195,16 @@ export default {
       this.selected = this.queryInfo.good
       this.params = this.queryInfo.cond
     },
-    onSelectResult (item) {
+    onClickResult (item) {
       this.selected = item
       this.$store.commit(SET_QUERY_INFO, {cond: this.formData, good: item})
       this.$router.push({name: 'view-query'})
     },
-    onPeopleFind (data) {
+    onPeopleFound (data) {
       console.log('found people...', data)
       this.peopleFinder = false
     },
-    onChurchFind (data) {
+    onChurchFound (data) {
       console.log('found church...', data)
       this.churchFinder = false
     },
@@ -215,4 +216,7 @@ export default {
 </script>
 
 <style scoped>
+  .v-input label {
+    font-size: 13px !important;
+  }
 </style>

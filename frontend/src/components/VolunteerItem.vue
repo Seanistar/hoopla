@@ -1,100 +1,142 @@
 <template>
-  <v-container>
-    <v-layout pa-4 class="elevation-3">
+  <v-container pt-4 pb-3 px-5 mt-2 elevation-3>
     <v-form ref="form">
-      <v-layout row pb-2>
-        <v-flex xs6>
-          <date-picker ref="au_date" title="선서일" @close-date-picker="onPicked" refs="au_date"
-          ></date-picker>
-        </v-flex>
+      <v-layout pt-3>
+        <div class="font-weight-bold grey--text subheading">
+          <span class="mb-4">기본 정보</span></div>
       </v-layout>
+      <v-divider></v-divider>
+      <v-container mb-4>
+        <v-layout>
+          <v-flex xs4>
+            <date-picker ref="au_date" title="선서일"
+                         @close-date-picker="onPicked" refs="au_date"></date-picker>
+          </v-flex>
+          <v-flex xs4>
+            <v-text-field label="봉사자 코드" :rules="[rules.required]"
+                          clearable v-model="params.ca_id"></v-text-field>
+          </v-flex>
+          <v-flex xs4>
+            <v-select label="활동 상태" v-model="params.state"
+                      :items="states" item-text="nm" item-value="cd" ></v-select><!--prepend-icon="contacts"-->
+          </v-flex>
+        </v-layout>
+        <v-layout>
+          <v-flex>
+            <v-text-field label="성명" v-model="params.name" :rules="[rules.required]"
+                          :clearable="true" hint="실명으로 입력해 주세요."
+            ></v-text-field>
+          </v-flex>
+          <v-flex>
+            <date-picker ref="br_date" title="생년월일"
+                         @close-date-picker="onPicked" refs="br_date"></date-picker>
+          </v-flex>
+          <v-flex>
+            <v-text-field label="세례명" :rules="[rules.required]"
+                          clearable v-model="params.ca_name"
+            ></v-text-field>
+          </v-flex>
+          <v-flex>
+            <date-picker ref="ca_date" title="세례일"
+                         @close-date-picker="onPicked" refs="ca_date"></date-picker>
+          </v-flex>
+        </v-layout>
+        <v-layout>
+          <v-flex xs4>
+            <v-select label="교구 코드" v-model="areaCode.la_code" @change="onChangeCode"
+                      :items="lAreaCodes" item-text="l_name" item-value="l_code"
+            ></v-select>
+          </v-flex>
+          <v-flex xs4>
+            <v-select label="지구 코드" v-model="areaCode.ma_code"
+                      @change="onChangeCode" no-data-text="본당 자료가 없습니다."
+                      :items="mAreaCodes" item-text="m_name" item-value="m_code" :disabled="areaCode.la_code === ''"
+            ></v-select>
+          </v-flex>
+          <v-flex xs4>
+            <v-select label="본당 코드" v-model="areaCode.sa_code"
+                      @change="onChangeCode" no-data-text="지구 자료가 없습니다."
+                      :items="sAreaCodes" item-text="s_name" item-value="s_code" :disabled="areaCode.ma_code === ''"
+            ></v-select>
+          </v-flex>
+        </v-layout>
+      </v-container>
 
-      <v-layout row wrap>
-        <v-flex xs12 sm6>
-          <v-text-field label="성명" prepend-icon="mood" :rules="[rules.required]"
-                  :clearable="true" v-model="params.name"
-                  hint="실명으로 입력해 주세요."
-          ></v-text-field>
-        </v-flex>
-        <v-flex xs12 sm6>
-          <date-picker ref="br_date" title="생년월일" @close-date-picker="onPicked" refs="br_date"
-          ></date-picker>
-        </v-flex>
-
-        <v-flex xs12 sm6>
-          <v-text-field label="세례명" prepend-icon="face" :rules="[rules.required]"
-                        clearable v-model="params.ca_name"
-          ></v-text-field>
-        </v-flex>
-        <v-flex xs12 sm6>
-          <date-picker ref="ca_date" title="세례일" @close-date-picker="onPicked" refs="ca_date"
-          ></date-picker>
-        </v-flex>
+      <v-layout>
+        <div class="font-weight-bold grey--text subheading">대표 봉사자 정보
+          <span class="grey--text caption">※ 임기 중이면 종료일은 설정하지 않습니다.</span></div>
       </v-layout>
+      <v-divider></v-divider>
+      <v-container mb-4>
+        <v-layout>
+          <v-flex xs2>
+            <v-checkbox label="대표 선임" v-model="isLeader"
+                        :disabled="!this.v_id || params.l_work === 'Y'"></v-checkbox>
+          </v-flex>
 
-      <v-layout wrap>
-        <v-flex xs12 sm4 d-flex>
-          <v-select label="교구 코드" v-model="areaCode.la_code"
-                    :items="lAreaCodes" item-text="l_name" item-value="l_code"
-          ></v-select>
-        </v-flex>
-        <v-flex xs12 sm4 d-flex>
-          <v-select label="지구 코드" v-model="areaCode.ma_code" no-data-text="본당 자료가 없습니다."
-                    :items="mAreaCodes" item-text="m_name" item-value="m_code" :disabled="areaCode.la_code === ''"
-          ></v-select>
-        </v-flex>
-        <v-flex xs12 sm4 d-flex>
-          <v-select label="본당 코드" v-model="areaCode.sa_code" no-data-text="지구 자료가 없습니다."
-                    :items="sAreaCodes" item-text="s_name" item-value="s_code" :disabled="areaCode.ma_code === ''"
-          ></v-select>
-        </v-flex>
+            <v-flex xs4>
+              <date-picker ref="ls_date" title="임기 시작일"
+                           @close-date-picker="onPicked" refs="ls_date">
+              </date-picker>
+            </v-flex>
+            <v-flex xs4>
+              <date-picker ref="le_date" title="임기 종료일"
+                           @close-date-picker="onPicked" refs="le_date"></date-picker>
+            </v-flex>
+            <v-flex>
+              <v-btn color="grey accent-2"
+                     v-if="params.l_work === 'Y'" class="mt-3">임기 중</v-btn>
+              <v-btn color="black accent-2" outline @click="onCompleteLeader('bgn')"
+                     v-else-if="isLeader && !params.l_work && params.ls_date" class="mt-3">임기 시작</v-btn>
+              <v-btn color="black accent-2" outline @click="onCompleteLeader('end')"
+                     v-else-if="params.l_work === 'Y' && params.ls_date && params.le_date" class="mt-3">임기 종료</v-btn>
+            </v-flex>
+
+        </v-layout>
+      </v-container>
+
+      <v-layout>
+        <div class="font-weight-bold grey--text subheading">부가 정보</div>
       </v-layout>
+      <v-divider></v-divider>
+      <v-container>
+        <v-layout row wrap>
+          <v-flex xs4>
+            <v-text-field label="이메일"
+                          v-model="params.email" :rules="[rules.email]"
+            ></v-text-field><!--prepend-icon="email"-->
+          </v-flex>
+          <v-flex xs4>
+            <v-text-field label="전화번호" persistent-hint
+                          v-model="params.phone" mask="### - #### - ####" hint="'-' 없이 입력해주세요."
+            ></v-text-field><!--prepend-icon="phone"-->
+          </v-flex>
+          <v-flex xs4>
+            <v-radio-group v-model="params.sex" row>
+              <span style="color: rgba(0,0,0,0.54)"><v-icon>wc</v-icon></span>&nbsp;&nbsp;:&nbsp;&nbsp;
+              <v-radio label="남자" value="M"></v-radio>
+              <v-radio label="여자" value="F"></v-radio>
+            </v-radio-group>
+          </v-flex>
 
-      <v-layout row wrap>
-        <v-flex xs12 sm6>
-          <v-text-field label="이메일"
-                  v-model="params.email" :rules="[rules.email]"
-          ></v-text-field><!--prepend-icon="email"-->
-        </v-flex>
-        <v-flex xs12 sm6>
-          <v-text-field label="전화번호" persistent-hint
-                  v-model="params.phone" mask="### - #### - ####" hint="'-' 없이 입력해주세요."
-          ></v-text-field><!--prepend-icon="phone"-->
-        </v-flex>
+          <v-flex xs12>
+            <v-text-field label="주소" v-model="params.address"></v-text-field><!--prepend-icon="home"-->
+          </v-flex>
 
-        <v-flex xs12>
-          <v-text-field label="주소" v-model="params.address"
-          ></v-text-field><!--prepend-icon="home"-->
-        </v-flex>
+          <v-flex xs6>
+            <v-text-field label="직업" v-model="params.job"></v-text-field>
+          </v-flex>
+          <v-flex xs6>
+            <v-select label="최종학력" :items="degrees" v-model="params.degree"></v-select>
+          </v-flex>
+        </v-layout>
 
-        <v-flex xs12 sm6>
-          <v-text-field label="직업" v-model="params.job"
-          ></v-text-field>
-        </v-flex>
-        <v-flex xs12 sm6>
-          <v-select label="최종학력" :items="degrees" v-model="params.degree"></v-select>
-        </v-flex>
+        <v-layout pt-2>
+          <v-textarea label="메모사항" box auto-grow v-model="params.memo"></v-textarea>
+        </v-layout>
+      </v-container>
 
-        <v-flex xs12 sm6>
-          <v-select label="활동상태" :items="states" item-text="nm" item-value="cd" v-model="params.state"></v-select><!--prepend-icon="contacts"-->
-        </v-flex>
-        <v-flex xs12 sm6>
-          <v-radio-group v-model="params.sex" row>
-            <span style="color: rgba(0,0,0,0.54)"><v-icon>wc</v-icon></span>&nbsp;&nbsp;:&nbsp;&nbsp;
-           <v-radio label="남자" value="M"></v-radio>
-           <v-radio label="여자" value="F"></v-radio>
-         </v-radio-group>
-        </v-flex>
-      </v-layout>
-
-      <v-layout row wrap pt-2>
-        <v-textarea label="메모사항"
-          box auto-grow
-          v-model="params.memo"
-        ></v-textarea>
-      </v-layout>
-
-      <v-layout justify-end mb-2>
+      <v-layout justify-end mb-1>
         <div>
           <v-btn color="black accent-2" outline class="mb-2" @click="$router.back()">취소</v-btn>
         </div>
@@ -104,46 +146,43 @@
         </div>
       </v-layout>
     </v-form>
-    </v-layout>
   </v-container>
 </template>
 
 <script>
-import { isEmpty, isUndefined } from 'lodash/lang'
+import { isEmpty, isUndefined, isEqual, cloneDeep } from 'lodash/lang'
+import { pick } from 'lodash/object'
 import DatePicker from './control/DatePicker'
 import AppAlert from './control/AppAlert'
-import { CREATE_VOLUNTEER, UPDATE_VOLUNTEER, FETCH_VOLUNTEER_ITEM } from '@/store/actions.type'
+import { CREATE_VOLUNTEER, UPDATE_VOLUNTEER, FETCH_VOLUNTEER_ITEM, CREATE_VOLUNTEER_HISTORY } from '@/store/actions.type'
 import { VolunteerService } from '@/common/api.service'
-import { ACTIVITY_STATES } from '../common/const.info'
+import { ACTIVITY_STATES, LEADER_STATES } from '../common/const.info'
 import CodeMixin from '@/common/code.mixin'
 
 export default {
   name: 'VolunteerItem',
   mixins: [ CodeMixin ],
   components: { AppAlert, DatePicker },
-  props: { v_id: null },
+  props: { v_id: undefined },
   computed: {
-    form () {
-      return this.$data.params
-    },
+    form () { return this.$data.params },
     volunteerInfo: {
-      get () {
-        return this.$store.getters.volunteerInfo(parseInt(this.v_id))
-      },
-      set (value) {
-        this.$store.dispatch(CREATE_VOLUNTEER, value)
-      }
+      get () { return this.$store.getters.volunteerInfo(parseInt(this.v_id)) },
+      set (value) { this.$store.dispatch(CREATE_VOLUNTEER, value) }
     }
   },
   data: () => ({
     isEditMode: false,
     isDisabled: false,
+    isLeader: false,
     formHasErrors: false,
     params: { // is equal to bible's column
       sex: 'F',
       state: 'ACT',
       br_date: null,
       ca_date: null,
+      ls_date: null,
+      l_work: undefined,
       name: null,
       address: null,
       email: null,
@@ -151,6 +190,7 @@ export default {
       job: null,
       degree: null,
       ca_name: null,
+      ca_id: null,
       au_date: null,
       memo: null
     },
@@ -167,17 +207,26 @@ export default {
       }
       // name: v => v.length <= 10 || 'Name must be less than 10 characters'
     },
-    degrees: ['초졸', '중졸', '고졸', '초대졸', '대졸'],
+    degrees: ['초졸', '중졸', '고졸', '초대졸', '대졸', '대학원졸'],
+    l_states: LEADER_STATES,
     states: ACTIVITY_STATES
   }),
   created () {
     this.isEditMode = !isUndefined(this.v_id)
     if (this.isEditMode) this.fetchData()
   },
+  mounted () {
+    const ts = document.getElementsByTagName('INPUT')
+    for (let i = 0; i < ts.length; i++) {
+      ts[i].addEventListener('change', () => {
+        console.log('changed input...', ts[i].nodeValue)
+      })
+    }
+  },
   methods: {
     async loadItem () {
       let item = null
-      if (!isEmpty(this.volunteerInfo)) item = this.volunteerInfo
+      if (!isEmpty(this.volunteerInfo)) item = cloneDeep(this.volunteerInfo)
       else {
         const res = await VolunteerService.get(this.v_id)
         item = res.data[0]
@@ -190,6 +239,8 @@ export default {
             this.$refs[k] && this.$refs[k].setDate(item[k])
           }
         })
+        this.$parent.setCore(pick(item, ['ca_name', 'name', 'ca_id', 'area_code']))
+        if (item.l_work === 'Y') this.isLeader = true
         this.params = item
         this.assignCode(item.area_code)
       })
@@ -197,6 +248,32 @@ export default {
     onPicked (obj) {
       console.log('picked date...', obj.type, obj.date)
       this.params[obj.type] = obj.date
+    },
+    onChangeCode () {
+      if (this.v_id === undefined || !this.params.sa_name) return
+      // const src = [this.volunteerInfo.la_name, this.volunteerInfo.ma_name, this.volunteerInfo.sa_name]
+      // const trg = [this.params.la_name, this.params.ma_name, this.params.sa_name]
+      if (!isEqual(this.volunteerInfo.sa_name, this.params.sa_name) && confirm('본당 정보를 변경하시겠습니까?')) {
+        const history = {
+          v_id: this.volunteerInfo.id,
+          out_code: this.volunteerInfo.area_code,
+          out_name: `${this.volunteerInfo.la_name} (교구) ${this.volunteerInfo.sa_name} (본당)`,
+          in_code: this.params.area_code,
+          in_name: `${this.params.la_name} (교구) ${this.params.sa_name} (본당)`
+        }
+        this.$store.dispatch(CREATE_VOLUNTEER_HISTORY, history)
+        this.$showSnackBar('변경되었습니다.')
+      }
+    },
+    onCompleteLeader (type) {
+      if (!this.v_id) return alert('봉사자 정보를 먼저 추가해주세요.')
+      if (type === 'end') {
+        if (this.params.ls_date > this.params.le_date) return alert('종료일이 시작일보다 빠릅니다.')
+        confirm('임기를 종료하시겠습니까? 변경 후 수정할 수 없습니다.')
+      } else {
+        if (this.params.l_work) return // must be undefined
+        confirm('임기를 시작하시겠습니까?')
+      }
     },
     reset () {
       this.formHasErrors = false
@@ -207,10 +284,8 @@ export default {
     },
     submit () {
       if (!this.$refs.form.validate()) {
-        // this.alert = {message: '입력 데이터를 확인해주세요.', icon: 'priority_high', type: 'warning', show: true}
         return alert('입력 데이터를 확인해주세요.')
       }
-
       /* this.formHasErrors = false
       Object.keys(this.form).forEach(f => {
         console.log(f + ' : ' + this.form[f])
@@ -220,22 +295,30 @@ export default {
 
       console.log(this.form)
       if (!this.isEditMode) {
-        alert('추가되었습니다.')
+        this.$showSnackBar('추가되었습니다.')
         this.isDisabled = true
         this.createItem()
       } else {
         this.$store.dispatch(UPDATE_VOLUNTEER, this.form)
-        alert('수정되었습니다.')
+        this.$showSnackBar('수정되었습니다.')
       }
-      this.$router.push({name: 'volunteers'})
     },
     async fetchData () {
       await this.$store.dispatch(FETCH_VOLUNTEER_ITEM, this.v_id)
       this.loadItem()
     },
     async createItem () {
-      await this.$store.dispatch(CREATE_VOLUNTEER, this.form)
-      this.$parent.addDone()
+      try {
+        this.v_id = await this.$store.dispatch(CREATE_VOLUNTEER, this.form)
+      } catch (e) {
+        console.warn(e)
+        return alert('실패하였습니다.')
+      }
+
+      const targetUrl = `${location.origin}${location.pathname}/${this.v_id}`
+      this.$nextTick(() => {
+        location.replace(targetUrl)
+      })
     }
   }
 }

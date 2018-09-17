@@ -1,16 +1,15 @@
 <template>
-  <v-container class="elevation-5 w-85 pt-2">
+  <v-container class="elevation-3 w-85 pt-2">
     <v-layout row wrap pb-0 align-baseline>
       <v-flex xs6>
         <v-layout row align-baseline>
           <v-flex xs2>
-            <v-subheader class="body-2 pr-0 w-50">소속본당 : </v-subheader>
+            <v-subheader class="body-2 pr-0">소속본당 : </v-subheader>
           </v-flex>
           <v-flex xs5>
             <v-combobox class="body-2" @input="onChange"
                         v-model="model" :items="items" item-value="code" item-text="name"
-                        :search-input.sync="search" clearable single-line
-            >
+                        :search-input.sync="search" clearable single-line>
               <template slot="no-data">
                 <v-list-tile>
                   <v-list-tile-content>
@@ -33,19 +32,11 @@
     </v-layout>
 
     <v-data-table :headers="headers" :items="reports" hide-actions
-                  class="elevation-1" :loading="fetched && isReportsLoading"
-    >
-      <template slot="headers" slot-scope="props">
-        <tr>
-          <th v-for="header in props.headers" :key="header.text"
-              class="body-2 font-weight-regular align-center"
-          >{{ header.text }}
-          </th>
-        </tr>
-      </template>
+                  class="elevation-5" :loading="fetched && isReportsLoading">
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <tr> <!--@click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'unset')}">-->
+        <tr @click="selected = props.item" @dblclick="editReport(props.item.id)"
+            :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
           <td class="text-xs-center">{{ props.item.r_year }}</td>
           <td class="text-xs-center">{{ props.item.name }}</td>
           <td class="text-xs-center">{{ props.item.phone|formatted }}</td>
@@ -53,8 +44,8 @@
           <td class="text-xs-center">{{ props.item.id }}</td>
           <td class="text-xs-center">{{ props.item.s_date|monthstamp }} ~ {{ props.item.e_date|monthstamp }}</td>
           <td class="justify-center layout px-0">
-            <v-icon small class="mr-3" @click="editReport(props.item.id)">edit</v-icon>
-            <v-icon small @click="deleteReport(props.item.id)">delete</v-icon>
+            <v-icon small class="mr-3" @click.self="editReport(props.item.id)">edit</v-icon>
+            <v-icon small @click.self="deleteReport(props.item.id)">delete</v-icon>
           </td>
         </tr>
       </template>
@@ -110,6 +101,9 @@ export default {
     ]
   }),
   created () {
+    this.headers.map(h => {
+      h.class = ['text-xs-center', 'body-1']
+    })
     const list = map(this.smallCodes, o => {
       return {code: o.s_code, name: o.s_name}
     })

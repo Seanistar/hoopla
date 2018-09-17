@@ -1,5 +1,5 @@
 <template>
-  <v-container pt-3>
+  <v-container pt-0>
     <v-tabs left align-with-title fixed-tabs class="elevation-4">
       <v-tab v-for="(item, idx) in title" :key="idx" @click="tabIdx = idx">
         <strong>{{ item }}</strong>

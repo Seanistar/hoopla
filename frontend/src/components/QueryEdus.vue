@@ -5,23 +5,23 @@
     >
       <template slot="headers" slot-scope="props">
         <tr>
-          <th rowspan="2" style="width: 10%" class="body-2 font-weight-bold">연도</th>
-          <th colspan="6" style="width: 90%" class="body-2 font-weight-bold">교육 참석 현황</th>
-          <!--<th colspan="9" style="width: 60%" class="subheading font-weight-bold">성서 연수 현황</th>-->
+          <th rowspan="2" class="body-2 font-weight-bold w-10">연도</th>
+          <th colspan="6" class="body-2 font-weight-bold w-90">교육 참석 현황</th>
+          <!--<th colspan="9" class="subheading font-weight-bold w-60">성서 연수 현황</th>-->
         </tr>
         <tr>
-          <th class="body-1" style="width: 15%">월교육</th>
-          <th class="body-1" style="width: 15%">성서40주간<br>읽기안내</th>
-          <th class="body-1" style="width: 15%">성서40주간<br>심화</th>
-          <th class="body-1" style="width: 15%">재교육</th>
-          <th class="body-1" style="width: 15%">피정</th>
-          <th class="body-1" style="width: 15%">기타교육</th>
+          <th class="body-1 w-15">월교육</th>
+          <th class="body-1 w-15">성서40주간<br>읽기안내</th>
+          <th class="body-1 w-15">성서40주간<br>심화</th>
+          <th class="body-1 w-15">재교육</th>
+          <th class="body-1 w-15">피정</th>
+          <th class="body-1 w-15">기타교육</th>
           <!--<th class="body-1 font-weight-bold" v-for="item in headers" :key="item.code">{{item.name|subject}}</th>-->
         </tr>
       </template>
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <tr @click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'unset')}">
+        <tr @click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
           <td class="text-xs-center">{{ props.item.id }}</td>
           <td class="text-xs-center">{{ props.item.name }}</td>
           <td class="text-xs-center">{{ props.item.ca_name }}</td>
@@ -66,5 +66,8 @@ export default {
   th, td {
     padding: 5px;
     text-align: center;
+  }
+  .w-15 {
+    width: 15%;
   }
 </style>

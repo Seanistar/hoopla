@@ -20,20 +20,29 @@ import ReportStates from '@/components/ReportStates'
 import ReportVolunteers from '@/components/ReportVolunteers'
 import ReportActs from '@/components/ReportActs'
 import FloatButton from '@/components/control/FloatButton'
+import { mapGetters } from 'vuex'
+import { find } from 'lodash/collection'
 
 export default {
   name: 'EditReport',
   components: { ReportStates, ReportVolunteers, ReportActs, FloatButton },
   props: { id: null },
-  watch: {
-    tabIdx (idx) {
-    }
+  computed: {
+    ...mapGetters([
+      'smallCodes',
+      'adminInfo'
+    ])
   },
   data: () => ({
     tabIdx: 0,
     titles: ['현황 내역', '봉사자 명단', '그룹 봉사 내역']
   }),
   methods: {
+    getSmall () {
+      let sc = sessionStorage.getItem('SMALL-CODE')
+      if (!sc) sc = this.adminInfo.area_code
+      return find(this.smallCodes, o => o.s_code === sc)
+    }
   }
 }
 </script>
