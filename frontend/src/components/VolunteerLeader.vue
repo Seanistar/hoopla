@@ -15,11 +15,11 @@
         <tr> <!--@click="selected = props.item" @dblclick="onClickMenu('update')"
             :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">-->
           <td class="text-xs-center">{{ props.item.idx }}</td>
-          <td class="text-xs-center">{{ leaderType[props.item.type] }} 대표</td>
+          <td class="text-xs-center">{{ props.item.work === 'Y' ? '임기 중' : '임기 종료' }}</td>
           <td class="text-xs-center">{{ props.item.area_name }} 본당</td>
           <td class="text-xs-center">{{ props.item.s_date }}</td>
           <td class="text-xs-center">{{ props.item.e_date }}</td>
-          <td class="text-xs-center">{{ props.item.period }}</td>
+          <td class="text-xs-center">{{ props.item.period|period }}</td>
         </tr>
       </template>
       <template slot="no-data" v-show="fetched">
@@ -55,9 +55,6 @@ export default {
     ]),
     isLoading () {
       return isUndefined(this.v_id) ? false : this.isVolunteersLoading
-    },
-    leaderType () {
-      return { S: '본당', M: '지구', L: '교구' }
     }
   },
   data: () => ({
@@ -67,7 +64,7 @@ export default {
     fetched: false,
     headers: [
       { text: '번호', value: 'idx' },
-      { text: '대표 유형', value: 'type' },
+      { text: '활동 상태', value: 'work' },
       { text: '소속 구역', value: 'area_name' },
       { text: '선임 날짜', value: 's_date' },
       { text: '퇴임 날짜', value: 'e_date' },
@@ -83,12 +80,6 @@ export default {
       this.selected = {}
       !isUndefined(this.v_id) && await this.$store.dispatch(FETCH_VOLUNTEER_LEADER, this.v_id)
       this.fetched = true
-    },
-    updateLdrItem (item) {
-      // this.$store.dispatch(UPDATE_VOLUNTEER_LEADER, item)
-    },
-    deleteLdrItem (id) {
-      // this.$store.dispatch(DELETE_VOLUNTEER_LEADER, id)
     },
     onClickMenu (type) {
       if (type === 'add') {
@@ -111,6 +102,20 @@ export default {
       console.log('input item...', data)
       if (isUndefined(this.selected.id)) this.volunteerActs = data
       else this.updateLdrItem(data)
+    }
+  },
+  filters: {
+    period (val) {
+      if (val < 0) return '-'
+      const days = parseInt(val)
+      const y = Math.floor(days / 365)
+      const m = Math.floor((days % 365) / 30)
+      const d = Math.floor((days % 365) % 30)
+      let [ys, ms, ds] = ['', '', '']
+      if (y > 0) ys = `${y}년 `
+      if (m > 0) ms = `${m}개월 `
+      if (d > 0) ds = `${d}일`
+      return ys + ms + ds
     }
   }
 }

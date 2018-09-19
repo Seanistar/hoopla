@@ -3,6 +3,7 @@ import {
   FETCH_REPORTS,
   FETCH_REPORT_STATE,
   FETCH_REPORT_ACTS,
+  FETCH_SMALL_LEADER,
   CREATE_REPORT, UPDATE_REPORT, DELETE_REPORT,
   CREATE_REPORT_ACT, UPDATE_REPORT_ACT, DELETE_REPORT_ACT
 } from './actions.type'
@@ -10,6 +11,7 @@ import {
   FETCH_START,
   FETCH_REPORTS_END,
   FETCH_REPORT_ACTS_END,
+  SET_SMALL_LEADER,
   ADD_REPORT, SET_REPORT, REMOVE_REPORT,
   SET_REPORT_ACT, ADD_REPORT_ACT, REMOVE_REPORT_ACT
 } from './mutations.type'
@@ -20,6 +22,7 @@ const state = {
   reportCode: '',
   reportInfo: {},
   isLoading: false,
+  smallLeader: {},
   reportCount: 0,
   reportActs: []
 }
@@ -29,6 +32,7 @@ const getters = {
   reportInfo: state => state.reportInfo,
   reports: state => state.reports,
   isReportsLoading: state => state.isLoading,
+  smallLeader: state => state.smallLeader,
   reportCode: state => state.reportCode,
   reportActs: state => state.reportActs
 }
@@ -119,6 +123,15 @@ const actions = {
       .catch((error) => {
         throw new Error(error)
       })
+  },
+  [FETCH_SMALL_LEADER] (context, code) {
+    return ReportService.get_leader(code)
+      .then(({ data }) => {
+        context.commit(SET_SMALL_LEADER, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
   }
 }
 
@@ -135,7 +148,7 @@ const mutations = {
   },
   [FETCH_REPORT_ACTS_END] (state, acts) {
     for (let i = 0; i < acts.length; i++) {
-      acts[i].idx = i + 1/**/
+      acts[i].idx = i + 1
     }
     state.reportActs = acts
     state.isLoading = false
@@ -147,6 +160,14 @@ const mutations = {
   },
   [SET_REPORT] (state, data) {
     state.reportInfo = data
+    const pos = state.reports.findIndex((o) => o.id === data.id)
+    if (pos > -1) {
+      console.log('set position : ', pos)
+      Object.assign(state.reports[pos], data)
+    } else {
+      console.log('no pos and add position : ', pos)
+      state.reports.push(data)
+    }
   },
   [REMOVE_REPORT] (state, id) {
     const pos = state.reports.findIndex((o) => o.id === id)
@@ -174,6 +195,9 @@ const mutations = {
       console.log('remove position : ', pos)
       state.reportActs.splice(pos, 1)
     }
+  },
+  [SET_SMALL_LEADER] (state, ldr) {
+    state.smallLeader = ldr
   }
 }
 

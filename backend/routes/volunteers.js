@@ -8,10 +8,12 @@ const db = require('../common/db.mysql')
  */
 router.get('', (req, res) => {
   let select = `
-    SELECT vl.*, ac.l_name la_name, ac.m_name ma_name, ac.s_name sa_name 
-    FROM volunteers vl 
-    LEFT JOIN area_code ac ON vl.area_code = ac.a_code `
-  if (req.query.code) select += `WHERE vl.area_code = ?`
+    SELECT v.*, IF(ISNULL(l.v_id), 'N', 'Y')is_leader,
+    a.l_name la_name, a.m_name ma_name, a.s_name sa_name 
+    FROM volunteers v
+    LEFT JOIN leaders l ON v.id = l.v_id AND l.work = 'Y'
+    LEFT JOIN area_code a ON v.area_code = a.a_code `
+  if (req.query.code) select += `WHERE v.area_code = ?`
   const sql = [select, req.query.code ? [req.query.code] : []]
   // console.log(sql)
   db.query(...sql, (err, rows) => {
@@ -29,7 +31,7 @@ router.get('/page/:id', (req, res) => {
     SELECT vl.*, ld.work l_work, ld.s_date ls_date, ld.e_date le_date, 
     ac.l_name la_name, ac.m_name ma_name, ac.s_name sa_name 
     FROM volunteers vl
-    LEFT JOIN leaders ld ON vl.id = ld.v_id
+    LEFT JOIN leaders ld ON vl.id = ld.v_id AND ld.work = 'Y'
     LEFT JOIN area_code ac ON vl.area_code = ac.a_code`
   if (req.params.id !== undefined) select += ' WHERE vl.id=?'
   const sql = [select, req.params.id]
@@ -273,6 +275,27 @@ router.get('/query', (req, res) => {
   })
 })
 
+router.get('/queried', (req, res) => {
+  const {e_type, v_id} = req.query
+  let sql = [`
+    SELECT edu_code e_code, COUNT(id) counter, MAX(YEAR(e.e_date))e_year, c.name e_name
+    FROM edus e
+    LEFT JOIN edu_code c ON e.edu_code = c.code
+    WHERE c.type = ? AND e.v_id = ?
+    GROUP BY YEAR(e.e_date), e.edu_code
+    ORDER BY e_year DESC
+   `, [e_type, v_id]]
+  console.log('queried... ', sql)
+  db.query(...sql, (err, rows) => {
+    if (!err) {
+      res.status(200).send(rows)
+    } else {
+      console.warn('queried error : ' + err)
+      res.status(500).send('Internal Server Error')
+    }
+  })
+})
+
 router.get('/find', (req, res) => {
   const {name} = req.query
   const select = `
@@ -295,7 +318,7 @@ router.get('/find', (req, res) => {
  */
 router.get('/leader/:id', (req, res) => {
   const select = `
-    SELECT *, c.s_name area_name
+    SELECT *, c.s_name area_name, IF(ISNULL(l.e_date), -1 , DATEDIFF(l.e_date, l.s_date)) period
     FROM leaders l
     LEFT JOIN area_code c ON l.area_code = c.a_code
     WHERE v_id=?`
@@ -310,15 +333,15 @@ router.get('/leader/:id', (req, res) => {
 })
 
 router.put('/leader', (req, res) => {
-  const {v_id, work, area_code, s_date, e_date} = req.body
+  const {id, area_code, ls_date} = req.body
   const sql = [`
-    INSERT INTO leaders (v_id, work, area_code, s_date, e_date) 
-    VALUES (?,?,?,?,?,?)`,
-    [v_id, work, area_code, s_date, e_date]
+    INSERT INTO leaders (v_id, area_code, s_date) 
+    VALUES (?,?,?)`,
+    [id, area_code, ls_date]
   ]
   db.query(...sql, (err, rows) => {
     if (!err) {
-      console.log('leader has been inserted')
+      console.log('leader has started')
       res.status(200).send({newID: rows.insertId})
     } else {
       console.warn('query error : ' + err)
@@ -328,16 +351,16 @@ router.put('/leader', (req, res) => {
 })
 
 router.post('/leader/:id', (req, res) => {
-  const {v_id, work, area_code, s_date, e_date} = req.body
+  const {ls_date, le_date} = req.body
   const sql = [`
-    UPDATE leaders 
-    SET v_id=?, work=?, area_code=?, s_date=?, e_date=? 
-    WHERE id=?`,
-    [v_id, work, area_code, s_date, e_date, req.params.id]
+    UPDATE leaders
+    SET work=\'N\', s_date=?, e_date=? 
+    WHERE v_id=? AND work = \'Y\'`,
+    [ls_date, le_date, req.params.id]
   ]
   db.query(...sql, (err, rows) => {
     if (!err) {
-      console.log('leader has been updated')
+      console.log('leader has completed', rows)
       res.status(200).send(rows)
     } else {
       console.warn('query error : ' + err)

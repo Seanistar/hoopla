@@ -7,7 +7,7 @@
       </v-flex>
       <v-flex xs9>
         <v-subheader class="body-2 justify-end"><span class="mr-2">대표 봉사자 :</span>
-          <input value="" class="pa-1 input-box">
+          <input :value="smallLeader.lv_name" class="pa-1 input-box">
         </v-subheader>
       </v-flex>
     </v-layout>
@@ -43,9 +43,8 @@
 import MenuButtons from './control/MenuButtons'
 import ItemDialog from './control/InputItemDialog'
 import { pick } from 'lodash/object'
-import { FETCH_REPORT_ACTS, CREATE_REPORT_ACT, UPDATE_REPORT_ACT, DELETE_REPORT_ACT } from '@/store/actions.type'
-// import { FETCH_REPORT_ACTS_END } from '@/store/mutations.type'
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { FETCH_REPORT_ACTS, CREATE_REPORT_ACT, UPDATE_REPORT_ACT, DELETE_REPORT_ACT, FETCH_SMALL_LEADER } from '@/store/actions.type'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'ReportActs',
@@ -54,7 +53,8 @@ export default {
     ...mapGetters([
       'reportActs',
       'isReportsLoading',
-      'actCodes'
+      'actCodes',
+      'smallLeader'
     ])
   },
   created () {
@@ -86,13 +86,11 @@ export default {
       FETCH_REPORT_ACTS,
       CREATE_REPORT_ACT,
       UPDATE_REPORT_ACT,
-      DELETE_REPORT_ACT
-    ]),
-    ...mapMutations([
-      // FETCH_REPORT_ACTS_END
+      DELETE_REPORT_ACT,
+      FETCH_SMALL_LEADER
     ]),
     async fetchData (code) {
-      // await this.$store.dispatch(FETCH_REPORT_ACTS, code)
+      await this[FETCH_SMALL_LEADER](code)
       await this[FETCH_REPORT_ACTS](code)
       this.fetched = true
     },

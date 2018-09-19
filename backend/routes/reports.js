@@ -16,9 +16,7 @@ router.get('/', (req, res) => {
   })
 })
 
-router.get('/acts', async (req, res) => {
-  const ldr = await getLeader(req.query.code)
-  console.log('leader is...', ldr.name, ldr.ca_name)
+router.get('/acts', (req, res) => {
   const sql = [`
     SELECT a.*, v.name, v.ca_name, v.ca_id, e.name act_name 
     FROM acts a
@@ -119,6 +117,17 @@ router.delete('/:id', (req, res) => {
     })
 })
 
+router.get('/leader/:code', (req, res) => {
+  getLeader(req.params.code)
+  .then(ldr => {
+    console.log('leader is...', ldr.lv_name, ldr.lv_id)
+    res.status(200).send(ldr)
+  }).catch(e => {
+    console.warn('catch error : ', e)
+    res.status(500).send('Internal Server Error')
+  })
+})
+
 const queryResult = async (id) => {
   const ro = await getData('', id)
   if (!ro) return Promise.reject('no base')
@@ -155,9 +164,11 @@ const getData = (table, id) => {
       WHERE r.id = ?`, [id]]
     } else {
       sql = [`
-      SELECT r.*, ro.*, ac.s_name 
+      SELECT r.*, ro.*, ac.s_name, 
+      IF(ISNULL(lv_id), NULL, CONCAT(vl.name, '', vl.ca_name))  
       FROM reports r 
       LEFT JOIN r_other ro ON r.id = ro.r_id
+      LEFT JOIN volunteers vl ON lv_id IS NOT NULL AND vl.id = r.lv_id
       LEFT JOIN area_code ac ON r.s_code = ac.a_code
       WHERE r.id = ?`, [id]]
     }
@@ -297,7 +308,7 @@ const deleteData = (table, id) => {
 const getLeader = (a_code) => {
   return new _promise(function(resolve, reject) {
     const sql = [`
-      SELECT name, ca_name
+      SELECT CONCAT(name, ' ', ca_name)lv_name, v_id lv_id
       FROM leaders l LEFT JOIN volunteers v ON v.id = l.v_id 
       WHERE l.work = 'Y' AND l.area_code = ?`, [a_code]]
     return db.query(...sql, (err, rows) => {

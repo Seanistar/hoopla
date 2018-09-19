@@ -20,16 +20,6 @@
           </v-flex>
         </v-layout>
         <v-layout row wrap pl-2>
-          <!--<v-flex xs12 sm3>
-            <v-select label="그룹공부" v-model="params.group_edu" hide-details chips multiple
-                      :items="eduCodes" item-text="name" item-value="code"
-            ></v-select>
-          </v-flex>
-          <v-flex xs12 sm3>
-            <v-select label="그룹봉사" v-model="params.group_vlt" hide-details chips multiple
-                      :items="eduCodes" item-text="name" item-value="code"
-            ></v-select>
-          </v-flex>-->
           <v-flex xs3>
             <v-select label="선서연도" v-model="params.au_date" hide-details
                       :items="years"
@@ -82,7 +72,6 @@
             <td class="text-xs-center">{{ props.item.ca_name }}</td>
             <td class="text-xs-center">{{ props.item.au_date|yearstamp }}</td>
             <td class="text-xs-center">{{ props.item.la_name }}</td>
-            <td class="text-xs-center">{{ props.item.ma_name }}</td>
             <td class="text-xs-center">{{ props.item.sa_name }}</td>
             <td class="text-xs-center">{{ props.item.edu_count }}</td>
             <td class="text-xs-center">{{ props.item.act_count }}</td>
@@ -115,7 +104,6 @@ export default {
   components: { DatePicker, PeopleDialog, ChurchDialog },
   computed: {
     ...mapGetters([
-      'eduCodes',
       'smallCodes',
       'isQuerying',
       'queryInfo',
@@ -143,6 +131,7 @@ export default {
     }
   },
   created () {
+    this.headers.map(h => { h.class = ['text-xs-center', 'body-2', 'pl-39x'] })
     const list = map(this.smallCodes, o => {
       return {code: o.s_code, name: o.s_name}
     })
@@ -163,15 +152,14 @@ export default {
       v_name: ''
     },
     headers: [
-      { text: 'ID', value: 'id', align: 'center' },
-      { text: '성명', value: 'name', align: 'center' },
-      { text: '세례명', value: 'ca_name', align: 'center' },
-      { text: '선서일', value: 'au_date', align: 'center' },
-      { text: '교구명', value: 'la_name', align: 'center' },
-      { text: '지구명', value: 'ma_name', align: 'center' },
-      { text: '본당명', value: 'san_ame', align: 'center' },
-      { text: '교육 횟수', value: 'edu_cnt', align: 'center' },
-      { text: '봉사 횟수', value: 'act_cnt', align: 'center' }
+      { text: 'ID', value: 'id' },
+      { text: '성명', value: 'name' },
+      { text: '세례명', value: 'ca_name' },
+      { text: '선서일', value: 'au_date' },
+      { text: '교구명', value: 'la_name' },
+      { text: '본당명', value: 'san_ame' },
+      { text: '교육 횟수', value: 'edu_cnt' },
+      { text: '봉사 횟수', value: 'act_cnt' }
     ]
   }),
   methods: {

@@ -96,7 +96,7 @@ export default {
     },
     onClickMenu (type) {
       if (type === 'add') {
-        this.$refs.acts.setItem(Object.assign({id: this.v_id}, this.$parent.getCore()))
+        this.$refs.acts.setItem(Object.assign({id: this.v_id}, this.$parent.VOLT))
         this.inputDlg = true
         return
       }
@@ -104,7 +104,7 @@ export default {
       if (type === 'remove') confirm('선택한 봉사 내역을 삭제하시겠습니까?') && this.deleteActItem(this.selected.id)
       else { // update
         this.selected.act_code = parseInt(this.selected.act_code)
-        Object.assign(this.selected, this.$parent.getCore())
+        Object.assign(this.selected, this.$parent.VOLT)
         this.$refs.acts.setItem(this.selected)
         this.inputDlg = true
       }
@@ -123,7 +123,4 @@ export default {
 </script>
 
 <style scoped>
-  .w-15 {
-    width: 15%;
-  }
 </style>

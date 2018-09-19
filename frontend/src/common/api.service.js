@@ -95,16 +95,22 @@ export const VolunteerService = {
   query (data) {
     return ApiService.query('volts/query', {params: data})
   },
+  query_volt (data) {
+    return ApiService.query('volts/queried', {params: data})
+  },
   find (data) {
     return ApiService.query('volts/find', {params: data})
   },
-  query_leader (id) {
+  get_leader (id) {
     return ApiService.get(`volts/leader`, id)
   },
   create_leader (data) {
     return ApiService.create('volts/leader', data)
   },
-  query_history (id) {
+  update_leader (data) {
+    return ApiService.update(`volts/leader/${data.id}`, data)
+  },
+  get_history (id) {
     return ApiService.get(`volts/history`, id)
   },
   create_history (data) {
@@ -130,6 +136,9 @@ export const ReportService = {
   },
   delete (id) {
     return ApiService.delete(`reports/${id}`)
+  },
+  get_leader (code) {
+    return ApiService.get('reports/leader', code)
   }
 }
 

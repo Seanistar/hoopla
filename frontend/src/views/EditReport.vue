@@ -7,9 +7,7 @@
       </v-tab>
     </v-tabs>
     <v-layout pt-0 mt-4 class="elevation-3">
-      <report-states v-if="tabIdx === 0" :r_id="id"/>
-      <report-volunteers v-else-if="tabIdx === 1" :r_id="id"/>
-      <report-acts v-else-if="tabIdx === 2" :r_id="id"/>
+      <component :is="targetComponents[tabIdx]" :r_id.sync="id"/>
     </v-layout>
     <float-button/>
   </v-container>
@@ -21,7 +19,6 @@ import ReportVolunteers from '@/components/ReportVolunteers'
 import ReportActs from '@/components/ReportActs'
 import FloatButton from '@/components/control/FloatButton'
 import { mapGetters } from 'vuex'
-import { find } from 'lodash/collection'
 
 export default {
   name: 'EditReport',
@@ -31,7 +28,10 @@ export default {
     ...mapGetters([
       'smallCodes',
       'adminInfo'
-    ])
+    ]),
+    targetComponents () {
+      return ['ReportStates', 'ReportVolunteers', 'ReportActs']
+    }
   },
   data: () => ({
     tabIdx: 0,
@@ -41,7 +41,7 @@ export default {
     getSmall () {
       let sc = sessionStorage.getItem('SMALL-CODE')
       if (!sc) sc = this.adminInfo.area_code
-      return find(this.smallCodes, o => o.s_code === sc)
+      return this.smallCodes.find(o => o.s_code === sc)
     }
   }
 }

@@ -2,12 +2,12 @@
   <v-container class="elevation-5 pt-2">
     <v-layout row align-baseline pb-0>
       <v-flex xs6>
-        <v-layout row align-baseline>
+        <v-layout row>
           <v-flex xs2>
-            <v-subheader class="body-2 pr-0">소속본당 : </v-subheader>
+            <v-subheader class="body-2 pr-0"><span>소속본당 : </span></v-subheader>
           </v-flex>
           <v-flex xs5>
-            <v-combobox class="body-2" v-model="model"
+            <v-combobox class="body-2" v-model="model" label="소속본당"
                         :items="items" item-value="code" item-text="name"
                         :search-input.sync="search" clearable single-line>
               <template slot="no-data">
@@ -33,26 +33,24 @@
     <v-data-table :headers="headers" :items="volunteers" class="elevation-5"
                   :pagination.sync="pagination" :rows-per-page-items="perPage" rows-per-page-text="페이지 당 보기 개수"
                   item-key="id" :loading="isVolunteersLoading && !fetched">
-      <template slot="headers" slot-scope="props">
-        <tr>
-          <th v-for="header in props.headers" :key="header.text"
-              class="body-1 font-weight-regular align-center"
-          >{{ header.text }}
-          </th>
-        </tr>
-      </template>
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
         <tr @dblclick="editItem(props.item)">
-          <td class="text-xs-center">{{ props.item.id }}</td>
-          <td class="text-xs-center">{{ props.item.name }}</td>
+          <td class="text-xs-center"><span>{{ props.item.id }}</span></td>
+          <td class="text-xs-center">
+            <span>{{ props.item.name }}</span>
+            <v-badge color="orange" class="badge-pos"
+                     overlap v-show="props.item.is_leader === 'Y'">
+              <v-icon slot="badge" small>face</v-icon>
+            </v-badge>
+          </td>
           <td class="text-xs-center">{{ props.item.ca_name }}</td>
           <td class="text-xs-center">{{ activityState[props.item.state] }}</td>
-          <td class="text-xs-center">{{ props.item.la_name }}</td>
-          <td class="text-xs-center">{{ props.item.ma_name }}</td>
+          <!--<td class="text-xs-center">{{ props.item.la_name }}</td>
+          <td class="text-xs-center">{{ props.item.ma_name }}</td>-->
           <td class="text-xs-center">{{ props.item.sa_name }}</td>
           <td class="text-xs-center">{{ props.item.au_date }}</td>
-          <td class="text-xs-center">{{ props.item.ca_date }}</td>
+          <td class="text-xs-center">{{ props.item.br_date }}</td>
           <td class="justify-center layout px-0">
             <v-icon small class="mr-3" @click.self="editItem(props.item)">edit</v-icon>
             <v-icon small @click.self="deleteItem(props.item)">delete</v-icon>
@@ -88,13 +86,13 @@ export default {
     headers: [
       { text: 'ID', value: 'id' },
       { text: '성명', value: 'name' },
-      { text: '세례명', value: 'ca_name', sortable: false },
+      { text: '세례명', value: 'ca_name' },
       { text: '활동상태', value: 'area_code' },
-      { text: '소속교구', value: 'la_name' },
-      { text: '소속지구', value: 'ma_name' },
+      // { text: '소속교구', value: 'la_name' },
+      // { text: '소속지구', value: 'ma_name' },
       { text: '소속본당', value: 'sa_name' },
       { text: '선서일', value: 'auth_date' },
-      { text: '세례일', value: 'ca_date' },
+      { text: '생년월일', value: 'br_date' },
       { text: '편집', value: 'edit', sortable: false }
     ]
   }),
@@ -118,6 +116,7 @@ export default {
     }
   },
   created () {
+    this.headers.map(h => { h.class = ['text-xs-center', 'body-2', 'pl-39x'] })
     const list = map(this.smallCodes, o => { return {code: o.s_code, name: o.s_name} })
     this.items = orderBy(list, ['name'])
 
@@ -129,7 +128,7 @@ export default {
   },
   methods: {
     async fetchVolunteers () {
-      await this.$store.dispatch(FETCH_VOLUNTEERS)
+      await this.$store.dispatch(FETCH_VOLUNTEERS, this.adminInfo.area_code) // '01-01-01',
       this.fetched = true
     },
     newVolunteer () {
@@ -146,4 +145,8 @@ export default {
 </script>
 
 <style scoped>
+  .badge-pos {
+    top: -15px;
+    right: -15px
+  }
 </style>

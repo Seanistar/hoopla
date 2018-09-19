@@ -12,12 +12,12 @@
       <template slot="items" slot-scope="props">
         <tr @click="selected = props.item" @dblclick="onClickMenu('update')"
             :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
-          <td class="text-xs-center">{{ props.item.idx }}</td>
-          <td class="text-xs-center">{{ props.item.edu_name }}</td>
-          <td class="text-xs-center">{{ props.item.s_date }}</td>
-          <td class="text-xs-center">{{ props.item.e_date }}</td>
-          <td class="text-xs-center">{{ props.item.gv_name }}</td>
-          <td class="text-xs-center">{{ props.item.memo }}</td>
+          <td class="text-xs-center w-10">{{ props.item.idx }}</td>
+          <td class="text-xs-center w-20">{{ props.item.edu_name }}</td>
+          <td class="text-xs-center w-15">{{ props.item.s_date }}</td>
+          <td class="text-xs-center w-15">{{ props.item.e_date }}</td>
+          <td class="text-xs-center w-20">{{ props.item.gv_name }}</td>
+          <td class="text-xs-center w-20">{{ props.item.memo }}</td>
         </tr>
       </template>
       <template slot="no-data" v-if="fetched">
@@ -46,12 +46,8 @@ export default {
   props: { v_id: undefined },
   computed: {
     volunteerEdus: {
-      get () {
-        return this.$store.getters.volunteerEdus
-      },
-      set (data) {
-        this.$store.dispatch(CREATE_VOLUNTEER_EDU, data)
-      }
+      get () { return this.$store.getters.volunteerEdus },
+      set (data) { this.$store.dispatch(CREATE_VOLUNTEER_EDU, data) }
     },
     volunteerInfo () {
       return this.$store.getters.volunteerInfo(parseInt(this.v_id))
@@ -96,7 +92,7 @@ export default {
     },
     onClickMenu (type) {
       if (type === 'add') {
-        this.$refs.edus.setItem(Object.assign({id: this.v_id}, this.$parent.getCore()))
+        this.$refs.edus.setItem(Object.assign({id: this.v_id}, this.$parent.VOLT))
         this.inputDlg = true
         return
       }
@@ -104,7 +100,7 @@ export default {
       if (type === 'remove') confirm('선택한 내역을 삭제하시겠습니까?') && this.deleteEduItem(this.selected.id)
       else { // update
         this.selected.edu_code = parseInt(this.selected.edu_code)
-        this.$refs.edus.setItem(Object.assign(this.selected, this.$parent.getCore()))
+        this.$refs.edus.setItem(Object.assign(this.selected, this.$parent.VOLT))
         this.inputDlg = true
       }
     },

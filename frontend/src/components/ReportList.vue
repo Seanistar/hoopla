@@ -67,7 +67,6 @@ export default {
     ...mapGetters([
       'smallCodes',
       'adminInfo',
-      'eduCodes',
       'reportCode',
       'isReportsLoading',
       'reports',
@@ -101,9 +100,7 @@ export default {
     ]
   }),
   created () {
-    this.headers.map(h => {
-      h.class = ['text-xs-center', 'body-1']
-    })
+    this.headers.map(h => { h.class = ['text-xs-center', 'body-1'] })
     const list = map(this.smallCodes, o => {
       return {code: o.s_code, name: o.s_name}
     })

@@ -7,10 +7,7 @@
       </v-tab>
     </v-tabs>
     <v-layout mt-4 pt-0 class="elevation-3">
-      <query-edus v-if="tabIdx === 0" :r_id="id"/>
-      <query-bibles v-else-if="tabIdx === 1" :r_id="id"/>
-      <query-notes v-else-if="tabIdx === 2" :r_id="id"/>
-      <query-acts v-else-if="tabIdx === 3" :r_id="id"/>
+      <component :is="targetComponents[tabIdx]" :r_id="id"/>
     </v-layout>
     <float-button/>
   </v-container>
@@ -27,6 +24,11 @@ export default {
   name: 'PartQuery',
   components: { QueryEdus, QueryNotes, QueryBibles, QueryActs, FloatButton },
   props: { id: null },
+  computed: {
+    targetComponents () {
+      return ['QueryEdus', 'QueryNotes', 'QueryBibles', 'QueryActs']
+    }
+  },
   watch: {
     tabIdx (idx) {
     }

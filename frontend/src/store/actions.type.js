@@ -20,7 +20,8 @@ export const UPDATE_VOLUNTEER_ACT = 'updateVolunteerAct'
 
 // volunteer's leaders
 export const FETCH_VOLUNTEER_LEADER = 'fetchVolunteerLeader'
-export const CREATE_VOLUNTEER_LEADER = 'createVolunteerLeader'
+export const BEGIN_VOLUNTEER_LEADER = 'beginVolunteerLeader'
+export const END_VOLUNTEER_LEADER = 'endVolunteerLeader'
 
 // volunteer's history
 export const FETCH_VOLUNTEER_HISTORY = 'fetchVolunteerHistory'
@@ -34,6 +35,7 @@ export const UPDATE_VOLUNTEER_EDU = 'updateVolunteerEdu'
 
 // query volunteer
 export const QUERY_VOLUNTEERS = 'queryVolunteers'
+export const QUERY_VOLUNTEER_ITEM = 'queryVolunteerItem'
 export const FIND_VOLUNTEERS = 'findVolunteers'
 
 // administration
@@ -51,6 +53,9 @@ export const FETCH_REPORT_ACTS = 'fetchReportActs'
 export const DELETE_REPORT_ACT = 'deleteReportAct'
 export const CREATE_REPORT_ACT = 'createReportAct'
 export const UPDATE_REPORT_ACT = 'updateReportAct'
+
+// utilize
+export const FETCH_SMALL_LEADER = 'fetchSmallLeader'
 
 // will be obsoleted
 export const DELETE_AUTHOR = 'deleteAuthor'

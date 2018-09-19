@@ -35,7 +35,7 @@
           <td class="text-xs-center">{{ props.item.ca_name }}</td>
           <td class="text-xs-center">{{ props.item.au_date }}</td>
           <td class="text-xs-center">{{ activityState[props.item.state] }}</td>
-          <td class="text-xs-center">{{ props.item.phone }}</td>
+          <td class="text-xs-center">{{ props.item.phone|formatted }}</td>
           <td class="text-xs-center">{{ props.item.br_date }}</td>
         </tr>
       </template>
@@ -83,9 +83,7 @@ export default {
     ]
   }),
   created () {
-    this.headers.map(h => {
-      h.class = ['text-xs-center', 'body-2']
-    })
+    this.headers.map(h => { h.class = ['text-xs-center', 'body-2'] })
     // this.selected.id = 0
     const res = this.$parent.getSmall()
     if (res) {
@@ -130,6 +128,16 @@ export default {
       const pos = this.items.findIndex(o => o.id === id)
       if (pos > -1) this.items.splice(pos, 1)
     } */
+  },
+  filters: {
+    formatted (no) {
+      if (!no) return ''
+      if (no && no.toString().indexOf('-') > 0) return no
+      const pn1 = no.toString().slice(0, 3)
+      const pn2 = no.toString().slice(3, 7)
+      const pn3 = no.toString().slice(7)
+      return `${pn1}-${pn2}-${pn3}`
+    }
   }
 }
 </script>

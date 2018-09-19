@@ -121,7 +121,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import MenuButtons from './control/MenuButtons'
-import { FETCH_REPORT_STATE, CREATE_REPORT, UPDATE_REPORT } from '@/store/actions.type'
+import { FETCH_REPORT_STATE, CREATE_REPORT, UPDATE_REPORT, FETCH_SMALL_LEADER } from '@/store/actions.type'
 import { reduce } from 'lodash/collection'
 import { pick, omit } from 'lodash/object'
 // import { isEqual, cloneDeep } from 'lodash/lang'
@@ -134,7 +134,8 @@ export default {
     ...mapGetters([
       'trnCodes',
       'stdCodes',
-      'reportInfo'
+      'reportInfo',
+      'smallLeader'
     ]),
     topics () {
       return this.trnCodes.length > this.stdCodes ? this.trnCodes : this.stdCodes
@@ -203,6 +204,7 @@ export default {
       if (res) {
         this.states.ro.s_name = res.s_name
         this.states.ro.s_code = res.s_code
+        this.$store.dispatch(FETCH_SMALL_LEADER, res.s_code)
       }
     }
   },
@@ -279,6 +281,7 @@ export default {
         data.rb.s_date = `${data.rb.s_date}-01`
         data.rb.e_date = `${data.rb.e_date}-01`
         data.rb.code = `${data.rb.s_code}-${data.rb.r_year}`
+        data.rb.lv_id = this.smallLeader.lv_id
       }
       if (this.changed.ro) {
         data.ro = omit(this.states.ro, ['s_code', 'name', 'phone', 's_date', 'e_date', 's_name'])

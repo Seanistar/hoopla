@@ -179,6 +179,20 @@ export default {
       }
     }
   },
+  watch: {
+    'item.edu_code' (code) {
+      if (!code) return
+      const res = this.eduCodes.find(e => e.code === code)
+      if (res) this.item.edu_name = res.name
+    },
+    'item.e_date' (date) {
+      if (!this.item.s_date || !date) return
+      if (date < this.item.s_date) {
+        alert('종료일이 시작일보다 빠릅니다.')
+        this.$refs['e_date'].setDate(null)
+      }
+    }
+  },
   data: () => ({
     finder: false,
     churchFinder: false,
@@ -191,11 +205,19 @@ export default {
       this.item.state = 'ACT'
     } else if (this.refs === 'acts') {
       this.item.s_date = this.item.e_date = ''
+    } else if (this.refs === 'edus') {
+      this.item.s_date = this.item.e_date = ''
+      this.item.edu_code = this.item.edu_name = null
     }
   },
   methods: {
     closeDialog () {
-      if (!this.item.id) return alert('코드 확인이 되지 않았습니다.')
+      if (!this.item.id) return alert('코드 확인이 되지 않았습니다!')
+      if (!this.item.e_date || !this.item.s_date) return alert('기간을 확인해주세요!')
+      if (this.item.e_date < this.item.s_date) {
+        this.$refs['e_date'].setDate(null)
+        return alert('종료일이 시작일보다 빠릅니다!')
+      }
       this.$emit('close-input-item', this.item)
       this.reset()
     },
@@ -207,6 +229,7 @@ export default {
     setItem (data) {
       this.item = data
       const sdr = this.$refs['s_date']; sdr && sdr.setDate(data.s_date)
+
       const edr = this.$refs['e_date']; edr && edr.setDate(data.e_date)
     },
     onPicked (obj) {

@@ -17,8 +17,8 @@
                           clearable v-model="params.ca_id"></v-text-field>
           </v-flex>
           <v-flex xs4>
-            <v-select label="활동 상태" v-model="params.state"
-                      :items="states" item-text="nm" item-value="cd" ></v-select><!--prepend-icon="contacts"-->
+            <v-select label="활동 상태" v-model="params.state" :rules="[rules.required]"
+                      :items="a_states" item-text="nm" item-value="cd" ></v-select><!--prepend-icon="contacts"-->
           </v-flex>
         </v-layout>
         <v-layout>
@@ -49,13 +49,13 @@
           </v-flex>
           <v-flex xs4>
             <v-select label="지구 코드" v-model="areaCode.ma_code"
-                      @change="onChangeCode" no-data-text="본당 자료가 없습니다."
+                      @change="onChangeCode" no-data-text="지구 자료가 없습니다."
                       :items="mAreaCodes" item-text="m_name" item-value="m_code" :disabled="areaCode.la_code === ''"
             ></v-select>
           </v-flex>
           <v-flex xs4>
             <v-select label="본당 코드" v-model="areaCode.sa_code"
-                      @change="onChangeCode" no-data-text="지구 자료가 없습니다."
+                      @change="onChangeCode" no-data-text="본당 자료가 없습니다."
                       :items="sAreaCodes" item-text="s_name" item-value="s_code" :disabled="areaCode.ma_code === ''"
             ></v-select>
           </v-flex>
@@ -84,12 +84,12 @@
                            @close-date-picker="onPicked" refs="le_date"></date-picker>
             </v-flex>
             <v-flex>
+              <v-btn color="black accent-2" outline @click="onCompleteLeader('end')"
+                     v-if="params.l_work === 'Y' && params.ls_date && params.le_date" class="mt-3">임기 종료</v-btn>
               <v-btn color="grey accent-2"
-                     v-if="params.l_work === 'Y'" class="mt-3">임기 중</v-btn>
+                     v-else-if="params.l_work === 'Y'" class="mt-3">임기 중</v-btn>
               <v-btn color="black accent-2" outline @click="onCompleteLeader('bgn')"
                      v-else-if="isLeader && !params.l_work && params.ls_date" class="mt-3">임기 시작</v-btn>
-              <v-btn color="black accent-2" outline @click="onCompleteLeader('end')"
-                     v-else-if="params.l_work === 'Y' && params.ls_date && params.le_date" class="mt-3">임기 종료</v-btn>
             </v-flex>
 
         </v-layout>
@@ -154,10 +154,18 @@ import { isEmpty, isUndefined, isEqual, cloneDeep } from 'lodash/lang'
 import { pick } from 'lodash/object'
 import DatePicker from './control/DatePicker'
 import AppAlert from './control/AppAlert'
-import { CREATE_VOLUNTEER, UPDATE_VOLUNTEER, FETCH_VOLUNTEER_ITEM, CREATE_VOLUNTEER_HISTORY } from '@/store/actions.type'
 import { VolunteerService } from '@/common/api.service'
 import { ACTIVITY_STATES, LEADER_STATES } from '../common/const.info'
 import CodeMixin from '@/common/code.mixin'
+import { mapActions } from 'vuex'
+import {
+  CREATE_VOLUNTEER,
+  UPDATE_VOLUNTEER,
+  FETCH_VOLUNTEER_ITEM,
+  BEGIN_VOLUNTEER_LEADER,
+  END_VOLUNTEER_LEADER,
+  CREATE_VOLUNTEER_HISTORY
+} from '@/store/actions.type'
 
 export default {
   name: 'VolunteerItem',
@@ -168,7 +176,7 @@ export default {
     form () { return this.$data.params },
     volunteerInfo: {
       get () { return this.$store.getters.volunteerInfo(parseInt(this.v_id)) },
-      set (value) { this.$store.dispatch(CREATE_VOLUNTEER, value) }
+      set (value) { this[CREATE_VOLUNTEER](value) }
     }
   },
   data: () => ({
@@ -178,21 +186,9 @@ export default {
     formHasErrors: false,
     params: { // is equal to bible's column
       sex: 'F',
-      state: 'ACT',
-      br_date: null,
-      ca_date: null,
+      area_code: '01-01-01',
       ls_date: null,
-      l_work: undefined,
-      name: null,
-      address: null,
-      email: null,
-      phone: null,
-      job: null,
-      degree: null,
-      ca_name: null,
-      ca_id: null,
-      au_date: null,
-      memo: null
+      l_work: null
     },
     rules: {
       required: value => !!value || '필수 항목입니다.',
@@ -209,21 +205,44 @@ export default {
     },
     degrees: ['초졸', '중졸', '고졸', '초대졸', '대졸', '대학원졸'],
     l_states: LEADER_STATES,
-    states: ACTIVITY_STATES
+    a_states: ACTIVITY_STATES
   }),
+  watch: {
+    'params.le_date' (date) {
+      if (!date || !this.params.ls_date) return
+      if (this.params.ls_date > date) {
+        this.$nextTick(() => {
+          this.$refs['le_date'].setDate(this.params.le_date = null)
+        })
+        return alert('종료일이 시작일보다 빠릅니다.')
+      }
+    }
+  },
   created () {
     this.isEditMode = !isUndefined(this.v_id)
     if (this.isEditMode) this.fetchData()
   },
   mounted () {
-    const ts = document.getElementsByTagName('INPUT')
+    /* const ts = document.getElementsByTagName('INPUT')
     for (let i = 0; i < ts.length; i++) {
       ts[i].addEventListener('change', () => {
         console.log('changed input...', ts[i].nodeValue)
       })
-    }
+    } */
   },
   methods: {
+    ...mapActions([
+      FETCH_VOLUNTEER_ITEM,
+      CREATE_VOLUNTEER,
+      UPDATE_VOLUNTEER,
+      BEGIN_VOLUNTEER_LEADER,
+      END_VOLUNTEER_LEADER,
+      CREATE_VOLUNTEER_HISTORY
+    ]),
+    async fetchData () {
+      await this[FETCH_VOLUNTEER_ITEM](this.v_id)
+      this.loadItem()
+    },
     async loadItem () {
       let item = null
       if (!isEmpty(this.volunteerInfo)) item = cloneDeep(this.volunteerInfo)
@@ -239,40 +258,55 @@ export default {
             this.$refs[k] && this.$refs[k].setDate(item[k])
           }
         })
-        this.$parent.setCore(pick(item, ['ca_name', 'name', 'ca_id', 'area_code']))
-        if (item.l_work === 'Y') this.isLeader = true
-        this.params = item
-        this.assignCode(item.area_code)
+        this._initItem(item)
       })
+    },
+    _initItem (item) {
+      this.$parent.VOLT = pick(item, ['area_code', 'name', 'ca_name', 'ca_id'])
+      if (item.l_work === 'Y') this.isLeader = true
+      this.assignCode(item.area_code)
+
+      this.params = item
     },
     onPicked (obj) {
       console.log('picked date...', obj.type, obj.date)
       this.params[obj.type] = obj.date
     },
-    onChangeCode () {
+    async onChangeCode () {
       if (this.v_id === undefined || !this.params.sa_name) return
-      // const src = [this.volunteerInfo.la_name, this.volunteerInfo.ma_name, this.volunteerInfo.sa_name]
-      // const trg = [this.params.la_name, this.params.ma_name, this.params.sa_name]
       if (!isEqual(this.volunteerInfo.sa_name, this.params.sa_name) && confirm('본당 정보를 변경하시겠습니까?')) {
         const history = {
           v_id: this.volunteerInfo.id,
           out_code: this.volunteerInfo.area_code,
-          out_name: `${this.volunteerInfo.la_name} (교구) ${this.volunteerInfo.sa_name} (본당)`,
+          out_name: `${this.volunteerInfo.la_name} 교구 / ${this.volunteerInfo.sa_name} 본당`,
           in_code: this.params.area_code,
-          in_name: `${this.params.la_name} (교구) ${this.params.sa_name} (본당)`
+          in_name: `${this.params.la_name} 교구 / ${this.params.sa_name} 본당`
         }
-        this.$store.dispatch(CREATE_VOLUNTEER_HISTORY, history)
+        await this[CREATE_VOLUNTEER_HISTORY](history)
         this.$showSnackBar('변경되었습니다.')
       }
     },
-    onCompleteLeader (type) {
+    async onCompleteLeader (type) {
       if (!this.v_id) return alert('봉사자 정보를 먼저 추가해주세요.')
       if (type === 'end') {
-        if (this.params.ls_date > this.params.le_date) return alert('종료일이 시작일보다 빠릅니다.')
-        confirm('임기를 종료하시겠습니까? 변경 후 수정할 수 없습니다.')
+        if (confirm('임기를 종료하시겠습니까? 변경 후 수정할 수 없습니다.')) {
+          await this[END_VOLUNTEER_LEADER](pick(this.params, ['id', 'ls_date', 'le_date']))
+          this.$showSnackBar('종료되었습니다.')
+          this.$nextTick(() => {
+            this.isLeader = false
+            this.params.l_work = 'N'
+            this.params.ls_date = this.params.le_date = null
+          })
+        }
       } else {
         if (this.params.l_work) return // must be undefined
-        confirm('임기를 시작하시겠습니까?')
+        if (confirm('임기를 시작하시겠습니까?')) {
+          await this[BEGIN_VOLUNTEER_LEADER](pick(this.params, ['id', 'area_code', 'ls_date']))
+          this.$showSnackBar('시작되었습니다.')
+          this.$nextTick(() => {
+            this.params.l_work = 'Y'
+          })
+        }
       }
     },
     reset () {
@@ -283,7 +317,7 @@ export default {
       })
     },
     submit () {
-      if (!this.$refs.form.validate()) {
+      /* if (!this.$refs.form.validate()) {
         return alert('입력 데이터를 확인해주세요.')
       }
       /* this.formHasErrors = false
@@ -293,31 +327,29 @@ export default {
         this.$refs[f].validate(true)
       }) */
 
-      console.log(this.form)
+      // console.log(this.form)
       if (!this.isEditMode) {
         this.$showSnackBar('추가되었습니다.')
         this.isDisabled = true
         this.createItem()
       } else {
-        this.$store.dispatch(UPDATE_VOLUNTEER, this.form)
+        this[UPDATE_VOLUNTEER](this.form)
         this.$showSnackBar('수정되었습니다.')
       }
     },
-    async fetchData () {
-      await this.$store.dispatch(FETCH_VOLUNTEER_ITEM, this.v_id)
-      this.loadItem()
-    },
     async createItem () {
+      let vid = null
       try {
-        this.v_id = await this.$store.dispatch(CREATE_VOLUNTEER, this.form)
+        vid = await this[CREATE_VOLUNTEER](this.form)
       } catch (e) {
         console.warn(e)
         return alert('실패하였습니다.')
       }
 
-      const targetUrl = `${location.origin}${location.pathname}/${this.v_id}`
+      // const targetUrl = `${location.origin}${location.pathname}/${vid}`
       this.$nextTick(() => {
-        location.replace(targetUrl)
+        // location.replace(targetUrl)
+        this.$parent.VID = vid
       })
     }
   }

@@ -16,6 +16,9 @@ const getters = {
   actCodes (state) {
     return filter(state.eduCodes, o => o.type === 'A')
   },
+  ebsCodes (state) {
+    return filter(state.eduCodes, o => o.type === 'E')
+  },
   trnCodes (state) {
     return filter(state.eduCodes, o => o.type === 'T')
   },
