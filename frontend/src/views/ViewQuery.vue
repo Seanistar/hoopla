@@ -26,7 +26,7 @@ export default {
   props: { id: null },
   computed: {
     targetComponents () {
-      return ['QueryEdus', 'QueryNotes', 'QueryBibles', 'QueryActs']
+      return ['QueryEdus', 'QueryBibles', 'QueryNotes', 'QueryActs']
     }
   },
   watch: {

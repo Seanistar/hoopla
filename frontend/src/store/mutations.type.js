@@ -60,6 +60,7 @@ export const ADD_REPORT_ACT = 'addReportAct'
 export const REMOVE_REPORT_ACT = 'removeReportAct'
 
 export const SET_SMALL_LEADER = 'setSmallLeader'
+export const SET_CHANGED_CODE = 'setChangedCode'
 
 // will be obsoleted
 export const SET_TOPIC = 'setTopic'

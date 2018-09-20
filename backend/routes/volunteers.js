@@ -14,8 +14,9 @@ router.get('', (req, res) => {
     LEFT JOIN leaders l ON v.id = l.v_id AND l.work = 'Y'
     LEFT JOIN area_code a ON v.area_code = a.a_code `
   if (req.query.code) select += `WHERE v.area_code = ?`
+  else select += `LIMIT 100`
   const sql = [select, req.query.code ? [req.query.code] : []]
-  // console.log(sql)
+  console.log(sql)
   db.query(...sql, (err, rows) => {
     if (!err) {
       res.status(200).send(rows)
@@ -66,13 +67,13 @@ router.put('/', (req, res) => {
 
 router.post('/page/:id', (req, res) => {
   const id = req.params.id
-  const {au_date, ca_id, name, ca_name, state, area_code, email, phone, address, job, degree, ca_date, br_date, memo} = req.body
+  const {au_date, ca_id, name, ca_name, state, area_code, sex, email, phone, address, job, degree, ca_date, br_date, memo} = req.body
   const sql = [`
     UPDATE volunteers 
-    SET au_date=?, ca_id=?, name=?, ca_name=?, state=?, area_code=?,
+    SET au_date=?, ca_id=?, name=?, ca_name=?, state=?, area_code=?, sex=?,
     email=?, phone=?, address=?, job=?, degree=?, ca_date=?, br_date=?, memo=?
     WHERE id=?`,
-    [au_date, ca_id, name, ca_name, state, area_code, email, phone, address, job, degree, ca_date, br_date, memo, id]
+    [au_date, ca_id, name, ca_name, state, area_code, sex, email, phone, address, job, degree, ca_date, br_date, memo, id]
   ]
   db.query(...sql, (err, rows) => {
     if (!err) {
@@ -264,7 +265,7 @@ router.get('/query', (req, res) => {
   if (au_date) sql += ` AND YEAR(vl.au_date) >= ${au_date}`
   if (v_name) sql += ` AND vl.name like (\'%${v_name}%\')`
   if (sa_code) sql += ` AND vl.area_code = (\'${sa_code}\')`
-  // console.log('query... ', sql, a_code, au_date)
+  console.log('query... ', sql, req.query)
   db.query(sql, (err, rows) => {
     if (!err) {
       res.status(200).send(rows)
@@ -277,14 +278,19 @@ router.get('/query', (req, res) => {
 
 router.get('/queried', (req, res) => {
   const {e_type, v_id} = req.query
-  let sql = [`
+  const e_sql = `
     SELECT edu_code e_code, COUNT(id) counter, MAX(YEAR(e.e_date))e_year, c.name e_name
     FROM edus e
     LEFT JOIN edu_code c ON e.edu_code = c.code
     WHERE c.type = ? AND e.v_id = ?
-    GROUP BY YEAR(e.e_date), e.edu_code
-    ORDER BY e_year DESC
-   `, [e_type, v_id]]
+    GROUP BY YEAR(e.e_date), e.edu_code`
+  const a_sql = `
+    SELECT act_code e_code, COUNT(id) counter, MAX(YEAR(a.e_date))e_year, c.name e_name
+    FROM acts a
+    LEFT JOIN edu_code c ON a.act_code = c.code
+    WHERE c.type = ? AND a.v_id = ?
+    GROUP BY YEAR(a.e_date), a.act_code`
+  let sql = [e_type === 'A' ? a_sql : e_sql, [e_type, v_id]]
   console.log('queried... ', sql)
   db.query(...sql, (err, rows) => {
     if (!err) {

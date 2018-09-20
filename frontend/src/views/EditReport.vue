@@ -27,6 +27,7 @@ export default {
   computed: {
     ...mapGetters([
       'smallCodes',
+      'changedCodes',
       'adminInfo'
     ]),
     targetComponents () {
@@ -39,7 +40,7 @@ export default {
   }),
   methods: {
     getSmall () {
-      let sc = sessionStorage.getItem('SMALL-CODE')
+      let sc = this.changedCodes.rl_ac
       if (!sc) sc = this.adminInfo.area_code
       return this.smallCodes.find(o => o.s_code === sc)
     }

@@ -1,7 +1,8 @@
 <template>
   <v-container pt-2>
-    <inline-text-box/>
-    <v-data-table :headers="headers" :items="items" hide-actions
+    <inline-text-box :au_year="queryInfo.good.au_date|yearstamp"
+                     :v_name="`${queryInfo.good.name} ${queryInfo.good.ca_name}`"/>
+    <v-data-table :items="items" hide-actions
                   class="elevation-1"
     >
       <template slot="headers" slot-scope="props">
@@ -11,17 +12,15 @@
         </tr>
         <tr>
           <th class="align-center body-1 w-10"
-              v-for="header in props.headers" :key="header.code"
-          >{{ header.name }}
+              v-for="header in actCodes" :key="header.code">{{ header.name }}
           </th>
         </tr>
       </template>
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <tr @click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
-          <td class="text-xs-center">{{ props.item.id }}</td>
-          <td class="text-xs-center">{{ props.item.name }}</td>
-          <td class="text-xs-center">{{ props.item.ca_name }}</td>
+        <tr>
+          <td class="text-xs-center">{{ props.item|yearKey }}</td>
+          <td class="text-xs-center" v-for="(at, i) in actCodes" :key="i">{{ props.item|yearBy|counter(at) }}</td>
         </tr>
       </template>
       <template slot="no-data">
@@ -33,18 +32,13 @@
 
 <script>
 import InlineTextBox from './control/InlineTextBox'
+import QueryMixin from '../common/query.mixin'
 
 export default {
   name: 'QueryActs',
+  mixins: [ QueryMixin ],
   components: { InlineTextBox },
-  computed: {
-    headers () {
-      return this.$store.getters.actCodes
-    }
-  },
-  data: () => ({
-    items: []
-  })
+  created () { this.e_type = 'A' }
 }
 </script>
 

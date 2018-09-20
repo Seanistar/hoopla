@@ -4,8 +4,14 @@ const db = require('../common/db.mysql')
 const _promise = require('bluebird')
 
 router.get('/', (req, res) => {
-  // const sql = [`SELECT * FROM reports WHERE s_code=?`, [req.query.code]]
-  const sql = ['SELECT * FROM reports']
+  const code = req.query.code
+  let select = `SELECT *, 
+  (SELECT COUNT(id) FROM volunteers WHERE area_code=?) numbers
+  FROM reports `
+  if (code) select += `WHERE s_code=?`
+  else select += `LIMIT 100`
+  const sql = [select, code ? [code, code] : []]
+  console.log(sql, code)
   db.query(...sql, (err, rows) => {
     if (!err) {
       res.status(200).send(rows)
@@ -18,7 +24,8 @@ router.get('/', (req, res) => {
 
 router.get('/acts', (req, res) => {
   const sql = [`
-    SELECT a.*, v.name, v.ca_name, v.ca_id, e.name act_name 
+    SELECT a.*, v.name, v.ca_name, v.ca_id, e.name act_name,
+    CONCAT(a.v_id, '-', a.act_code) v_a_c 
     FROM acts a
     LEFT JOIN volunteers v ON a.v_id = v.id
     LEFT JOIN edu_code e ON e.code = a.act_code
@@ -322,4 +329,5 @@ const getLeader = (a_code) => {
     })
   })
 }
+
 module.exports = router

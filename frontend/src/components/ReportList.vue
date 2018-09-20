@@ -1,5 +1,5 @@
 <template>
-  <v-container class="elevation-3 w-85 pt-2">
+  <v-container class="elevation-3 w-85 pt-2 mb-4">
     <v-layout row wrap pb-0 align-baseline>
       <v-flex xs6>
         <v-layout row align-baseline>
@@ -7,7 +7,7 @@
             <v-subheader class="body-2 pr-0">소속본당 : </v-subheader>
           </v-flex>
           <v-flex xs5>
-            <v-combobox class="body-2" @input="onChange"
+            <v-combobox class="body-2" @input="fetchReports()"
                         v-model="model" :items="items" item-value="code" item-text="name"
                         :search-input.sync="search" clearable single-line>
               <template slot="no-data">
@@ -41,7 +41,7 @@
           <td class="text-xs-center">{{ props.item.name }}</td>
           <td class="text-xs-center">{{ props.item.phone|formatted }}</td>
           <td class="text-xs-center">{{ props.item.created|datestamp }}</td>
-          <td class="text-xs-center">{{ props.item.id }}</td>
+          <td class="text-xs-center">{{ props.item.numbers }}</td>
           <td class="text-xs-center">{{ props.item.s_date|monthstamp }} ~ {{ props.item.e_date|monthstamp }}</td>
           <td class="justify-center layout px-0">
             <v-icon small class="mr-3" @click.self="editReport(props.item.id)">edit</v-icon>
@@ -60,6 +60,7 @@
 import { mapGetters } from 'vuex'
 import { map, find, orderBy } from 'lodash/collection'
 import { FETCH_REPORTS, DELETE_REPORT } from '@/store/actions.type'
+import { SET_CHANGED_CODE } from '@/store/mutations.type'
 
 export default {
   name: 'ReportList',
@@ -69,6 +70,7 @@ export default {
       'adminInfo',
       'reportCode',
       'isReportsLoading',
+      'changedCodes',
       'reports',
       'reportCount'
     ])
@@ -85,7 +87,7 @@ export default {
   },
   data: () => ({
     items: [],
-    model: '',
+    model: null,
     search: null,
     fetched: false,
     selected: {},
@@ -101,20 +103,13 @@ export default {
   }),
   created () {
     this.headers.map(h => { h.class = ['text-xs-center', 'body-1'] })
-    const list = map(this.smallCodes, o => {
-      return {code: o.s_code, name: o.s_name}
-    })
-    this.items = orderBy(list, ['name'])
-
-    const res = find(list, o => o.code === this.adminInfo.area_code)
-    if (res) this.model = res.name
-
-    this.fetchReports(this.adminInfo.area_code)
   },
   methods: {
     async fetchReports (code) {
-      await this.$store.dispatch(FETCH_REPORTS, code)
+      let reqCode = code !== undefined ? code : (this.model ? this.model.code : '')
+      await this.$store.dispatch(FETCH_REPORTS, reqCode)
       this.fetched = true
+      reqCode && this.$store.commit(SET_CHANGED_CODE, {type: 'rl_ac', code: reqCode})
     },
     newReport () {
       this.$router.push({name: 'edit-report'})
@@ -127,10 +122,21 @@ export default {
       if (!confirm('이 항목을 삭제하시겠습니까?')) return
       this.$store.dispatch(DELETE_REPORT, id) && this.$showSnackBar('삭제되었습니다!')
     },
-    onChange (ev) {
-      if (ev === undefined) return
-      this.fetchReports(ev.code)
-      sessionStorage.setItem('SMALL-CODE', ev.code)
+    setLastChangedCode () {
+      let code = this.changedCodes.rl_ac
+      if (!code) code = this.adminInfo.area_code
+
+      this.setCodeInfo(code)
+      this.fetchReports(code)
+    },
+    setCodeInfo (code) {
+      const list = map(this.smallCodes, o => { return {code: o.s_code, name: o.s_name} })
+      this.items = orderBy(list, ['name'])
+
+      const res = find(list, o => o.code === code)
+      res && this.$nextTick(() => {
+        this.model = {name: res.name, code: res.code}
+      })
     }
   },
   filters: {

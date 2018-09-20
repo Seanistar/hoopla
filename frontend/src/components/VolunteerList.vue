@@ -2,12 +2,12 @@
   <v-container class="elevation-5 pt-2">
     <v-layout row align-baseline pb-0>
       <v-flex xs6>
-        <v-layout row>
+        <v-layout row align-baseline>
           <v-flex xs2>
             <v-subheader class="body-2 pr-0"><span>소속본당 : </span></v-subheader>
           </v-flex>
           <v-flex xs5>
-            <v-combobox class="body-2" v-model="model" label="소속본당"
+            <v-combobox class="body-2" v-model="model" @input="fetchVolunteers()"
                         :items="items" item-value="code" item-text="name"
                         :search-input.sync="search" clearable single-line>
               <template slot="no-data">
@@ -72,19 +72,20 @@
 <script>
 import { mapGetters } from 'vuex'
 import { FETCH_VOLUNTEERS, DELETE_VOLUNTEER } from '@/store/actions.type'
+import { SET_CHANGED_CODE } from '@/store/mutations.type'
 import { map, find, orderBy } from 'lodash/collection'
 
 export default {
   name: 'VolunteerList',
   data: () => ({
     items: [],
-    model: '',
+    model: null,
     search: null,
     fetched: false,
     perPage: [10, 25, {text: '$vuetify.dataIterator.rowsPerPageAll', value: -1}],
     pagination: { sortBy: 'id' },
     headers: [
-      { text: 'ID', value: 'id' },
+      { text: '코드', value: 'id' },
       { text: '성명', value: 'name' },
       { text: '세례명', value: 'ca_name' },
       { text: '활동상태', value: 'area_code' },
@@ -102,6 +103,7 @@ export default {
       'adminInfo',
       'volunteers',
       'volunteersCount',
+      'changedCodes',
       'isVolunteersLoading'
     ]),
     activityState () {
@@ -117,19 +119,14 @@ export default {
   },
   created () {
     this.headers.map(h => { h.class = ['text-xs-center', 'body-2', 'pl-39x'] })
-    const list = map(this.smallCodes, o => { return {code: o.s_code, name: o.s_name} })
-    this.items = orderBy(list, ['name'])
-
-    const res = find(list, o => o.code === this.adminInfo.area_code)
-    if (res) this.model = res.name
-  },
-  mounted () {
-    this.fetchVolunteers()
   },
   methods: {
-    async fetchVolunteers () {
-      await this.$store.dispatch(FETCH_VOLUNTEERS, this.adminInfo.area_code) // '01-01-01',
+    async fetchVolunteers (code) {
+      let reqCode = code !== undefined ? code : (this.model ? this.model.code : '')
+      console.log('request code...', reqCode, this.model)
+      await this.$store.dispatch(FETCH_VOLUNTEERS, reqCode)
       this.fetched = true
+      reqCode && this.$store.commit(SET_CHANGED_CODE, {type: 'vl_ac', code: reqCode})
     },
     newVolunteer () {
       this.$router.push({name: 'edit-volunteer'})
@@ -139,6 +136,23 @@ export default {
     },
     deleteItem (item) {
       confirm('이 항목을 삭제하시겠습니까?') && this.$store.dispatch(DELETE_VOLUNTEER, item.id)
+    },
+    setLastChangedCode () {
+      let code = this.changedCodes.vl_ac
+      if (!code) code = this.adminInfo.area_code
+
+      this.setCodeInfo(code)
+      this.fetchVolunteers(code)
+    },
+    setCodeInfo (code) {
+      const list = map(this.smallCodes, o => { return {code: o.s_code, name: o.s_name} })
+      this.items = orderBy(list, ['name'])
+
+      const res = find(list, o => o.code === code)
+      res && this.$nextTick(() => {
+        this.model = {name: res.name, code: res.code}
+        // console.log(this.model.name, this.model.code)
+      })
     }
   }
 }

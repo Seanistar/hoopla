@@ -9,7 +9,7 @@ import {
   FETCH_VOLUNTEER_HISTORY, CREATE_VOLUNTEER_HISTORY
 } from './actions.type'
 import {
-  FETCH_START,
+  FETCH_START, SET_CHANGED_CODE,
   FETCH_VOLUNTEERS_END, ADD_VOLUNTEER, SET_VOLUNTEER, REMOVE_VOLUNTEER,
   START_QUERYING, QUERY_VOLUNTEERS_END, SET_QUERY_INFO, SET_QUERIED_VOLUNTEER_ITEM,
   START_FINDING, FIND_VOLUNTEERS_END, RESET_FIND_VOLUNTEERS,
@@ -25,6 +25,10 @@ const state = {
   volunteerActs: [],
   volunteerHistory: [],
   volunteerLeader: [],
+  changedCodes: {
+    vl_ac: null, // volunteer list
+    rl_ac: null // report list
+  },
   isLoading: false,
   isFinding: false,
   isQuerying: false,
@@ -55,7 +59,8 @@ const getters = {
   queryInfo: state => state.queryInfo,
   queriedVoltItems: state => state.queriedVoltItems,
   foundVolunteers: state => state.foundResult,
-  foundCount: state => state.foundCount
+  foundCount: state => state.foundCount,
+  changedCodes: state => state.changedCodes
 }
 
 const actions = {
@@ -411,6 +416,9 @@ const mutations = {
   },
   [ADD_VOLUNTEER_HISTORY] (state, hst) {
     state.volunteerHistory.push(hst)
+  },
+  [SET_CHANGED_CODE] (state, param) {
+    state.changedCodes[param.type] = param.code
   }
 }
 

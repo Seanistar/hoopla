@@ -1,6 +1,6 @@
 <template>
   <div class="pt-0">
-    <report-list/>
+    <report-list ref="rl"/>
   </div>
 </template>
 
@@ -9,7 +9,12 @@ import ReportList from '@/components/ReportList'
 
 export default {
   name: 'ReportHome',
-  components: { ReportList }
+  components: { ReportList },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      vm.$refs.rl.setLastChangedCode()
+    })
+  }
 }
 </script>
 

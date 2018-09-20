@@ -3,7 +3,7 @@
     <v-layout row wrap align-end>
       <v-flex xs12>
         <v-layout row wrap pb-0>
-          <v-subheader class="subheading font-weight-bold w-16 pl-1 pr-0">{{states.ro.s_name}} 본당
+          <v-subheader class="subheading font-weight-bold w-16 pl-2 pr-0">{{states.ro.s_name}} 본당
           </v-subheader>
           <v-subheader class="body-2 w-24 pr-0"><span class="mr-2">작성자 :</span>
             <input v-model="states.ro.name" tag="rb"

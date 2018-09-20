@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mb-4">
     <v-form ref="form">
       <v-container class="elevation-4 py-1 w-85">
         <v-layout row wrap pl-2>
@@ -186,7 +186,9 @@ export default {
     onClickResult (item) {
       this.selected = item
       this.$store.commit(SET_QUERY_INFO, {cond: this.formData, good: item})
-      this.$router.push({name: 'view-query'})
+      setTimeout(() => {
+        this.$router.push({name: 'view-query'})
+      }, 10)
     },
     onPeopleFound (data) {
       console.log('found people...', data)

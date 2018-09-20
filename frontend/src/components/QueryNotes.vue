@@ -1,6 +1,7 @@
 <template>
   <v-container pt-2>
-    <inline-text-box/>
+    <inline-text-box :au_year="queryInfo.good.au_date|yearstamp"
+                     :v_name="`${queryInfo.good.name} ${queryInfo.good.ca_name}`"/>
     <v-data-table hide-actions class="elevation-1" :items="items"
     >
       <template slot="headers" slot-scope="props">
@@ -10,15 +11,14 @@
         </tr>
         <tr>
           <th class="body-1 w-10"
-              v-for="item in headers" :key="item.code">{{item.name|subject}}</th>
+              v-for="item in stdCodes" :key="item.code">{{item.name|subject}}</th>
         </tr>
       </template>
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <tr @click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
-          <td class="text-xs-center">{{ props.item.id }}</td>
-          <td class="text-xs-center">{{ props.item.name }}</td>
-          <td class="text-xs-center">{{ props.item.ca_name }}</td>
+        <tr>
+          <td class="text-xs-center">{{ props.item|yearKey }}</td>
+          <td class="text-xs-center" v-for="(nt, i) in stdCodes" :key="i">{{ props.item|yearBy|counter(nt) }}</td>
         </tr>
       </template>
       <template slot="no-data">
@@ -30,25 +30,13 @@
 
 <script>
 import InlineTextBox from './control/InlineTextBox'
+import QueryMixin from '../common/query.mixin'
 
 export default {
   name: 'QueryNotes',
+  mixins: [ QueryMixin ],
   components: { InlineTextBox },
-  computed: {
-    headers () {
-      return this.$store.getters.stdCodes
-    }
-  },
-  data: () => ({
-    items: [],
-    selected: {}
-  }),
-  filters: {
-    subject (name) {
-      const [tr, nm] = name.split('-')
-      return nm ? nm.trim() : tr.trim()
-    }
-  }
+  created () { this.e_type = 'N' }
 }
 </script>
 

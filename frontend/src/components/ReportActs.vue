@@ -11,20 +11,25 @@
         </v-subheader>
       </v-flex>
     </v-layout>
-    <v-data-table :headers="headers" :items="reportActs" hide-actions
+    <v-data-table :headers="headers" :items="items" hide-actions item-key="idx"
                   class="elevation-5" :loading="fetched && isReportsLoading">
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <tr @click="selected = props.item" @dblclick="onClickMenu('update')"
+        <tr @click="selected = props.item; props.expanded = !props.expanded" @dblclick="onClickMenu('update')"
             :style="{backgroundColor: (selected.id && selected.id === props.item.id ? 'orange' : 'white')}">
-          <td class="text-xs-center">{{ props.item.idx }}</td>
-          <td class="text-xs-center">{{ props.item.name }}</td>
-          <td class="text-xs-center">{{ props.item.ca_name }}</td>
-          <td class="text-xs-center">{{ props.item.act_name }}</td>
-          <td class="text-xs-center">{{ props.item.grp_count }}</td>
-          <td class="text-xs-center">{{ props.item.numbers }}</td>
-          <td class="text-xs-center">{{ props.item.s_date }}</td>
+          <td class="text-xs-center w-10">{{ props.item.idx }}</td>
+          <td class="text-xs-center w-20">{{ props.item.name }}</td>
+          <td class="text-xs-center w-20">{{ props.item.ca_name }}</td>
+          <td class="text-xs-center w-20">{{ props.item.act_name }}</td>
+          <td class="text-xs-center w-15">{{ props.item.groups }}</td>
+          <td class="text-xs-center w-15">{{ props.item.numbers }}</td>
+          <!--<td class="text-xs-center">{{ props.item.s_date }}</td>-->
         </tr>
+      </template>
+      <template slot="expand" slot-scope="props">
+        <v-card flat>
+          <v-card-text>Peek-a-boo!</v-card-text>
+        </v-card>
       </template>
       <template slot="no-data">
         <div class="text-xs-center">봉사 내역이 없습니다.</div>
@@ -43,6 +48,7 @@
 import MenuButtons from './control/MenuButtons'
 import ItemDialog from './control/InputItemDialog'
 import { pick } from 'lodash/object'
+import { groupBy, map, reduce } from 'lodash/collection'
 import { FETCH_REPORT_ACTS, CREATE_REPORT_ACT, UPDATE_REPORT_ACT, DELETE_REPORT_ACT, FETCH_SMALL_LEADER } from '@/store/actions.type'
 import { mapGetters, mapActions } from 'vuex'
 
@@ -58,7 +64,7 @@ export default {
     ])
   },
   created () {
-    this.headers.map(h => { h.class = ['text-xs-center', 'body-2'] })
+    this.headers.map(h => { h.class = ['text-xs-center', 'body-2', 'pl-39x'] })
     const res = this.$parent.getSmall()
     if (res) {
       this.small.nm = res.s_name
@@ -72,13 +78,12 @@ export default {
     fetched: false,
     small: { nm: '', cd: '' },
     headers: [
-      { text: '고유코드', value: 'idx' },
+      { text: '번호', value: 'idx' },
       { text: '이름', value: 'name' },
       { text: '세례명', value: 'ca_name' },
       { text: '봉사 활동명', value: 'act_name' },
-      { text: '그룹 수', value: 'grp_count' },
-      { text: '총 인원', value: 'numbers' },
-      { text: '시작한 날', value: 's_date' }
+      { text: '그룹 수', value: 'groups' },
+      { text: '총 인원', value: 'numbers' }
     ]
   }),
   methods: {
@@ -93,6 +98,26 @@ export default {
       await this[FETCH_SMALL_LEADER](code)
       await this[FETCH_REPORT_ACTS](code)
       this.fetched = true
+      this._mapData()
+    },
+    _mapData () {
+      const list = groupBy(this.reportActs, 'v_a_c')
+      let i = 1
+      const mapped = map(list, (ol) => {
+        let obj = { idx: i++, groups: ol.length }
+        obj['numbers'] = this._sumNumbers(ol)
+        obj['groups'] = ol.length
+        Object.assign(obj, pick(ol[0], ['name', 'ca_name', 'act_name', 'v_a_c']))
+        return obj
+      })
+      this.items = mapped
+      // console.log(mapped)
+    },
+    _sumNumbers (list) {
+      return reduce(list, (t, v) => {
+        let n = v.numbers
+        return t + n
+      }, 0)
     },
     deleteActItem (id) {
       this[DELETE_REPORT_ACT](id)

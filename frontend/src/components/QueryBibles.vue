@@ -1,8 +1,8 @@
 <template>
   <v-container pt-2>
-    <inline-text-box/>
-    <v-data-table hide-actions class="elevation-1" :items="items"
-    >
+    <inline-text-box :au_year="queryInfo.good.au_date|yearstamp"
+                     :v_name="`${queryInfo.good.name} ${queryInfo.good.ca_name}`"/>
+    <v-data-table hide-actions class="elevation-1" :items="items">
       <template slot="headers" slot-scope="props">
         <tr>
           <th rowspan="2" class="body-2 font-weight-bold w-10">연도</th>
@@ -10,15 +10,14 @@
         </tr>
         <tr>
           <th class="body-1 font-weight-medium w-10"
-              v-for="item in headers" :key="item.code">{{item.name|subject}}</th>
+              v-for="item in trnCodes" :key="item.code">{{item.name|subject}}</th>
         </tr>
       </template>
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <tr @click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
-          <td class="text-xs-center">{{ props.item.id }}</td>
-          <td class="text-xs-center">{{ props.item.name }}</td>
-          <td class="text-xs-center">{{ props.item.ca_name }}</td>
+        <tr> <!--@click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">-->
+          <td class="text-xs-center">{{ props.item|yearKey }}</td>
+          <td class="text-xs-center" v-for="(tr, i) in trnCodes" :key="i">{{ props.item|yearBy|counter(tr) }}</td>
         </tr>
       </template>
       <template slot="no-data">
@@ -30,25 +29,13 @@
 
 <script>
 import InlineTextBox from './control/InlineTextBox'
+import QueryMixin from '../common/query.mixin'
 
 export default {
   name: 'QueryBibles',
+  mixins: [ QueryMixin ],
   components: { InlineTextBox },
-  computed: {
-    headers () {
-      return this.$store.getters.trnCodes
-    }
-  },
-  data: () => ({
-    items: [],
-    selected: {}
-  }),
-  filters: {
-    subject (name) {
-      const [tr, nm] = name.split('-')
-      return nm ? nm.trim() : tr.trim()
-    }
-  }
+  created () { this.e_type = 'T' }
 }
 </script>
 
