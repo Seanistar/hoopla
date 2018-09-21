@@ -126,6 +126,7 @@ export default {
       console.log('request code...', reqCode, this.model)
       await this.$store.dispatch(FETCH_VOLUNTEERS, reqCode)
       this.fetched = true
+
       reqCode && this.$store.commit(SET_CHANGED_CODE, {type: 'vl_ac', code: reqCode})
     },
     newVolunteer () {

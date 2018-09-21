@@ -5,9 +5,7 @@ const _promise = require('bluebird')
 
 router.get('/', (req, res) => {
   const code = req.query.code
-  let select = `SELECT *, 
-  (SELECT COUNT(id) FROM volunteers WHERE area_code=?) numbers
-  FROM reports `
+  let select = `SELECT * FROM reports `
   if (code) select += `WHERE s_code=?`
   else select += `LIMIT 100`
   const sql = [select, code ? [code, code] : []]
@@ -58,6 +56,8 @@ router.put('/', async (req, res) => {
     const data = JSON.parse(req.body.data)
     if (!data.rb) throw new Error('no base')
 
+    const numbers = await getVoltsNumber(data.rb.s_code)
+    data.rb.numbers = numbers
     const {newID} = await updateData('reports', data.rb)
     if (!newID) throw new Error('failed to insert')
 
@@ -274,18 +274,18 @@ const updateData = (table, obj, id) => {
       ]
     } else {
       sql = [`
-        INSERT INTO reports(code, s_code, name, phone, r_year, lv_id, s_date, e_date) 
+        INSERT INTO reports(code, s_code, name, phone, r_year, lv_id, numbers, s_date, e_date) 
         VALUES(?
-        ,?,?,?,?,?,?,?) 
-        ON DUPLICATE KEY UPDATE s_code=?, name=?, phone=?, r_year=?, lv_id=?, s_date=?, e_date=?`,
+        ,?,?,?,?,?,?,?,?) 
+        ON DUPLICATE KEY UPDATE s_code=?, name=?, phone=?, r_year=?, lv_id=?, numbers=?, s_date=?, e_date=?`,
         [ obj.code,
-          obj.s_code, obj.name, obj.phone, obj.r_year, obj.lv_id, obj.s_date, obj.e_date,
-          obj.s_code, obj.name, obj.phone, obj.r_year, obj.lv_id, obj.s_date, obj.e_date ]
+          obj.s_code, obj.name, obj.phone, obj.r_year, obj.lv_id, obj.numbers, obj.s_date, obj.e_date,
+          obj.s_code, obj.name, obj.phone, obj.r_year, obj.lv_id, obj.numbers, obj.s_date, obj.e_date ]
       ]
     }
     return db.query(...sql, (err, rows) => {
       if (!err) {
-        console.log('query has done')
+        console.log('query has done', rows)
         resolve({newID: rows.insertId})
       } else {
         console.warn('query error : ' + err)
@@ -325,6 +325,24 @@ const getLeader = (a_code) => {
       } else {
         console.warn('query error : ' + err)
         reject(err)
+      }
+    })
+  })
+}
+
+const getVoltsNumber = (a_code) => {
+  return new _promise(function(resolve) {
+    const sql = [`
+      SELECT COUNT(DISTINCT id) numbers
+      FROM volunteers
+      WHERE state = 'ACT' AND area_code = ?`, [a_code]]
+    return db.query(...sql, (err, rows) => {
+      if (!err) {
+        console.log('query has done', rows[0])
+        resolve(rows[0].numbers)
+      } else {
+        console.warn('query error : ' + err)
+        resolve(0)
       }
     })
   })

@@ -1,60 +1,67 @@
 <template>
   <div class="mb-4">
-    <v-form ref="form">
-      <v-container class="elevation-4 py-1 w-85">
-        <v-layout row wrap pl-2>
-          <v-flex xs12 sm3>
-            <v-select label="교구" v-model="areaCode.la_code" hide-details class="body-1"
-                      :items="lAreaCodes" item-text="l_name" item-value="l_code"
-            ></v-select>
-          </v-flex>
-          <v-flex xs12 sm3>
-            <v-select label="교구 > 지구" v-model="areaCode.ma_code" hide-details no-data-text="지구 자료가 없습니다."
-                      :items="mAreaCodes" item-text="m_name" item-value="m_code" :disabled="areaCode.la_code === ''"
-            ></v-select>
-          </v-flex>
-          <v-flex xs12 sm3>
-            <v-select label="교구 > 지구 > 본당" v-model="areaCode.sa_code" hide-details no-data-text="본당 자료가 없습니다."
-                      :items="sAreaCodes" item-text="s_name" item-value="s_code" :disabled="areaCode.ma_code === ''"
-            ></v-select>
-          </v-flex>
-        </v-layout>
-        <v-layout row wrap pl-2>
-          <v-flex xs3>
-            <v-select label="선서연도" v-model="params.au_date" hide-details
-                      :items="years"
-            ></v-select>
-          </v-flex>
-          <v-flex xs3>
-            <v-text-field label="봉사자이름" v-model="params.v_name" @keyup.enter="submit"></v-text-field>
-          </v-flex>
-          <v-flex xs3>
-            <v-combobox label="본당이름"
-                        v-model="small.model" :items="small.items" item-value="code" item-text="name"
-                        :search-input.sync="small.search" @input="onBlur" clearable>
-              <template slot="no-data">
-                <v-list-tile>
-                  <v-list-tile-content>
-                    <v-list-tile-title>
-                      "<strong>{{ small.search }}</strong>" 본당이 없습니다. 관리자에게 문의해주세요.
-                    </v-list-tile-title>
-                  </v-list-tile-content>
-                </v-list-tile>
-              </template>
-            </v-combobox>
-          </v-flex>
-          <v-flex xs3>
-            <v-layout align-end justify-end row>
-              <v-btn color="orange accent-2" outline class="mt-3" @click="reset">초기화</v-btn>
-              <v-btn color="indigo accent-2" outline class="mt-3" @click="submit">조회</v-btn>
-            </v-layout>
-          </v-flex>
-        </v-layout>
-      </v-container>
+    <v-form ref="form" v-if="isQueryBox">
+      <transition name="slide-fade">
+        <v-container class="elevation-4 py-1 w-85">
+          <v-layout row wrap pl-2>
+            <v-flex xs12 sm3>
+              <v-select label="교구" v-model="areaCode.la_code" hide-details class="body-1"
+                        :items="lAreaCodes" item-text="l_name" item-value="l_code"
+              ></v-select>
+            </v-flex>
+            <v-flex xs12 sm3>
+              <v-select label="교구 > 지구" v-model="areaCode.ma_code" hide-details no-data-text="지구 자료가 없습니다."
+                        :items="mAreaCodes" item-text="m_name" item-value="m_code" :disabled="areaCode.la_code === ''"
+              ></v-select>
+            </v-flex>
+            <v-flex xs12 sm3>
+              <v-select label="교구 > 지구 > 본당" v-model="areaCode.sa_code" hide-details no-data-text="본당 자료가 없습니다."
+                        :items="sAreaCodes" item-text="s_name" item-value="s_code" :disabled="areaCode.ma_code === ''"
+              ></v-select>
+            </v-flex>
+          </v-layout>
+          <v-layout row wrap pl-2>
+            <v-flex xs3>
+              <v-select label="선서연도" v-model="params.au_date" hide-details
+                        :items="years"
+              ></v-select>
+            </v-flex>
+            <v-flex xs3>
+              <v-text-field label="봉사자이름" v-model="params.v_name" @keyup.enter="submit"></v-text-field>
+            </v-flex>
+            <v-flex xs3>
+              <v-combobox label="본당이름"
+                          v-model="small.model" :items="small.items" item-value="code" item-text="name"
+                          :search-input.sync="small.search" @input="onBlur" clearable>
+                <template slot="no-data">
+                  <v-list-tile>
+                    <v-list-tile-content>
+                      <v-list-tile-title>
+                        "<strong>{{ small.search }}</strong>" 본당이 없습니다. 관리자에게 문의해주세요.
+                      </v-list-tile-title>
+                    </v-list-tile-content>
+                  </v-list-tile>
+                </template>
+              </v-combobox>
+            </v-flex>
+            <v-flex xs3>
+              <v-layout align-end justify-end row>
+                <v-btn color="orange accent-2" outline class="mt-3" @click="reset">초기화</v-btn>
+                <v-btn color="indigo accent-2" outline class="mt-3" @click="submit">조회</v-btn>
+              </v-layout>
+            </v-flex>
+          </v-layout>
+        </v-container>
+      </transition>
     </v-form>
-    <v-divider class="my-3"></v-divider>
-    <v-container class="elevation-2 w-85">
-      <v-btn fixed dark fab style="top: 40%" right color="pink"><v-icon>add</v-icon></v-btn>
+    <v-container class="elevation-2 w-85" :class="[isQueryBox ? 'mt-3' : 'mt-0']">
+      <v-tooltip bottom>
+        <v-btn fixed outline fab right @click="isQueryBox = !isQueryBox"
+               slot="activator" :class="[isQueryBox ? 't-40p' : 't-21p']" color="cyan">
+          <v-icon>{{isQueryBox ? 'arrow_upward' : 'arrow_downward'}}</v-icon>
+        </v-btn>
+        <span>{{isQueryBox ? '박스 숨기기' : '박스 펼치기'}}</span>
+      </v-tooltip>
       <v-layout pb-2>
         <v-flex xs12>
           <div>조회 결과 수 : {{queryCount}} 건</div>
@@ -143,6 +150,7 @@ export default {
       model: '',
       search: null
     },
+    isQueryBox: true,
     queried: false,
     selected: {},
     peopleFinder: false,
@@ -208,5 +216,21 @@ export default {
 <style scoped>
   .v-input label {
     font-size: 13px !important;
+  }
+  .t-40p {
+    top: 40%;
+  }
+  .t-21p {
+    top: 21%;
+  }
+  .slide-fade-enter-active {
+    transition: all .3s ease;
+  }
+  .slide-fade-leave-active {
+    transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  }
+  .slide-fade-enter, .slide-fade-leave-to {
+    transform: translateX(10px);
+    opacity: 0;
   }
 </style>

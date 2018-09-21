@@ -70,7 +70,7 @@ const actions = {
   [CREATE_REPORT] (context, report) {
     return ReportService.create(report)
       .then(({ data }) => {
-        report.id = data.lastId
+        report.id = data[0].newID
         context.commit(ADD_REPORT, report)
       })
       .catch((error) => {

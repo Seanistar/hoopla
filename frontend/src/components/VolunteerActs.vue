@@ -12,13 +12,13 @@
       <template slot="items" slot-scope="props">
         <tr @click="selected = props.item" @dblclick="onClickMenu('update')"
             :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
-          <td class="text-xs-center w-10">{{ props.item.idx }}</td>
-          <td class="text-xs-center w-15">{{ props.item.act_name }}</td>
+          <td class="text-xs-center w-5">{{ props.item.idx }}</td>
+          <td class="text-xs-center w-10">{{ props.item.act_name }}</td>
           <td class="text-xs-center w-10">{{ props.item.numbers }}</td>
           <td class="text-xs-center w-15">{{ props.item.s_date }}</td>
           <td class="text-xs-center w-15">{{ props.item.e_date }}</td>
           <td class="text-xs-center w-15">{{ props.item.s_name }} 본당</td>
-          <td class="text-xs-center w-20">{{ props.item.content }}</td>
+          <td class="text-xs-center">{{ props.item.content }}</td>
         </tr>
       </template>
       <template slot="no-data" v-if="fetched">
@@ -79,7 +79,7 @@ export default {
     ]
   }),
   created () {
-    this.headers.map(h => { h.class = ['text-xs-center', 'body-1'] })
+    this.headers.map(h => { h.class = ['text-xs-center', 'body-1', 'pl-39x'] })
     this.fetchData()
   },
   methods: {
@@ -123,4 +123,7 @@ export default {
 </script>
 
 <style scoped>
+  .w-5 {
+    width: 5%;
+  }
 </style>

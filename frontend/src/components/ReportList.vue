@@ -109,6 +109,7 @@ export default {
       let reqCode = code !== undefined ? code : (this.model ? this.model.code : '')
       await this.$store.dispatch(FETCH_REPORTS, reqCode)
       this.fetched = true
+
       reqCode && this.$store.commit(SET_CHANGED_CODE, {type: 'rl_ac', code: reqCode})
     },
     newReport () {

@@ -122,7 +122,7 @@
 import { mapGetters } from 'vuex'
 import MenuButtons from './control/MenuButtons'
 import { FETCH_REPORT_STATE, CREATE_REPORT, UPDATE_REPORT, FETCH_SMALL_LEADER } from '@/store/actions.type'
-import { reduce } from 'lodash/collection'
+import { reduce, map } from 'lodash/collection'
 import { pick, omit } from 'lodash/object'
 // import { isEqual, cloneDeep } from 'lodash/lang'
 
@@ -209,6 +209,7 @@ export default {
     }
   },
   mounted () {
+    this._initStates()
     const ts = document.getElementsByTagName('INPUT')
     for (let i = 0; i < ts.length; i++) {
       ts[i].addEventListener('change', () => {
@@ -233,7 +234,6 @@ export default {
         this.states = this.reportInfo
         this._initData()
         this.fetched = true
-        // console.log('fetched...', this.states)
       })
     },
     _initData () {
@@ -243,6 +243,21 @@ export default {
       if (this.states.ro.s_date) this.states.ro.s_date = this.states.ro.s_date.slice(0, 7)
       if (this.states.ro.e_date) this.states.ro.e_date = this.states.ro.e_date.slice(0, 7)
     },
+    _initStates () {
+      // let sts = {rs: {}, rt: {}}
+      Object.keys(this.states).forEach(so => {
+        if (so === 'ro') return
+        const temp = so === 'rs' ? this.stdCodes : this.trnCodes
+        const codes = map(temp, o => o.code)
+        this.topicTags.forEach(o => {
+          this.states[so][o] = {}
+          codes.forEach(c => {
+            this.states[so][o][c] = null
+          })
+        })
+      })
+      // Object.assign(this.states, sts)
+    },
     rsCode (index) {
       return `${this.stdCodes[index].code}`
     },
@@ -251,9 +266,11 @@ export default {
     },
     onChangeRs (topic, index) {
       this.states.rs[topic][this.rsCode(index)] = event.currentTarget.value
+      this.states.rs.tt[topic] = this.sumData(this.states.rs[topic])
     },
     onChangeRt (topic, index) {
       this.states.rt[topic][this.rtCode(index)] = event.currentTarget.value
+      this.states.rt.tt[topic] = this.sumData(this.states.rt[topic])
     },
     onChangePhone (phone) {
       let no = phone !== undefined ? phone : event.currentTarget.value
@@ -277,7 +294,7 @@ export default {
       let data = {}
       if (this.changed.rb) {
         data.rb = pick(this.states.ro, ['s_code', 'name', 'phone', 's_date', 'e_date'])
-        data.rb.r_year = data.rb.e_date ? data.rb.e_date.slice(0, 4) : (new Date()).getFullYear()
+        data.rb.r_year = data.rb.s_date ? data.rb.s_date.slice(0, 4) : (new Date()).getFullYear()
         data.rb.s_date = `${data.rb.s_date}-01`
         data.rb.e_date = `${data.rb.e_date}-01`
         data.rb.code = `${data.rb.s_code}-${data.rb.r_year}`
@@ -309,7 +326,7 @@ export default {
           Object.assign(res, obj)
         })
       })
-      console.log(res)
+      // console.log(res)
       return res
     },
     sumData (st) {

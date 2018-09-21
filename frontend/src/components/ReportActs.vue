@@ -15,8 +15,7 @@
                   class="elevation-5" :loading="fetched && isReportsLoading">
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <tr @click="selected = props.item; props.expanded = !props.expanded" @dblclick="onClickMenu('update')"
-            :style="{backgroundColor: (selected.id && selected.id === props.item.id ? 'orange' : 'white')}">
+        <tr @click="forked = props.item; selected = {}; props.expanded = !props.expanded">
           <td class="text-xs-center w-10">{{ props.item.idx }}</td>
           <td class="text-xs-center w-20">{{ props.item.name }}</td>
           <td class="text-xs-center w-20">{{ props.item.ca_name }}</td>
@@ -28,7 +27,27 @@
       </template>
       <template slot="expand" slot-scope="props">
         <v-card flat>
-          <v-card-text>Peek-a-boo!</v-card-text>
+          <v-card-text class="py-0">
+            <v-data-table :items="details" hide-actions>
+              <template slot="headers" slot-scope="header">
+                <tr>
+                  <th>참여 인원 수</th>
+                  <th>시작 날짜</th>
+                  <th>종료 날짜</th>
+                  <th>활동 내용</th>
+                </tr>
+              </template>
+              <template slot="items" slot-scope="props">
+                <tr @click="selected = props.item" @dblclick="onClickMenu('update')"
+                    :style="{backgroundColor: (selected.id && selected.id === props.item.id ? 'orange' : 'white')}">
+                  <td class="text-xs-center">{{ props.item.numbers }}</td>
+                  <td class="text-xs-center">{{ props.item.s_date }}</td>
+                  <td class="text-xs-center">{{ props.item.e_date }}</td>
+                  <td class="text-xs-center">{{ props.item.content }}</td>
+                </tr>
+              </template>
+            </v-data-table>
+          </v-card-text>
         </v-card>
       </template>
       <template slot="no-data">
@@ -61,7 +80,10 @@ export default {
       'isReportsLoading',
       'actCodes',
       'smallLeader'
-    ])
+    ]),
+    details () {
+      return this.reportActs.filter(o => o.v_a_c === this.forked.v_a_c)
+    }
   },
   created () {
     this.headers.map(h => { h.class = ['text-xs-center', 'body-2', 'pl-39x'] })
@@ -74,6 +96,7 @@ export default {
   data: () => ({
     items: [],
     selected: {},
+    forked: {},
     inputDlg: false,
     fetched: false,
     small: { nm: '', cd: '' },
@@ -106,7 +129,6 @@ export default {
       const mapped = map(list, (ol) => {
         let obj = { idx: i++, groups: ol.length }
         obj['numbers'] = this._sumNumbers(ol)
-        obj['groups'] = ol.length
         Object.assign(obj, pick(ol[0], ['name', 'ca_name', 'act_name', 'v_a_c']))
         return obj
       })
@@ -141,8 +163,6 @@ export default {
       this.inputDlg = false
       if (data === undefined) return
 
-      // const res = this.actCodes.find(o => o.code === data.act_code)
-      // data.act_name = res ? res.name : '없음'
       if (data.v_id === undefined) data.v_id = data.id
       const item = pick(data, ['id', 'v_id', 'act_code', 'area_code', 's_date', 'e_date', 'content', 'numbers'])
       console.log('input item...', item)
@@ -157,9 +177,9 @@ export default {
         this.$showSnackBar('수정되었습니다.')
       }
 
-      this.$forceUpdate()
+      // this.$forceUpdate()
       this.$nextTick(() => {
-        // this.fetchData(this.small.cd)
+        this.fetchData(this.small.cd)
       })
     }
   }

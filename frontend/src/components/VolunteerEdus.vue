@@ -75,7 +75,7 @@ export default {
     ]
   }),
   created () {
-    this.headers.map(h => { h.class = ['text-xs-center', 'body-2'] })
+    this.headers.map(h => { h.class = ['text-xs-center', 'body-2', 'pl-39x'] })
     this.fetchData()
   },
   methods: {
