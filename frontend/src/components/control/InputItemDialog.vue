@@ -63,7 +63,7 @@
               </v-flex>
               <v-flex xs12>
                 <v-text-field label="봉사한 구역 (본당)" clearable hide-details
-                              :disabled="item.id !== 0 || (item.id === 0 && item.s_name !== undefined)"
+                              :disabled="item.s_name !== undefined"
                               @focus="churchFinder = true" v-model="item.s_name"></v-text-field>
               </v-flex>
               <v-flex xs12 sm6>

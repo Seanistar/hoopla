@@ -284,8 +284,6 @@ const mutations = {
     state.isLoading = false
   },
   [ADD_VOLUNTEER] (state, volunteer) {
-    // volunteer.registered = Moment().format('YYYY-MM-DD HH:mm:ss')()
-    // state.newID = volunteer.id
     state.volunteers.push(volunteer)
   },
   [SET_VOLUNTEER] (state, data) {

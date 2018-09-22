@@ -12,7 +12,7 @@
       <template slot="items" slot-scope="props">
         <tr @click="selected = props.item" @dblclick="onClickMenu('update')"
             :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
-          <td class="text-xs-center w-5">{{ props.item.idx }}</td>
+          <td class="text-xs-center w-10">{{ props.item.idx }}</td>
           <td class="text-xs-center w-10">{{ props.item.act_name }}</td>
           <td class="text-xs-center w-10">{{ props.item.numbers }}</td>
           <td class="text-xs-center w-15">{{ props.item.s_date }}</td>
@@ -40,28 +40,23 @@ import DatePicker from './control/DatePicker'
 import ItemDialog from './control/InputItemDialog'
 import { isUndefined } from 'lodash/lang'
 import { FETCH_VOLUNTEER_ACTS, CREATE_VOLUNTEER_ACT, UPDATE_VOLUNTEER_ACT, DELETE_VOLUNTEER_ACT } from '../store/actions.type'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'VolunteerActs',
   components: { DatePicker, MenuButtons, ItemDialog },
   props: { v_id: undefined },
   computed: {
-    volunteerActs: {
-      get () {
-        return this.$store.state.volunteer.volunteerActs
-      },
-      set (data) {
-        this.$store.dispatch(CREATE_VOLUNTEER_ACT, data)
-      }
-    },
+    ...mapGetters([
+      'volunteerActs',
+      'isVolunteersLoading',
+      'actCodes'
+    ]),
     volunteerInfo () {
       return this.$store.getters.volunteerInfo(parseInt(this.v_id))
     },
     isLoading () {
-      return isUndefined(this.v_id) ? false : this.$store.getters.isVolunteersLoading
-    },
-    actCodes () {
-      return this.$store.getters.actCodes
+      return isUndefined(this.v_id) ? false : this.isVolunteersLoading
     }
   },
   data: () => ({
@@ -85,14 +80,25 @@ export default {
   methods: {
     async fetchData () {
       this.selected = {}
-      !isUndefined(this.v_id) && await this.$store.dispatch(FETCH_VOLUNTEER_ACTS, this.v_id)
+      this.v_id && await this.$store.dispatch(FETCH_VOLUNTEER_ACTS, this.v_id)
       this.fetched = true
     },
-    updateActItem (item) {
-      this.$store.dispatch(UPDATE_VOLUNTEER_ACT, item)
+    async updateActItem (item) {
+      if (isUndefined(this.selected.id)) {
+        await this.$store.dispatch(CREATE_VOLUNTEER_ACT, item)
+        this.$showSnackBar('추가되었습니다.')
+      } else {
+        await this.$store.dispatch(UPDATE_VOLUNTEER_ACT, item)
+        this.$showSnackBar('수정되었습니다.')
+      }
+
+      this.$nextTick(() => {
+        this.fetchData()
+      })
     },
     deleteActItem (id) {
       this.$store.dispatch(DELETE_VOLUNTEER_ACT, id)
+      this.$showSnackBar('삭제되었습니다.')
     },
     onClickMenu (type) {
       if (type === 'add') {
@@ -115,8 +121,7 @@ export default {
 
       if (isUndefined(data.v_id)) data.v_id = data.id
       console.log('input item...', data)
-      if (isUndefined(this.selected.id)) this.volunteerActs = data
-      else this.updateActItem(data)
+      this.updateActItem(data)
     }
   }
 }

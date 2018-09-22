@@ -122,8 +122,14 @@ export const ReportService = {
   query (code) {
     return ApiService.query('reports', {params: {code}})
   },
-  query_acts (code) {
-    return ApiService.query('reports/acts', {params: {code}})
+  query_acts (data) {
+    return ApiService.query('reports/acts', {params: data})
+  },
+  query_volts (data) {
+    return ApiService.query('reports/volts', {params: data})
+  },
+  query_dynamic (data) {
+    return ApiService.query('reports/dynamic', {params: data})
   },
   get (id) {
     return ApiService.get('reports/page', id)

@@ -71,7 +71,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { FETCH_VOLUNTEERS, DELETE_VOLUNTEER } from '@/store/actions.type'
+import { FETCH_VOLUNTEERS, DELETE_VOLUNTEER, FETCH_SMALL_LEADER } from '@/store/actions.type'
 import { SET_CHANGED_CODE } from '@/store/mutations.type'
 import { map, find, orderBy } from 'lodash/collection'
 
@@ -129,10 +129,14 @@ export default {
 
       reqCode && this.$store.commit(SET_CHANGED_CODE, {type: 'vl_ac', code: reqCode})
     },
-    newVolunteer () {
+    async newVolunteer () {
+      if (!this.model || !this.model.code) return alert('본당을 선택하세요!')
+      await this.$store.dispatch(FETCH_SMALL_LEADER, this.model.code)
       this.$router.push({name: 'edit-volunteer'})
     },
     editItem (item) {
+      if (!item.area_code) return alert('본당을 선택하세요!')
+      this.$store.dispatch(FETCH_SMALL_LEADER, item.area_code)
       this.$router.push({name: 'edit-volunteer', params: {id: item.id, item: item}})
     },
     deleteItem (item) {

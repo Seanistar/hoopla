@@ -1,11 +1,12 @@
 <template>
   <v-container pt-2>
     <v-layout row wrap align-end>
-      <v-flex xs12>
+      <v-flex xs3>
         <v-layout row wrap pb-0>
-          <v-subheader class="subheading font-weight-bold w-16 pl-2 pr-0">{{states.ro.s_name}} 본당
+          <v-subheader class="subheading font-weight-bold pl-3">
+            {{states.ro.s_name}} 본당 ({{states.ro.r_year}})
           </v-subheader>
-          <v-subheader class="body-2 w-24 pr-0"><span class="mr-2">작성자 :</span>
+          <!--<v-subheader class="body-2 w-24 pr-0"><span class="mr-2">작성자 :</span>
             <input v-model="states.ro.name" tag="rb"
                    placeholder="예) 김대건 안드레아" class="pa-1 input-box text-xs-center">
           </v-subheader>
@@ -19,7 +20,41 @@
                    type="month" class="pa-1 input-box mw-40">&nbsp;~&nbsp;
             <input v-model="states.ro.e_date" id="e_date" tag="rb" @change="onChangeDate"
                    type="month" class="pa-1 input-box mw-40">
-          </v-subheader>
+          </v-subheader>-->
+        </v-layout>
+      </v-flex>
+      <v-flex xs6>
+        <v-subheader class="body-2 px-0 justify-center">
+          <!--<v-radio-group v-model="states.ro.r_half" row wrap>
+            <v-radio label="상반기" value="A"></v-radio>
+            <v-radio label="하반기" value="B"></v-radio>
+          </v-radio-group>-->
+          <v-flex xs3>
+            <v-select label="기간선택" class="pl-4 w-90 text-xs-center body-1" single-line
+                      :items="[{nm: '상반기', vl: 'A'}, {nm: '하반기', vl: 'B'}]"
+                      item-text="nm" item-value="vl" v-model="states.ro.r_half"></v-select>
+          </v-flex>
+          <input v-model="states.ro.s_date" id="s_date" tag="rb" readonly
+                 type="text" class="pa-1 input-box mw-25">&nbsp;~&nbsp;
+          <input v-model="states.ro.e_date" id="e_date" tag="rb" readonly
+                 type="text" class="pa-1 input-box mw-25">
+        </v-subheader>
+      </v-flex>
+      <v-flex>
+        <v-layout justify-end>
+          <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+            <v-btn slot="activator" color="indigo accent-2" outline class="mb-2"
+                   :disabled="!r_id" @click="dialog = true">연도 전체 보기</v-btn>
+            <v-card>
+              <v-toolbar dark color="blue lighten-1">
+                <v-btn icon dark @click.native="dialog = false"><v-icon>close</v-icon></v-btn>
+                <v-toolbar-title>{{states.ro.s_name}} 본당 {{states.ro.r_year}}년도 현황 보기</v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-toolbar-items><v-btn dark flat @click.native="dialog = false">닫기</v-btn></v-toolbar-items>
+              </v-toolbar>
+              <state-layout :code="states.ro.s_code" :year="states.ro.r_year" v-if="dialog"/>
+            </v-card>
+          </v-dialog>
         </v-layout>
       </v-flex>
     </v-layout>
@@ -42,11 +77,11 @@
           <td>{{item.name|subject}}</td>
           <td v-for="(t, i) in topicTags" :key="i">
             <input type="number" tag="rs" :value="states.rs[t][rsCode(index)]" class="w-100 text-xs-center upl-13"
-                   @change="onChangeRs(t, index)" @keyup.enter="onChangeRs(t, index)">
+                   @change="onChangeRS(t, index)" @keyup.enter="onChangeRS(t, index)">
           </td>
           <td v-for="(t, i) in topicTags" :key="4+i">
             <input type="number" tag="rt" :value="states.rt[t][rtCode(index)]" class="w-100 text-xs-center upl-13"
-                   @change="onChangeRt(t, index)" @keyup.enter="onChangeRt(t, index)">
+                   @change="onChangeRT(t, index)" @keyup.enter="onChangeRT(t, index)">
           </td>
         </tr>
         <tr class="top-line">
@@ -68,7 +103,7 @@
         <tr>
           <th colspan="2" class="w-20">성서 40주간</th>
           <th colspan="2" class="w-20">월모임</th>
-          <th colspan="2" class="w-20">교육 현황(특강,재교육)</th>
+          <th colspan="2" class="w-20">교육 현황 (특강,재교육)</th>
           <th colspan="6" class="w-40">봉사자 현황</th>
         </tr>
         <tr>
@@ -97,21 +132,30 @@
           <td><input type="number" tag="ro" v-model="states.ro['e_sa_n']" class="text-xs-right w-80">명</td>
           <td><input type="number" tag="ro" v-model="states.ro['e_hd_c']" class="text-xs-right w-80">명</td>
           <td><input type="number" tag="ro" v-model="states.ro['e_hd_n']" class="text-xs-right w-80">명</td>
-          <td><input type="number" tag="ro" v-model="states.ro['v_act_f']" class="text-xs-right w-80"></td>
-          <td><input type="number" tag="ro" v-model="states.ro['v_act_m']" class="text-xs-right w-80"></td>
-          <td><input type="number" tag="ro" v-model="states.ro['v_brk_f']" class="text-xs-right w-80"></td>
-          <td><input type="number" tag="ro" v-model="states.ro['v_brk_m']" class="text-xs-right w-80"></td>
-          <td><input type="number" tag="ro" v-model="states.ro['v_rsv_f']" class="text-xs-right w-80"></td>
-          <td><input type="number" tag="ro" v-model="states.ro['v_rsv_m']" class="text-xs-right w-80"></td>
+          <td class="px-0"><input type="number" tag="ro" v-model="states.ro['v_act_f']" class="pr-1 text-xs-right w-80"></td>
+          <td class="px-0"><input type="number" tag="ro" v-model="states.ro['v_act_m']" class="pr-1 text-xs-right w-80"></td>
+          <td class="px-0"><input type="number" tag="ro" v-model="states.ro['v_brk_f']" class="pr-1 text-xs-right w-80"></td>
+          <td class="px-0"><input type="number" tag="ro" v-model="states.ro['v_brk_m']" class="pr-1 text-xs-right w-80 "></td>
+          <td class="px-0"><input type="number" tag="ro" v-model="states.ro['v_rsv_f']" class="pr-1 text-xs-right w-80"></td>
+          <td class="px-0"><input type="number" tag="ro" v-model="states.ro['v_rsv_m']" class="pr-1 text-xs-right w-80"></td>
         </tr>
       </table>
     </v-layout>
 
     <v-layout pt-3>
-      <v-flex xs12>
+      <v-flex xs6>
+        <v-layout justify-start>
+          <v-subheader class="subheading w-80">
+            <span class="mr-0 w-20">작성자 :</span>
+            <input v-model="states.ro.name" tag="rb"
+                   placeholder="예) 김대건 안드레아" class="pa-1 input-box body-1 text-xs-center">
+          </v-subheader>
+        </v-layout>
+      </v-flex>
+      <v-flex xs6>
         <v-layout justify-end>
           <v-btn color="orange accent-2" outline @click="$router.back()">취소</v-btn>
-          <v-btn color="indigo accent-2" outline :disabled="!isChanged" @click="updateState">현황 {{r_id ? '수정' : '저장'}}</v-btn>
+          <v-btn color="indigo accent-2" outline :disabled="!isChanged" @click="submit">현황 {{r_id ? '수정' : '저장'}}</v-btn>
         </v-layout>
       </v-flex>
     </v-layout>
@@ -120,15 +164,15 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import MenuButtons from './control/MenuButtons'
-import { FETCH_REPORT_STATE, CREATE_REPORT, UPDATE_REPORT, FETCH_SMALL_LEADER } from '@/store/actions.type'
-import { reduce, map } from 'lodash/collection'
+import { FETCH_REPORT_STATE, CREATE_REPORT, UPDATE_REPORT } from '@/store/actions.type'
+import { reduce } from 'lodash/collection'
 import { pick, omit } from 'lodash/object'
-// import { isEqual, cloneDeep } from 'lodash/lang'
+import MenuButtons from './control/MenuButtons'
+import StateLayout from './StateLayout'
 
 export default {
   name: 'ReportStates',
-  components: { MenuButtons },
+  components: { MenuButtons, StateLayout },
   props: { r_id: undefined },
   computed: {
     ...mapGetters([
@@ -148,6 +192,18 @@ export default {
     }
   },
   watch: {
+    'states.ro.r_half' (val) {
+      if (this.r_id || !val) return
+      const thisYear = (new Date()).getFullYear()
+      if (val === 'A') { // 2017-09-01 ~ 2018-02-28
+        this.states.ro.s_date = `${thisYear - 1}-09`
+        this.states.ro.e_date = `${thisYear}-02`
+      } else if (val === 'B') { // 2018-03-01 ~ 2018-08-31
+        this.states.ro.s_date = `${thisYear}-03`
+        this.states.ro.e_date = `${thisYear}-08`
+      }
+      this.changed.rb = true
+    },
     'states.rs.dg': {
       handler: function () {
         this.states.rs.tt.dg = this.sumData(this.states.rs.dg)
@@ -204,12 +260,12 @@ export default {
       if (res) {
         this.states.ro.s_name = res.s_name
         this.states.ro.s_code = res.s_code
-        this.$store.dispatch(FETCH_SMALL_LEADER, res.s_code)
+        this.states.ro.r_year = (new Date()).getFullYear()
       }
     }
   },
   mounted () {
-    this._initStates()
+    this.initStates()
     const ts = document.getElementsByTagName('INPUT')
     for (let i = 0; i < ts.length; i++) {
       ts[i].addEventListener('change', () => {
@@ -222,9 +278,10 @@ export default {
     states: {
       rs: {dg: {}, dp: {}, ng: {}, np: {}, tt: {dg: 0, dp: 0, ng: 0, np: 0}},
       rt: {dg: {}, dp: {}, ng: {}, np: {}, tt: {dg: 0, dp: 0, ng: 0, np: 0}},
-      ro: {}
+      ro: {r_half: null}
     },
     fetched: false,
+    dialog: false,
     changed: {rb: false, rs: false, rt: false, ro: false}
   }),
   methods: {
@@ -232,31 +289,19 @@ export default {
       await this.$store.dispatch(FETCH_REPORT_STATE, this.r_id)
       this.$nextTick(() => {
         this.states = this.reportInfo
-        this._initData()
+        this.states.rs.tt = {dg: 0, dp: 0, ng: 0, np: 0}
+        this.states.rt.tt = {dg: 0, dp: 0, ng: 0, np: 0}
+        const [sDate, eDate] = [this.states.ro.s_date, this.states.ro.e_date]
+        if (sDate) {
+          this.$parent.S_DATE = sDate
+          this.states.ro.s_date = sDate.slice(0, 7)
+        }
+        if (eDate) {
+          this.$parent.E_DATE = eDate
+          this.states.ro.e_date = eDate.slice(0, 7)
+        }
         this.fetched = true
       })
-    },
-    _initData () {
-      this.states.rs.tt = {dg: null, dp: null, ng: null, np: null}
-      this.states.rt.tt = {dg: null, dp: null, ng: null, np: null}
-      this.onChangePhone(this.states.ro.phone)
-      if (this.states.ro.s_date) this.states.ro.s_date = this.states.ro.s_date.slice(0, 7)
-      if (this.states.ro.e_date) this.states.ro.e_date = this.states.ro.e_date.slice(0, 7)
-    },
-    _initStates () {
-      // let sts = {rs: {}, rt: {}}
-      Object.keys(this.states).forEach(so => {
-        if (so === 'ro') return
-        const temp = so === 'rs' ? this.stdCodes : this.trnCodes
-        const codes = map(temp, o => o.code)
-        this.topicTags.forEach(o => {
-          this.states[so][o] = {}
-          codes.forEach(c => {
-            this.states[so][o][c] = null
-          })
-        })
-      })
-      // Object.assign(this.states, sts)
     },
     rsCode (index) {
       return `${this.stdCodes[index].code}`
@@ -264,15 +309,87 @@ export default {
     rtCode (index) {
       return `${this.trnCodes[index].code}`
     },
-    onChangeRs (topic, index) {
-      this.states.rs[topic][this.rsCode(index)] = event.currentTarget.value
+    onChangeRS (topic, index) {
+      if (!this.states.ro.r_half) return alert('보고 기간부터 확인해주세요!')
+      const rsv = event.currentTarget.value
+      this.states.rs[topic][this.rsCode(index)] = rsv === '' ? 0 : rsv
       this.states.rs.tt[topic] = this.sumData(this.states.rs[topic])
     },
-    onChangeRt (topic, index) {
-      this.states.rt[topic][this.rtCode(index)] = event.currentTarget.value
+    onChangeRT (topic, index) {
+      if (!this.states.ro.r_half) return alert('보고 기간부터 확인해주세요!')
+      const rtv = event.currentTarget.value
+      this.states.rt[topic][this.rtCode(index)] = rtv === '' ? 0 : rtv
       this.states.rt.tt[topic] = this.sumData(this.states.rt[topic])
     },
-    onChangePhone (phone) {
+    submit () {
+      if (!this.states.ro.s_date || !this.states.ro.e_date) return alert('보고 기간을 확인해주세요!')
+      let data = {}
+      if (this.changed.rb) {
+        data.rb = pick(this.states.ro, ['s_code', 'r_half', 'name', 'r_year', 's_date', 'e_date', 'numbers'])
+        data.rb.s_date = `${data.rb.s_date}-01`
+        data.rb.e_date = `${data.rb.e_date}-${data.rb.r_half === 'A' ? '28' : '31'}`
+        data.rb.r_code = `${data.rb.s_code}-${data.rb.r_year}-${data.rb.r_half}`
+        data.rb.lv_id = this.smallLeader.lv_id
+      }
+      if (this.changed.ro) data.ro = omit(this.states.ro, ['s_code', 's_date', 'e_date'])
+      if (this.changed.rs) data.rs = this.mapData(this.states.rs)
+      if (this.changed.rt) data.rt = this.mapData(this.states.rt)
+
+      if (this.r_id) { // update
+        this.$store.dispatch(UPDATE_REPORT, {id: this.r_id, obj: JSON.stringify(data)})
+      } else { // create
+        if (data.rb === undefined) return alert('현황 정보를 입력해주세요!')
+        this.createState(data)
+      }
+      this.changed.rb = this.changed.ro = this.changed.rt = this.changed.rt = false
+      this.$showSnackBar(`${(this.r_id ? '수정' : '저장')}되었습니다.`)
+    },
+    async createState (data) {
+      let rid = null
+      try {
+        rid = await this.$store.dispatch(CREATE_REPORT, {r: data, s: JSON.stringify(data)})
+      } catch (e) {
+        return alert('실패하였습니다.' + e)
+      }
+
+      this.$nextTick(() => {
+        // console.log('createState', rid)
+        this.$parent.RID = rid
+      })
+    },
+    mapData (src) {
+      let res = {}
+      const tags = [].concat(this.topicTags, ['tt'])
+      tags.forEach(t => {
+        const st = src[t]
+        Object.keys(st).forEach(k => {
+          let obj = {}
+          obj[`${t}_${k}`] = st[k]
+          Object.assign(res, obj)
+        })
+      })
+      return res
+    },
+    sumData (st) {
+      return reduce(st, (t, n) => {
+        n = (n === null) ? 0 : parseInt(n)
+        return t + n
+      }, 0)
+    },
+    initStates () {
+      Object.keys(this.states).forEach(so => {
+        if (so === 'ro') return
+        const temp = so === 'rs' ? this.stdCodes : this.trnCodes
+        const codes = temp.map(o => o.code)
+        this.topicTags.forEach(o => {
+          this.states[so][o] = {}
+          codes.forEach(c => {
+            this.states[so][o][c] = null
+          })
+        })
+      })
+    }
+    /* onChangePhone (phone) {
       let no = phone !== undefined ? phone : event.currentTarget.value
       if (!no) return
       no = no.replace(/-/g, '')
@@ -287,54 +404,7 @@ export default {
       let value = event.currentTarget.value
       if (!value || value.length < 8) return
       this.states.ro[event.currentTarget.id] = value.slice(0, 7)
-      // console.log(event.currentTarget.id, value)
-    },
-    updateState () {
-      if (!this.states.ro.s_date || !this.states.ro.e_date) return alert('보고 기간을 설정해주세요!')
-      let data = {}
-      if (this.changed.rb) {
-        data.rb = pick(this.states.ro, ['s_code', 'name', 'phone', 's_date', 'e_date'])
-        data.rb.r_year = data.rb.s_date ? data.rb.s_date.slice(0, 4) : (new Date()).getFullYear()
-        data.rb.s_date = `${data.rb.s_date}-01`
-        data.rb.e_date = `${data.rb.e_date}-01`
-        data.rb.code = `${data.rb.s_code}-${data.rb.r_year}`
-        data.rb.lv_id = this.smallLeader.lv_id
-      }
-      if (this.changed.ro) {
-        data.ro = omit(this.states.ro, ['s_code', 'name', 'phone', 's_date', 'e_date', 's_name'])
-      }
-      if (this.changed.rs) data.rs = this._mapData(this.states.rs)
-      if (this.changed.rt) data.rt = this._mapData(this.states.rt)
-
-      if (this.r_id) { // update
-        this.$store.dispatch(UPDATE_REPORT, {id: this.states.ro.id, obj: JSON.stringify(data)})
-      } else { // create
-        if (data.rb === undefined) return alert('현황 정보를 입력해주세요!')
-        this.$store.dispatch(CREATE_REPORT, JSON.stringify(data))
-      }
-      this.changed.rb = this.changed.ro = this.changed.rt = this.changed.rt = false
-      this.$showSnackBar(`${(this.r_id ? '수정' : '저장')}되었습니다.`)
-    },
-    _mapData (src) {
-      let res = {}
-      const tags = [].concat(this.topicTags, ['tt'])
-      tags.forEach(t => {
-        const st = src[t]
-        Object.keys(st).forEach(k => {
-          let obj = {}
-          obj[`${t}_${k}`] = st[k]
-          Object.assign(res, obj)
-        })
-      })
-      // console.log(res)
-      return res
-    },
-    sumData (st) {
-      return reduce(st, (t, n) => {
-        n = (n === null) ? 0 : parseInt(n)
-        return t + n
-      }, 0)
-    }
+    } */
   },
   filters: {
     subject (name) {
@@ -345,7 +415,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
   table, th, td {
     border: 1px solid grey;
     border-collapse: collapse;
@@ -377,7 +447,7 @@ export default {
     width: 35%;
   }
   .input-box {
-    width: 76%;
+    width: 60%; // 76%;
   }
   td .w-100 {
     width: 100% !important;
@@ -385,7 +455,16 @@ export default {
   td .w-80 {
     width: 80% !important;
   }
-  input.mw-40 {
-    max-width: 40% !important;
+  .v-input--radio-group {
+    max-width: 36.5%;
+    max-height: 25px;
+    margin-top: 0px !important;
+    padding-top: 0px !important;
+    .v-radio input {
+      font-size: 13px !important;
+    }
+  }
+  input.mw-25 {
+    max-width: 18% !important;
   }
 </style>

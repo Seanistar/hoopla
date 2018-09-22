@@ -6,20 +6,26 @@
       </v-tab>
     </v-tabs>
     <v-layout pt-1>
-      <area-code v-if="tabIdx === 0"/>
+      <component :is="targetComponents[tabIdx]"/>
     </v-layout>
   </v-container>
 </template>
 
 <script>
 import AreaCode from '@/components/AreaCode'
+import EdusCode from '@/components/EdusCode'
 
 export default {
   name: 'ViewOthers',
-  components: { AreaCode },
+  components: { AreaCode, EdusCode },
+  computed: {
+    targetComponents () {
+      return ['AreaCode', 'EdusCode']
+    }
+  },
   data: () => ({
     tabIdx: 0,
-    title: ['구역 코드', '교육 과목', '그룹 공부 봉사', '보기 설정']
+    title: ['구역 코드', '교육 및 봉사', '관리자 설정']
   })
 }
 </script>

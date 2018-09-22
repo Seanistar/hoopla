@@ -70,7 +70,7 @@
       <v-container mb-4>
         <v-layout>
           <v-flex xs2>
-            <v-checkbox label="대표 선임" v-model="isLeader"
+            <v-checkbox label="대표 선임" v-model="isLeader" @change="onBeginLeader"
                         :disabled="!this.v_id || params.l_work === 'Y'"></v-checkbox>
           </v-flex>
 
@@ -157,7 +157,7 @@ import AppAlert from './control/AppAlert'
 import { VolunteerService } from '@/common/api.service'
 import { ACTIVITY_STATES, LEADER_STATES } from '../common/const.info'
 import CodeMixin from '@/common/code.mixin'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import {
   CREATE_VOLUNTEER,
   UPDATE_VOLUNTEER,
@@ -173,6 +173,9 @@ export default {
   components: { AppAlert, DatePicker },
   props: { v_id: undefined },
   computed: {
+    ...mapGetters([
+      'smallLeader'
+    ]),
     form () { return this.$data.params },
     volunteerInfo: {
       get () { return this.$store.getters.volunteerInfo(parseInt(this.v_id)) },
@@ -258,10 +261,10 @@ export default {
             this.$refs[k] && this.$refs[k].setDate(item[k])
           }
         })
-        this._initItem(item)
+        this.initItem(item)
       })
     },
-    _initItem (item) {
+    initItem (item) {
       this.$parent.VOLT = pick(item, ['area_code', 'name', 'ca_name', 'ca_id'])
       if (item.l_work === 'Y') this.isLeader = true
       this.assignCode(item.area_code)
@@ -309,6 +312,14 @@ export default {
         }
       }
     },
+    onBeginLeader () {
+      if (this.isLeader && this.smallLeader.lv_id) {
+        alert('이미 대표자가 임기 중입니다!')
+        this.$nextTick(() => {
+          this.isLeader = false
+        })
+      }
+    },
     reset () {
       this.formHasErrors = false
       Object.keys(this.form).forEach(f => {
@@ -349,6 +360,7 @@ export default {
       // const targetUrl = `${location.origin}${location.pathname}/${vid}`
       this.$nextTick(() => {
         // location.replace(targetUrl)
+        console.log('submit...', vid)
         this.$parent.VID = vid
       })
     }

@@ -4,6 +4,7 @@ export const FETCH_AREA_CODES = 'fetchAreaCodes'
 export const DELETE_AREA_CODE = 'deleteAreaCode'
 export const CREATE_AREA_CODE = 'createAreaCode'
 export const UPDATE_AREA_CODE = 'updateAreaCode'
+export const CREATE_EDUS_CODE = 'createEdusCode'
 
 // volunteer's base information
 export const FETCH_VOLUNTEERS = 'fetchVolunteers'
@@ -53,6 +54,7 @@ export const FETCH_REPORT_ACTS = 'fetchReportActs'
 export const DELETE_REPORT_ACT = 'deleteReportAct'
 export const CREATE_REPORT_ACT = 'createReportAct'
 export const UPDATE_REPORT_ACT = 'updateReportAct'
+export const FETCH_DYNAMIC_STATE = 'fetchDynamicState'
 
 // utilize
 export const FETCH_SMALL_LEADER = 'fetchSmallLeader'

@@ -47,6 +47,7 @@ export const FETCH_AREA_CODES_END = 'fetchAreaCodes'
 export const SET_AREA_CODE = 'setAreaCode'
 export const ADD_AREA_CODE = 'addAreaCode'
 export const REMOVE_AREA_CODE = 'removeAreaCode'
+export const SET_EDUS_CODE = 'setEdusCode'
 
 // reports
 export const FETCH_REPORTS_END = 'fetchReports'
@@ -58,9 +59,11 @@ export const FETCH_REPORT_ACTS_END = 'fetchReportActs'
 export const SET_REPORT_ACT = 'setReportAct'
 export const ADD_REPORT_ACT = 'addReportAct'
 export const REMOVE_REPORT_ACT = 'removeReportAct'
+export const FETCH_REPORT_VOLTS_END = 'fetchReportVolts'
 
 export const SET_SMALL_LEADER = 'setSmallLeader'
 export const SET_CHANGED_CODE = 'setChangedCode'
+export const FETCH_DYNAMIC_STATE_END = 'fetchDynamicState'
 
 // will be obsoleted
 export const SET_TOPIC = 'setTopic'

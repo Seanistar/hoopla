@@ -1,8 +1,8 @@
 import { ReportService, VolunteerService } from '@/common/api.service'
 import {
   FETCH_REPORTS,
-  FETCH_REPORT_STATE,
-  FETCH_REPORT_ACTS,
+  FETCH_REPORT_STATE, FETCH_DYNAMIC_STATE,
+  FETCH_REPORT_ACTS, FETCH_REPORT_VOLTS,
   FETCH_SMALL_LEADER,
   CREATE_REPORT, UPDATE_REPORT, DELETE_REPORT,
   CREATE_REPORT_ACT, UPDATE_REPORT_ACT, DELETE_REPORT_ACT
@@ -10,21 +10,23 @@ import {
 import {
   FETCH_START,
   FETCH_REPORTS_END,
+  FETCH_REPORT_VOLTS_END,
   FETCH_REPORT_ACTS_END,
+  FETCH_DYNAMIC_STATE_END,
   SET_SMALL_LEADER,
   ADD_REPORT, SET_REPORT, REMOVE_REPORT,
   SET_REPORT_ACT, ADD_REPORT_ACT, REMOVE_REPORT_ACT
 } from './mutations.type'
-import DateFilter from '@/common/date.filter'
 
 const state = {
   reports: [],
-  reportCode: '',
   reportInfo: {},
   isLoading: false,
   smallLeader: {},
   reportCount: 0,
-  reportActs: []
+  reportActs: [],
+  reportVolts: [],
+  dynamicSTAT: []
 }
 
 const getters = {
@@ -33,13 +35,14 @@ const getters = {
   reports: state => state.reports,
   isReportsLoading: state => state.isLoading,
   smallLeader: state => state.smallLeader,
-  reportCode: state => state.reportCode,
-  reportActs: state => state.reportActs
+  reportVolts: state => state.reportVolts,
+  reportActs: state => state.reportActs,
+  dynamicSTAT: state => state.dynamicSTAT
 }
 
 const actions = {
   [FETCH_REPORTS] (context, code) {
-    context.commit(FETCH_START, code)
+    context.commit(FETCH_START)
     return ReportService.query(code)
       .then(({ data }) => {
         context.commit(FETCH_REPORTS_END, data)
@@ -57,9 +60,29 @@ const actions = {
         throw new Error(error)
       })
   },
-  [FETCH_REPORT_ACTS] (context, code) {
-    context.commit(FETCH_START, code)
-    return ReportService.query_acts(code)
+  [FETCH_DYNAMIC_STATE] (context, params) {
+    context.commit(FETCH_START)
+    return ReportService.query_dynamic(params)
+      .then(({ data }) => {
+        context.commit(FETCH_DYNAMIC_STATE_END, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
+  [FETCH_REPORT_VOLTS] (context, params) {
+    context.commit(FETCH_START)
+    return ReportService.query_volts(params)
+      .then(({ data }) => {
+        context.commit(FETCH_REPORT_VOLTS_END, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
+  [FETCH_REPORT_ACTS] (context, params) {
+    context.commit(FETCH_START)
+    return ReportService.query_acts(params)
       .then(({ data }) => {
         context.commit(FETCH_REPORT_ACTS_END, data)
       })
@@ -67,11 +90,14 @@ const actions = {
         throw new Error(error)
       })
   },
-  [CREATE_REPORT] (context, report) {
-    return ReportService.create(report)
+  [CREATE_REPORT] (context, params) {
+    let report = params.r
+    const sReport = params.s
+    return ReportService.create(sReport)
       .then(({ data }) => {
-        report.id = data[0].newID
+        report.id = data.newID
         context.commit(ADD_REPORT, report)
+        return Promise.resolve(report.id)
       })
       .catch((error) => {
         throw new Error(error)
@@ -137,13 +163,20 @@ const actions = {
 
 /* eslint no-param-reassign: ["error", { "props": false }] */
 const mutations = {
-  [FETCH_START] (state, code) {
+  [FETCH_START] (state) {
     state.isLoading = true
-    state.reportCode = code
   },
   [FETCH_REPORTS_END] (state, reports) {
     state.reports = reports
     state.reportsCount = reports.length
+    state.isLoading = false
+  },
+  [FETCH_DYNAMIC_STATE_END] (state, stat) {
+    state.dynamicSTAT = stat
+    state.isLoading = false
+  },
+  [FETCH_REPORT_VOLTS_END] (state, volts) {
+    state.reportVolts = volts
     state.isLoading = false
   },
   [FETCH_REPORT_ACTS_END] (state, acts) {
@@ -154,8 +187,7 @@ const mutations = {
     state.isLoading = false
   },
   [ADD_REPORT] (state, report) {
-    console.log(report)
-    report.created = DateFilter()
+    state.reportInfo = report
     state.reports.push(report)
   },
   [SET_REPORT] (state, data) {

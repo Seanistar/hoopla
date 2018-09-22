@@ -25,7 +25,7 @@
         <menu-buttons class="pt-0 pb-0" refs="state" @click-menu="onClickMenu" v-show="false"/>
       </v-flex>-->
     </v-layout>
-    <v-data-table :headers="headers" :items="volunteers" hide-actions
+    <v-data-table :headers="headers" :items="reportVolts" hide-actions
                   class="elevation-5">
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
@@ -50,7 +50,7 @@
 <script>
 // import MenuButtons from './control/MenuButtons'
 // import ItemDialog from './control/InputItemDialog'
-import { FETCH_VOLUNTEERS } from '@/store/actions.type'
+import { FETCH_REPORT_VOLTS } from '@/store/actions.type'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -58,7 +58,7 @@ export default {
   // components: { MenuButtons, ItemDialog },
   computed: {
     ...mapGetters([
-      'volunteers'
+      'reportVolts'
     ]),
     activityState () {
       return { ACT: '활동중', STP: '중단', BRK: '쉼', DTH: '사망' }
@@ -93,13 +93,14 @@ export default {
   },
   methods: {
     async fetchData (code) {
-      await this.$store.dispatch(FETCH_VOLUNTEERS, code)
+      const date = this.$parent.E_DATE
+      await this.$store.dispatch(FETCH_REPORT_VOLTS, {a_code: code, e_date: date})
       this.fetched = true
-      this._makeSTAT()
+      this.makeSTAT()
     },
-    _makeSTAT () {
-      this.volts.tv = this.volunteers.length
-      this.volunteers.forEach(o => {
+    makeSTAT () {
+      this.volts.tv = this.reportVolts.length
+      this.reportVolts.forEach(o => {
         if (o.state === 'ACT') this.volts.av += 1
         else if (o.state === 'BRK') this.volts.bv += 1
       })

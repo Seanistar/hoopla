@@ -30,7 +30,7 @@
           <v-card-text class="py-0">
             <v-data-table :items="details" hide-actions>
               <template slot="headers" slot-scope="header">
-                <tr>
+                <tr style="background-color: beige">
                   <th>참여 인원 수</th>
                   <th>시작 날짜</th>
                   <th>종료 날짜</th>
@@ -56,7 +56,7 @@
     </v-data-table>
     <v-layout justify-end pt-2 pb-0>
       <v-flex xs12>
-        <menu-buttons refs="acts" @click-menu="onClickMenu"/>
+        <menu-buttons refs="acts" :disabled="isEditable" @click-menu="onClickMenu"/>
       </v-flex>
     </v-layout>
     <item-dialog ref="acts" :visible="inputDlg" @close-input-item="onInputItem" refs="acts"/>
@@ -67,8 +67,9 @@
 import MenuButtons from './control/MenuButtons'
 import ItemDialog from './control/InputItemDialog'
 import { pick } from 'lodash/object'
+import { cloneDeep } from 'lodash/lang'
 import { groupBy, map, reduce } from 'lodash/collection'
-import { FETCH_REPORT_ACTS, CREATE_REPORT_ACT, UPDATE_REPORT_ACT, DELETE_REPORT_ACT, FETCH_SMALL_LEADER } from '@/store/actions.type'
+import { FETCH_REPORT_ACTS, CREATE_REPORT_ACT, UPDATE_REPORT_ACT, DELETE_REPORT_ACT } from '@/store/actions.type'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -83,6 +84,11 @@ export default {
     ]),
     details () {
       return this.reportActs.filter(o => o.v_a_c === this.forked.v_a_c)
+    },
+    isEditable () {
+      const thisYear = (new Date()).getFullYear()
+      const endYear = parseInt(this.$parent.E_DATE.slice(0, 4))
+      return thisYear !== endYear
     }
   },
   created () {
@@ -114,28 +120,26 @@ export default {
       FETCH_REPORT_ACTS,
       CREATE_REPORT_ACT,
       UPDATE_REPORT_ACT,
-      DELETE_REPORT_ACT,
-      FETCH_SMALL_LEADER
+      DELETE_REPORT_ACT
     ]),
     async fetchData (code) {
-      await this[FETCH_SMALL_LEADER](code)
-      await this[FETCH_REPORT_ACTS](code)
+      const [sd, ed] = [this.$parent.S_DATE, this.$parent.E_DATE]
+      await this[FETCH_REPORT_ACTS]({a_code: code, s_date: sd, e_date: ed})
       this.fetched = true
-      this._mapData()
+      this.mapData()
     },
-    _mapData () {
+    mapData () {
       const list = groupBy(this.reportActs, 'v_a_c')
       let i = 1
       const mapped = map(list, (ol) => {
         let obj = { idx: i++, groups: ol.length }
-        obj['numbers'] = this._sumNumbers(ol)
+        obj['numbers'] = this.sumNumbers(ol)
         Object.assign(obj, pick(ol[0], ['name', 'ca_name', 'act_name', 'v_a_c']))
         return obj
       })
       this.items = mapped
-      // console.log(mapped)
     },
-    _sumNumbers (list) {
+    sumNumbers (list) {
       return reduce(list, (t, v) => {
         let n = v.numbers
         return t + n
@@ -155,7 +159,7 @@ export default {
       else { // update
         this.selected.act_code = parseInt(this.selected.act_code)
         this.selected.s_name = this.small.nm
-        this.$refs.acts.setItem(this.selected)
+        this.$refs.acts.setItem(cloneDeep(this.selected))
         this.inputDlg = true
       }
     },
@@ -177,7 +181,6 @@ export default {
         this.$showSnackBar('수정되었습니다.')
       }
 
-      // this.$forceUpdate()
       this.$nextTick(() => {
         this.fetchData(this.small.cd)
       })

@@ -12,28 +12,73 @@ router.get('/', (req, res) => {
   console.log(sql, code)
   db.query(...sql, (err, rows) => {
     if (!err) {
+      console.log('reports query has done')
       res.status(200).send(rows)
     } else {
-      console.warn('query error : ' + err)
+      console.warn('reports query error : ' + err)
+      res.status(500).send('Internal Server Error')
+    }
+  })
+})
+
+router.get('/volts', (req, res) => {
+  let {a_code, e_date} = req.query
+  e_date = `${e_date} 23:59:59`
+  const sql = [`
+    SELECT id, name, ca_name, ca_id, au_date, state, phone, br_date 
+    FROM volunteers
+    WHERE area_code=? AND registered <= DATE_FORMAT(?, '%Y-%m-%d %H:%i:%s')`,
+    [a_code, e_date]
+  ]
+  db.query(...sql, (err, rows) => {
+    if (!err) {
+      console.log('volts query has done')
+      res.status(200).send(rows)
+    } else {
+      console.warn('volts query error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })
 })
 
 router.get('/acts', (req, res) => {
+  let {a_code, s_date, e_date} = req.query
   const sql = [`
     SELECT a.*, v.name, v.ca_name, v.ca_id, e.name act_name,
     CONCAT(a.v_id, '-', a.act_code) v_a_c 
     FROM acts a
     LEFT JOIN volunteers v ON a.v_id = v.id
     LEFT JOIN edu_code e ON e.code = a.act_code
-    WHERE a.area_code=?`,
-    [req.query.code]]
+    WHERE a.area_code=? AND a.s_date>=? AND a.e_date<=?`,
+    [a_code, s_date, e_date]
+  ]
   db.query(...sql, (err, rows) => {
     if (!err) {
+      console.log('acts query has done')
       res.status(200).send(rows)
     } else {
-      console.warn('query error : ' + err)
+      console.warn('acts query error : ' + err)
+      res.status(500).send('Internal Server Error')
+    }
+  })
+})
+
+router.get('/dynamic', (req, res) => {
+  const {s_code, r_year} = req.query
+  const sql = [`
+    SELECT rb.r_code, ro.*, rs.*, rt.*
+    FROM reports rb
+    LEFT JOIN r_other ro ON rb.id = ro.r_id
+    LEFT JOIN r_study rs ON rb.id = rs.r_id
+    LEFT JOIN r_train rt ON rb.id = rt.r_id
+    WHERE s_code=? AND r_year=?`,
+    [s_code, r_year]]
+  db.query(...sql, (err, rows) => {
+    if (!err) {
+      console.log('dynamic query has done', sql)
+      res.status(200).send(rows)
+    } else {
+      console.warn('dynamic query error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })
@@ -56,26 +101,28 @@ router.put('/', async (req, res) => {
     const data = JSON.parse(req.body.data)
     if (!data.rb) throw new Error('no base')
 
-    const numbers = await getVoltsNumber(data.rb.s_code)
+    const numbers = await getVoltsNumber(data.rb.s_code) // s_date, e_date
     data.rb.numbers = numbers
-    const {newID} = await updateData('reports', data.rb)
+    const newID = await updateData('reports', data.rb)
     if (!newID) throw new Error('failed to insert')
 
-    if (data.rs) prList.push(updateData('r_study', data.rs, newID))
-    if (data.rt) prList.push(updateData('r_train', data.rt, newID))
-    if (data.ro) prList.push(updateData('r_other', data.ro, newID))
+    prList.push(Promise.resolve(newID))
+    data.rs && prList.push(updateData('r_study', data.rs, newID))
+    data.rt && prList.push(updateData('r_train', data.rt, newID))
+    data.ro && prList.push(updateData('r_other', data.ro, newID))
   } catch(e) {
     console.warn('parse error : ', e)
     return res.status(500).send('Internal Server Error')
   }
 
-  prList.length && Promise.all(prList)
-    .then(result => {
-     res.status(200).send(result)
-   }).catch(err => {
-     console.warn('query error : ' + err)
-     res.status(500).send('Internal Server Error')
-   })
+  Promise.all(prList).then(result => {
+      console.log(result)
+      res.status(200).send({newID: result[0]})
+    }).catch(err => {
+      console.warn('put query error : ' + err)
+      res.status(500).send('Internal Server Error')
+    })
+
 })
 
 router.post('/:id', (req, res) => {
@@ -85,10 +132,10 @@ router.post('/:id', (req, res) => {
     console.log(req.body.data)
     const data = JSON.parse(req.body.data)
 
-    if (data.rb) prList.push(updateData('reports', data.rb))
-    if (data.rs) prList.push(updateData('r_study', data.rs, req.params.id))
-    if (data.rt) prList.push(updateData('r_train', data.rt, req.params.id))
-    if (data.ro) prList.push(updateData('r_other', data.ro, req.params.id))
+    data.rb && prList.push(updateData('reports', data.rb))
+    data.rs && prList.push(updateData('r_study', data.rs, req.params.id))
+    data.rt && prList.push(updateData('r_train', data.rt, req.params.id))
+    data.ro && prList.push(updateData('r_other', data.ro, req.params.id))
   } catch (e) {
     console.warn('parse error : ', e)
     return res.status(500).send('Internal Server Error')
@@ -127,7 +174,7 @@ router.delete('/:id', (req, res) => {
 router.get('/leader/:code', (req, res) => {
   getLeader(req.params.code)
   .then(ldr => {
-    console.log('leader is...', ldr.lv_name, ldr.lv_id)
+    ldr && console.log('leader is...', ldr.lv_name, ldr.lv_id)
     res.status(200).send(ldr)
   }).catch(e => {
     console.warn('catch error : ', e)
@@ -172,7 +219,7 @@ const getData = (table, id) => {
     } else {
       sql = [`
       SELECT r.*, ro.*, ac.s_name, 
-      IF(ISNULL(lv_id), NULL, CONCAT(vl.name, '', vl.ca_name))  
+      IF(ISNULL(lv_id), NULL, CONCAT(vl.name, '', vl.ca_name)) v_name 
       FROM reports r 
       LEFT JOIN r_other ro ON r.id = ro.r_id
       LEFT JOIN volunteers vl ON lv_id IS NOT NULL AND vl.id = r.lv_id
@@ -181,10 +228,10 @@ const getData = (table, id) => {
     }
     return db.query(...sql, (err, rows) => {
       if (!err) {
-        console.log('query has done')
+        console.log('getData query has done')
         resolve(rows[0])
       } else {
-        console.warn('query error : ' + err)
+        console.warn('getData query error : ' + err)
         resolve(null)
       }
     })
@@ -274,21 +321,21 @@ const updateData = (table, obj, id) => {
       ]
     } else {
       sql = [`
-        INSERT INTO reports(code, s_code, name, phone, r_year, lv_id, numbers, s_date, e_date) 
+        INSERT INTO reports(r_code, s_code, name, r_half, r_year, lv_id, numbers, s_date, e_date) 
         VALUES(?
         ,?,?,?,?,?,?,?,?) 
-        ON DUPLICATE KEY UPDATE s_code=?, name=?, phone=?, r_year=?, lv_id=?, numbers=?, s_date=?, e_date=?`,
-        [ obj.code,
-          obj.s_code, obj.name, obj.phone, obj.r_year, obj.lv_id, obj.numbers, obj.s_date, obj.e_date,
-          obj.s_code, obj.name, obj.phone, obj.r_year, obj.lv_id, obj.numbers, obj.s_date, obj.e_date ]
+        ON DUPLICATE KEY UPDATE s_code=?, name=?, r_half=?, r_year=?, lv_id=?, numbers=?, s_date=?, e_date=?`,
+        [ obj.r_code,
+          obj.s_code, obj.name, obj.r_half, obj.r_year, obj.lv_id, obj.numbers, obj.s_date, obj.e_date,
+          obj.s_code, obj.name, obj.r_half, obj.r_year, obj.lv_id, obj.numbers, obj.s_date, obj.e_date ]
       ]
     }
     return db.query(...sql, (err, rows) => {
       if (!err) {
-        console.log('query has done', rows)
-        resolve({newID: rows.insertId})
+        console.log(`updateData ${table} query has done`, table !== 'reports' ? rows.affectedRows : rows.insertId)
+        resolve(table === 'reports' ? rows.insertId : rows.affectedRows)
       } else {
-        console.warn('query error : ' + err)
+        console.warn('updateData query error : ' + err)
         reject(err)
       }
     })
@@ -302,10 +349,10 @@ const deleteData = (table, id) => {
     else sql = [`DELETE FROM ${table} WHERE r_id=?`, id]
     return db.query(...sql, (err, rows) => {
       if (!err) {
-        console.log('query has done')
+        console.log('deleteData query has done')
         resolve(rows)
       } else {
-        console.warn('query error : ' + err)
+        console.warn('deleteData query error : ' + err)
         reject(err)
       }
     })
@@ -320,10 +367,10 @@ const getLeader = (a_code) => {
       WHERE l.work = 'Y' AND l.area_code = ?`, [a_code]]
     return db.query(...sql, (err, rows) => {
       if (!err) {
-        console.log('query has done')
+        console.log('getLeader query has done')
         resolve(rows[0])
       } else {
-        console.warn('query error : ' + err)
+        console.warn('getLeader query error : ' + err)
         reject(err)
       }
     })
@@ -338,10 +385,10 @@ const getVoltsNumber = (a_code) => {
       WHERE state = 'ACT' AND area_code = ?`, [a_code]]
     return db.query(...sql, (err, rows) => {
       if (!err) {
-        console.log('query has done', rows[0])
+        console.log('getVoltsNumber query has done', rows[0])
         resolve(rows[0].numbers)
       } else {
-        console.warn('query error : ' + err)
+        console.warn('getVoltsNumber query error : ' + err)
         resolve(0)
       }
     })

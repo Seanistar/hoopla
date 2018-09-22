@@ -57,7 +57,7 @@
     <v-container class="elevation-2 w-85" :class="[isQueryBox ? 'mt-3' : 'mt-0']">
       <v-tooltip bottom>
         <v-btn fixed outline fab right @click="isQueryBox = !isQueryBox"
-               slot="activator" :class="[isQueryBox ? 't-40p' : 't-21p']" color="cyan">
+               slot="activator" :class="[isQueryBox ? 't-35p' : 't-18p']" color="cyan">
           <v-icon>{{isQueryBox ? 'arrow_upward' : 'arrow_downward'}}</v-icon>
         </v-btn>
         <span>{{isQueryBox ? '박스 숨기기' : '박스 펼치기'}}</span>
@@ -217,11 +217,11 @@ export default {
   .v-input label {
     font-size: 13px !important;
   }
-  .t-40p {
-    top: 40%;
+  .t-35p {
+    top: 35%;
   }
-  .t-21p {
-    top: 21%;
+  .t-18p {
+    top: 18%;
   }
   .slide-fade-enter-active {
     transition: all .3s ease;

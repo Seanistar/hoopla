@@ -1,5 +1,5 @@
 <template>
-  <v-container class="elevation-3 w-85 pt-2 mb-4">
+  <v-container class="elevation-3 pt-2 mb-4">
     <v-layout row wrap pb-0 align-baseline>
       <v-flex xs6>
         <v-layout row align-baseline>
@@ -31,20 +31,21 @@
       </v-flex>
     </v-layout>
 
-    <v-data-table :headers="headers" :items="reports" hide-actions
+    <v-data-table :headers="headers" :items="reports" hide-actions :pagination.sync="pagination"
                   class="elevation-5" :loading="fetched && isReportsLoading">
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <tr @click="selected = props.item" @dblclick="editReport(props.item.id)"
+        <tr @click="selected = props.item" @dblclick="editReport(props.item.id, props.item.s_code)"
             :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
           <td class="text-xs-center">{{ props.item.r_year }}</td>
+          <td class="text-xs-center">{{ props.item.r_half === 'A' ? '상반기' : '하반기' }}</td>
           <td class="text-xs-center">{{ props.item.name }}</td>
-          <td class="text-xs-center">{{ props.item.phone|formatted }}</td>
+          <!--<td class="text-xs-center">{{ props.item.phone|formatted }}</td>-->
           <td class="text-xs-center">{{ props.item.created|datestamp }}</td>
           <td class="text-xs-center">{{ props.item.numbers }}</td>
           <td class="text-xs-center">{{ props.item.s_date|monthstamp }} ~ {{ props.item.e_date|monthstamp }}</td>
           <td class="justify-center layout px-0">
-            <v-icon small class="mr-3" @click.self="editReport(props.item.id)">edit</v-icon>
+            <v-icon small class="mr-3" @click.self="editReport(props.item.id, props.item.s_code)">edit</v-icon>
             <v-icon small @click.self="deleteReport(props.item.id)">delete</v-icon>
           </td>
         </tr>
@@ -59,7 +60,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { map, find, orderBy } from 'lodash/collection'
-import { FETCH_REPORTS, DELETE_REPORT } from '@/store/actions.type'
+import { FETCH_REPORTS, DELETE_REPORT, FETCH_SMALL_LEADER } from '@/store/actions.type'
 import { SET_CHANGED_CODE } from '@/store/mutations.type'
 
 export default {
@@ -76,13 +77,8 @@ export default {
     ])
   },
   watch: {
-    model (val) {
-      if (val && val.length > 5) {
-        this.$nextTick(() => this.model.pop())
-      }
-    },
-    'selected.id' (val) {
-      // val && this.$router.push({name: 'edit-report', params: {id: val}})
+    model (obj) {
+      obj && console.log(obj.code, obj.name)
     }
   },
   data: () => ({
@@ -91,13 +87,14 @@ export default {
     search: null,
     fetched: false,
     selected: {},
+    pagination: {descending: true},
     headers: [
-      { text: '보고연도', value: 'year' },
+      { text: '보고연도', value: 'r_year' },
+      { text: '상/하반기', value: 'r_half' },
       { text: '작성자', value: 'name' },
-      { text: '연락처', value: 'phone' },
-      { text: '작성일', value: 'date' },
-      { text: '봉사자수', value: 'volts' },
-      { text: '보고기간', value: 'state' },
+      { text: '작성일', value: 'created' },
+      { text: '봉사자수', value: 'number' },
+      { text: '보고기간', value: 'e_date' },
       { text: '편집', value: 'edit', sortable: false }
     ]
   }),
@@ -110,12 +107,17 @@ export default {
       await this.$store.dispatch(FETCH_REPORTS, reqCode)
       this.fetched = true
 
+      reqCode && this.$store.dispatch(FETCH_SMALL_LEADER, reqCode)
       reqCode && this.$store.commit(SET_CHANGED_CODE, {type: 'rl_ac', code: reqCode})
     },
-    newReport () {
+    async newReport () {
+      if (!this.model || !this.model.code) return alert('본당을 선택하세요!')
+      await this.$store.dispatch(FETCH_SMALL_LEADER, this.model.code)
       this.$router.push({name: 'edit-report'})
     },
-    editReport (id) {
+    async editReport (id, sCode) {
+      if (!sCode) return alert('본당을 선택하세요!')
+      await this.$store.dispatch(FETCH_SMALL_LEADER, sCode)
       this.$router.push({name: 'edit-report', params: {id}})
     },
     deleteReport (id) {
