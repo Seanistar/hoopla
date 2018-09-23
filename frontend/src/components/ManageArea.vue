@@ -1,20 +1,19 @@
 <template>
-  <v-container class="elevation-2 mt-4">
-    <v-layout row>
-      <v-flex xs12 sm6>
-        <!--<v-text-field label="편집할 구역을 선택하세요." readonly :value="codeName"></v-text-field>-->
+  <v-container class="elevation-2 mt-3 pt-1">
+    <v-layout row align-baseline>
+      <v-flex xs12 sm4>
+        <v-text-field label="편집할 구역을 선택하세요." readonly single-line :value="codeName"></v-text-field>
       </v-flex>
-      <v-flex xs12 sm2 offset-sm4>
-        <menu-buttons class="pt-0 pb-1" refs="codes" :menu="['add']" @click-menu="onClickMenu"/>
+      <v-flex xs12 sm2 offset-sm6>
+        <menu-buttons refs="codes" @click-menu="onClickMenu"/>
       </v-flex>
     </v-layout>
-
     <v-layout row>
-      <v-flex xs3 @click="selected = 'L'">
+      <v-flex xs12 sm4 d-flex @click="selected = 'L'">
         <v-card :raised="selected === 'L'">
           <v-list>
             <v-subheader key="header" class="text-xs-center" :class="selected === 'L' ? 'active-card' : ''">
-              <span class="full-width">기본교육 코드</span>
+              <span class="full-width">교구 코드</span>
             </v-subheader>
             <v-radio-group v-model="areaCode.la_code" mandatory class="pl-2">
               <template v-for="(item, index) in lAreaCodes" v-if="item.l_code !== ''">
@@ -23,7 +22,7 @@
                     <v-radio :value="item.l_code"></v-radio>
                   </v-list-tile-action>
                   <v-list-tile-content>
-                    <v-list-tile-title>{{ item.l_name }}</v-list-tile-title>
+                    <v-list-tile-title>{{ item.l_name }} ({{ item.l_code|areaCode(0, 2) }})</v-list-tile-title>
                   </v-list-tile-content>
                 </v-list-tile>
               </template>
@@ -31,12 +30,11 @@
           </v-list>
         </v-card>
       </v-flex>
-
-      <v-flex xs3class="ml-3" @click="selected = 'M'">
+      <v-flex xs12 sm4 d-flex class="ml-3" @click="selected = 'M'">
         <v-card :raised="selected === 'M'">
           <v-list>
             <v-subheader key="header" class="text-xs-center" :class="selected === 'M' ? 'active-card' : ''">
-              <span class="full-width">성서교육 코드</span>
+              <span class="full-width">지구 코드</span>
             </v-subheader>
             <v-radio-group v-model="areaCode.ma_code" class="pl-2" v-if="areaCode.la_code !== ''">
               <template v-for="(item, index) in mAreaCodes" v-if="item.m_code !== ''">
@@ -45,7 +43,7 @@
                     <v-radio :value="item.m_code"></v-radio>
                   </v-list-tile-action>
                   <v-list-tile-content>
-                    <v-list-tile-title>{{ item.m_name }} ({{ item.s_code|areaCode(4, 6) }})</v-list-tile-title>
+                    <v-list-tile-title>{{ item.m_name }} ({{ item.m_code|areaCode(3, 5) }})</v-list-tile-title>
                   </v-list-tile-content>
                 </v-list-tile>
               </template>
@@ -53,12 +51,11 @@
           </v-list>
         </v-card>
       </v-flex>
-
-      <v-flex xs3 class="ml-3" @click="selected = 'S'">
+      <v-flex xs12 sm4 d-flex class="ml-3" @click="selected = 'S'">
         <v-card :raised="selected === 'S'">
           <v-list >
             <v-subheader key="header" class="text-xs-center" :class="selected === 'S' ? 'active-card' : ''">
-              <span class="full-width">노트검사 코드</span>
+              <span class="full-width">본당 코드</span>
             </v-subheader>
             <v-radio-group v-model="areaCode.sa_code" class="pl-2" v-if="areaCode.ma_code !== ''">
               <template v-for="(item, index) in sAreaCodes" v-if="item.s_code !== ''">
@@ -67,32 +64,7 @@
                     <v-radio :value="item.s_code"></v-radio>
                   </v-list-tile-action>
                   <v-list-tile-content>
-                    <v-list-tile-title>{{ item.s_name }} ({{ item.s_code|areaCode(6, -1) }})</v-list-tile-title>
-                  </v-list-tile-content>
-                </v-list-tile>
-              </template>
-              <template v-else-if="sAreaCodes.length === 0">
-                <v-text-field label="데이터가 없습니다."></v-text-field>
-              </template>
-            </v-radio-group>
-          </v-list>
-        </v-card>
-      </v-flex>
-
-      <v-flex xs3 class="ml-3" @click="selected = 'S'">
-        <v-card :raised="selected === 'S'">
-          <v-list >
-            <v-subheader key="header" class="text-xs-center" :class="selected === 'S' ? 'active-card' : ''">
-              <span class="full-width">봉사활동 코드</span>
-            </v-subheader>
-            <v-radio-group v-model="areaCode.sa_code" class="pl-2" v-if="areaCode.ma_code !== ''">
-              <template v-for="(item, index) in sAreaCodes" v-if="item.s_code !== ''">
-                <v-list-tile :key="item.s_code + index" ripple>
-                  <v-list-tile-action>
-                    <v-radio :value="item.s_code"></v-radio>
-                  </v-list-tile-action>
-                  <v-list-tile-content>
-                    <v-list-tile-title>{{ item.s_name }} ({{ item.s_code|areaCode(6, -1) }})</v-list-tile-title>
+                    <v-list-tile-title>{{ item.s_name }} ({{ item.s_code|areaCode(6, 8) }})</v-list-tile-title>
                   </v-list-tile-content>
                 </v-list-tile>
               </template>

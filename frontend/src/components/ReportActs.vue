@@ -67,9 +67,15 @@
 import MenuButtons from './control/MenuButtons'
 import ItemDialog from './control/InputItemDialog'
 import { pick } from 'lodash/object'
-import { cloneDeep } from 'lodash/lang'
+import { isEmpty } from 'lodash/lang'
 import { groupBy, map, reduce } from 'lodash/collection'
-import { FETCH_REPORT_ACTS, CREATE_REPORT_ACT, UPDATE_REPORT_ACT, DELETE_REPORT_ACT } from '@/store/actions.type'
+import {
+  FETCH_REPORT_ACTS,
+  CREATE_REPORT_ACT,
+  UPDATE_REPORT_ACT,
+  DELETE_REPORT_ACT,
+  FETCH_SMALL_LEADER
+} from '@/store/actions.type'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -95,6 +101,7 @@ export default {
     this.headers.map(h => { h.class = ['text-xs-center', 'body-2', 'pl-39x'] })
     const res = this.$parent.getSmall()
     if (res) {
+      if (isEmpty(this.smallLeader)) this[FETCH_SMALL_LEADER](res.s_code)
       this.small.nm = res.s_name
       this.fetchData(this.small.cd = res.s_code)
     }
@@ -120,7 +127,8 @@ export default {
       FETCH_REPORT_ACTS,
       CREATE_REPORT_ACT,
       UPDATE_REPORT_ACT,
-      DELETE_REPORT_ACT
+      DELETE_REPORT_ACT,
+      FETCH_SMALL_LEADER
     ]),
     async fetchData (code) {
       const [sd, ed] = [this.$parent.S_DATE, this.$parent.E_DATE]
@@ -141,7 +149,7 @@ export default {
     },
     sumNumbers (list) {
       return reduce(list, (t, v) => {
-        let n = v.numbers
+        let n = +v.numbers
         return t + n
       }, 0)
     },
@@ -150,6 +158,7 @@ export default {
     },
     onClickMenu (type) {
       if (type === 'add') {
+        this.selected = {}
         this.$refs.acts.setItem({s_name: this.small.nm, s_code: this.small.cd, id: 0})
         this.inputDlg = true
         return
@@ -159,7 +168,7 @@ export default {
       else { // update
         this.selected.act_code = parseInt(this.selected.act_code)
         this.selected.s_name = this.small.nm
-        this.$refs.acts.setItem(cloneDeep(this.selected))
+        this.$refs.acts.setItem(this.selected)
         this.inputDlg = true
       }
     },
@@ -168,12 +177,13 @@ export default {
       if (data === undefined) return
 
       if (data.v_id === undefined) data.v_id = data.id
-      const item = pick(data, ['id', 'v_id', 'act_code', 'area_code', 's_date', 'e_date', 'content', 'numbers'])
+      const item = pick(data, ['id', 'v_id', 'act_code', 'act_name', 'name', 'ca_name', 'area_code', 's_date', 'e_date', 'content', 'numbers'])
       console.log('input item...', item)
       this.updateActItem(item)
     },
     async updateActItem (data) {
       if (this.selected.id === undefined) {
+        data.v_a_c = `${data.v_id}-${data.act_code}`
         await this[CREATE_REPORT_ACT](data)
         this.$showSnackBar('추가되었습니다.')
       } else {
@@ -182,7 +192,8 @@ export default {
       }
 
       this.$nextTick(() => {
-        this.fetchData(this.small.cd)
+        // this.fetchData(this.small.cd)
+        this.mapData()
       })
     }
   }

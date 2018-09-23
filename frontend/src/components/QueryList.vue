@@ -74,14 +74,14 @@
         <template slot="items" slot-scope="props">
           <tr @click="selected = props.item" @dblclick="onClickResult(props.item)"
               :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
-            <td class="text-xs-center">{{ props.item.id }}</td>
-            <td class="text-xs-center">{{ props.item.name }}</td>
-            <td class="text-xs-center">{{ props.item.ca_name }}</td>
-            <td class="text-xs-center">{{ props.item.au_date|yearstamp }}</td>
-            <td class="text-xs-center">{{ props.item.la_name }}</td>
-            <td class="text-xs-center">{{ props.item.sa_name }}</td>
-            <td class="text-xs-center">{{ props.item.edu_count }}</td>
-            <td class="text-xs-center">{{ props.item.act_count }}</td>
+            <td class="text-xs-center w-10">{{ props.item.id }}</td>
+            <td class="text-xs-center w-15">{{ props.item.name }}</td>
+            <td class="text-xs-center w-15">{{ props.item.ca_name }}</td>
+            <td class="text-xs-center w-10">{{ props.item.au_date|yearstamp }}</td>
+            <td class="text-xs-center w-15">{{ props.item.la_name }}</td>
+            <td class="text-xs-center w-15">{{ props.item.sa_name }}</td>
+            <td class="text-xs-center w-10">{{ props.item.edu_count }}</td>
+            <td class="text-xs-center w-10">{{ props.item.act_count }}</td>
           </tr>
         </template>
         <template slot="no-data" v-if="queried">

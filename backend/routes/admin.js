@@ -16,10 +16,10 @@ const getPassword = (id) => {
     const sql = ['SELECT password pwd FROM admins WHERE admin_id=?', [id]]
     return db.query(...sql, (err, row) => {
       if (!err) {
-        console.log('query getPassword has done')
+        console.log('getPassword query has done')
         resolve(row.length ? row[0].pwd : '')
       } else {
-        console.log('query getPassword error : ' + err)
+        console.log('getPassword query error : ' + err)
         reject(err)
       }
     })
@@ -35,7 +35,7 @@ router.post('/login', (req, res) => {
       if (admin_password === encryptPassword(pwd)) {
         res.status(200).send('OK')
       } else {
-        res.send('FAIL')
+        res.status(500).send('FAIL')
       }
     })
     .error(e => {console.log("Error handler " + e)})

@@ -12,8 +12,8 @@
       </v-btn>
       <v-tabs slot="extension" v-model="tabIdx" color="blue lighten-2" grow>
         <v-tabs-slider color="yellow"></v-tabs-slider>
-        <v-tab v-for="(item, index) in items" :key="index" ripple
-               @click="onSelect(item.link)" >
+        <v-tab v-for="(item, index) in items" :key="index" ripple class="subheading"
+               :disabled="!isLogin" @click="onSelect(item.link)" >
           {{ item.text }}
         </v-tab>
       </v-tabs>
@@ -43,6 +43,9 @@ export default {
     }
   },
   computed: {
+    /* ...mapGetters([
+      'isLogin'
+    ]), */
     isLogin () {
       return true // this.$store.getters.isLogin
     }

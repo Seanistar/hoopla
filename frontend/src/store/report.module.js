@@ -125,8 +125,9 @@ const actions = {
   [CREATE_REPORT_ACT] (context, act) {
     return VolunteerService.create_act(act)
       .then(({ data }) => {
-        act.id = data.lastId
+        act.id = data.newID
         context.commit(ADD_REPORT_ACT, act)
+        return Promise.resolve(act.id)
       })
       .catch((error) => {
         throw new Error(error)

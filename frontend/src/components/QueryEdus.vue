@@ -6,7 +6,7 @@
       <template slot="headers" slot-scope="props">
         <tr>
           <th rowspan="2" class="body-2 font-weight-bold w-10">연도</th>
-          <th colspan="7" class="body-2 font-weight-bold w-90">교육 참석 현황</th>
+          <th :colspan="ebsCodes.length + 1" class="body-2 font-weight-bold w-90">교육 참석 현황</th>
         </tr>
         <tr>
           <th class="body-1 w-15" v-for="(ec, i) in ebsCodes" :key="i" v-html="twoLine(ec.name)"></th>

@@ -12,20 +12,21 @@
 </template>
 
 <script>
-import AreaCode from '@/components/AreaCode'
-import EdusCode from '@/components/EdusCode'
+import ManageArea from '@/components/ManageArea'
+import ManageEdus from '@/components/ManageEdus'
+import ManageAdmin from '@/components/ManageAdmin'
 
 export default {
   name: 'ViewOthers',
-  components: { AreaCode, EdusCode },
+  components: { ManageArea, ManageEdus, ManageAdmin },
   computed: {
     targetComponents () {
-      return ['AreaCode', 'EdusCode']
+      return ['ManageArea', 'ManageEdus', 'ManageAdmin']
     }
   },
   data: () => ({
     tabIdx: 0,
-    title: ['구역 코드', '교육 및 봉사', '관리자 설정']
+    title: ['구역 설정', '교육 및 봉사', '관리자 설정']
   })
 }
 </script>

@@ -2,9 +2,8 @@
 export const FETCH_EDU_CODES = 'fetchEduCodes'
 export const FETCH_AREA_CODES = 'fetchAreaCodes'
 export const DELETE_AREA_CODE = 'deleteAreaCode'
-export const CREATE_AREA_CODE = 'createAreaCode'
 export const UPDATE_AREA_CODE = 'updateAreaCode'
-export const CREATE_EDUS_CODE = 'createEdusCode'
+export const UPDATE_EDUS_CODE = 'updateEdusCode'
 
 // volunteer's base information
 export const FETCH_VOLUNTEERS = 'fetchVolunteers'
@@ -42,6 +41,10 @@ export const FIND_VOLUNTEERS = 'findVolunteers'
 // administration
 export const LOGIN_ADMIN = 'loginAdmin'
 export const CHECK_AUTH = 'checkAuth'
+export const FETCH_ADMINS = 'fetchAdmins'
+export const CREATE_ADMIN = 'createAdmins'
+export const UPDATE_ADMIN = 'updateAdmins'
+export const DELETE_ADMIN = 'deleteAdmins'
 
 // state report for small area
 export const FETCH_REPORTS = 'fetchReports'

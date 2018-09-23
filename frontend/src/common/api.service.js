@@ -161,6 +161,9 @@ export const CodeService = {
   delete_area (code) {
     return ApiService.delete(`codes/area/${code}`)
   },
+  update_edus (params) {
+    return ApiService.update('codes/edu', params)
+  },
   test (testCode) {
     return ApiService.query(`codes/test`, { params: { code: testCode } })
   }

@@ -61,6 +61,24 @@ router.delete('/area/:code', (req, res) => {
   })
 })
 
+router.post('/edu', (req, res) => {
+  const {code, name, type} = req.body
+  const sql = [`
+    INSERT INTO edu_code(code, name, type) 
+    VALUES(?,?,?) ON DUPLICATE KEY UPDATE name=?, type=?`,
+    [code, name, type, name, type]
+  ]
+  db.query(...sql, (err, row) => {
+    if (!err) {
+      row = {code:parseInt(code), name, type}
+      res.status(200).send(row)
+    } else {
+      console.log('query error : ' + err)
+      res.status(500).send('Internal Server Error')
+    }
+  })
+})
+
 const getCodeName = (code) => {
   return new _promise(function(resolve, reject) {
     let sql = null

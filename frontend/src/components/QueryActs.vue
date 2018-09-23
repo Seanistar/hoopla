@@ -8,7 +8,7 @@
       <template slot="headers" slot-scope="props">
         <tr>
           <th rowspan="2" class="body-2 font-weight-bold w-10">연도</th>
-          <th colspan="9" class="body-2 font-weight-bold w-90">그룹 봉사 현황</th>
+          <th :colspan="actCodes.length" class="body-2 font-weight-bold w-90">그룹 봉사 현황</th>
         </tr>
         <tr>
           <th class="align-center body-1 w-10"

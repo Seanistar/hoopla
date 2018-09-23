@@ -1,15 +1,15 @@
 <template>
   <div class="pt-3">
-    <admin-list/>
+    <!--<admin-list/>-->
   </div>
 </template>
 
 <script>
-import AdminList from '@/components/AdminList'
+// import AdminList from '@/components/AdminList'
 
 export default {
-  name: 'AdminHome',
-  components: { AdminList }
+  name: 'AdminHome'
+  // components: { AdminList }
 }
 </script>
 

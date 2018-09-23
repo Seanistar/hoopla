@@ -7,7 +7,7 @@
       <template slot="headers" slot-scope="props">
         <tr>
           <th rowspan="2" class="body-1 font-weight-bold w-10">연도</th>
-          <th colspan="9" class="body-1 font-weight-bold w-90">노트 검사 현황</th>
+          <th :colspan="stdCodes.length" class="body-1 font-weight-bold w-90">노트 검사 현황</th>
         </tr>
         <tr>
           <th class="body-1 w-10"

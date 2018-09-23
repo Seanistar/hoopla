@@ -1,6 +1,12 @@
 import { CodeService } from '@/common/api.service'
-import { FETCH_EDU_CODES, FETCH_AREA_CODES, UPDATE_AREA_CODE, DELETE_AREA_CODE } from './actions.type'
-import { FETCH_START, FETCH_EDU_CODES_END, FETCH_AREA_CODES_END, SET_AREA_CODE, REMOVE_AREA_CODE } from './mutations.type'
+import {
+  FETCH_EDU_CODES, UPDATE_EDUS_CODE,
+  FETCH_AREA_CODES, UPDATE_AREA_CODE, DELETE_AREA_CODE } from './actions.type'
+import {
+  FETCH_START,
+  FETCH_EDU_CODES_END, SET_EDUS_CODE,
+  FETCH_AREA_CODES_END,
+  SET_AREA_CODE, REMOVE_AREA_CODE } from './mutations.type'
 import { filter } from 'lodash/collection'
 
 const state = {
@@ -74,6 +80,15 @@ const actions = {
       .catch((error) => {
         throw new Error(error)
       })
+  },
+  [UPDATE_EDUS_CODE] (context, params) {
+    return CodeService.update_edus(params)
+      .then(({ data }) => {
+        context.commit(SET_EDUS_CODE, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
   }
 }
 
@@ -102,6 +117,13 @@ const mutations = {
     if (pos > -1) {
       state.areaCodes.splice(pos, 1)
     }
+  },
+  [SET_EDUS_CODE] (state, obj) {
+    const pos = state.eduCodes.findIndex((o) => o.code === obj.code)
+    if (pos > -1) {
+      state.eduCodes.splice(pos, 1)
+    }
+    state.eduCodes.push(obj)
   }
 }
 

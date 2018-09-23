@@ -11,11 +11,11 @@
             <v-container fill-height>
               <v-layout align-center>
                 <v-flex xs12 class="pl-2">
-                  <h4 class="display-1 bp-10">환영합니다.</h4>
+                  <h4 class="display-1 pb-4">환영합니다.</h4>
                   <span class="subheading">주님의 은총으로 말씀 봉사의 부르심에 응답하는 봉사자들을 효과적으로 관리하고 지원하기 위한 프로그램입니다.</span><br/>
                   <span class="subheading">봉사자들의 그룹공부, 연수현황, 월교육, 재교육, 특강, 피정, 전출입, 노트검사 및 보완 교육 등을 체계적으로 정리하여 성서모임 수녀님들이 함께 공유하는 데 목적이 있습니다.</span>
-                  <v-divider class="my-3"></v-divider>
-                  <div class="title mb-3">관리자 계정으로 로그인하세요!</div>
+                  <v-divider class="my-4"></v-divider>
+                  <div class="title my-3">관리자 계정으로 로그인하세요!</div>
                   <v-btn class="mx-0" color="brown darken-2" large outline @click="dialog = true">Login</v-btn>
                 </v-flex>
               </v-layout>
@@ -53,8 +53,8 @@
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" flat @click="dialog = false">취소</v-btn>
-          <v-btn color="primary" flat @click="login">확인</v-btn>
+          <v-btn color="primary" outline @click="dialog = false">취소</v-btn>
+          <v-btn color="primary" outline @click="login">확인</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import {LOGIN_ADMIN} from '@/store/actions.type'
+import { LOGIN_ADMIN } from '@/store/actions.type'
 
 export default {
   name: 'HelloHome',

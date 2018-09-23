@@ -89,7 +89,7 @@ export default {
     selected: {},
     pagination: {descending: true},
     headers: [
-      { text: '보고연도', value: 'r_year' },
+      { text: '보고연도', value: 'r_code' },
       { text: '상/하반기', value: 'r_half' },
       { text: '작성자', value: 'name' },
       { text: '작성일', value: 'created' },
@@ -107,7 +107,7 @@ export default {
       await this.$store.dispatch(FETCH_REPORTS, reqCode)
       this.fetched = true
 
-      reqCode && this.$store.dispatch(FETCH_SMALL_LEADER, reqCode)
+      // reqCode && this.$store.dispatch(FETCH_SMALL_LEADER, reqCode)
       reqCode && this.$store.commit(SET_CHANGED_CODE, {type: 'rl_ac', code: reqCode})
     },
     async newReport () {

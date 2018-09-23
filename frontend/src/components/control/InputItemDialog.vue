@@ -115,13 +115,34 @@
             </v-layout>
           </v-container>
 
-          <v-container grid-list-md v-else-if="refs === 'codes'">
+          <v-container grid-list-md v-else-if="refs === 'codes' || refs === 'eac'">
             <v-layout wrap>
               <v-flex xs12>
-                <v-text-field label="구역 코드" v-model="item.code" readonly></v-text-field>
+                <v-text-field :label="(refs === 'codes' ? '구역' : '항목') + ' 코드'" v-model="item.code" readonly></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-text-field label="구역 이름" v-model="item.name"></v-text-field>
+                <v-text-field :label="(refs === 'codes' ? '구역' : '항목') + ' 이름'" v-model="item.name"></v-text-field>
+              </v-flex>
+            </v-layout>
+          </v-container>
+
+          <v-container grid-list-md v-else-if="refs === 'admin'">
+            <v-layout wrap>
+              <v-flex xs12>
+                <v-text-field label="관리자 ID" v-model="item.code" readonly></v-text-field>
+              </v-flex>
+              <v-flex xs12>
+                <v-text-field label="관리자 비밀번호" v-model="item.password" type="password"></v-text-field>
+              </v-flex>
+              <v-flex xs6>
+                <v-text-field label="관리자 성명" v-model="item.name"></v-text-field>
+              </v-flex>
+              <v-flex xs6>
+                <v-text-field label="관리자 세례명" v-model="item.ca_name"></v-text-field>
+              </v-flex>
+              <v-flex xs12>
+                <v-text-field label="봉사한 구역 (본당)" clearable hide-details
+                              @focus="churchFinder = true" v-model="item.area_name"></v-text-field>
               </v-flex>
             </v-layout>
           </v-container>
@@ -148,6 +169,7 @@ import ChurchDialog from './FindChurchDialog'
 import { ACTIVITY_STATES } from '../../common/const.info'
 import { pick } from 'lodash/object'
 import { mapGetters } from 'vuex'
+import { cloneDeep } from 'lodash/lang'
 
 export default {
   name: 'InputItemDialog',
@@ -167,6 +189,8 @@ export default {
       else if (this.refs === 'acts') return '봉사활동 정보'
       else if (this.refs === 'codes') return '구역코드 정보'
       else if (this.refs === 'edus') return '교육 정보'
+      else if (this.refs === 'eac') return '교육 및 봉사 코드 정보'
+      else if (this.refs === 'admin') return '관리자 정보'
     },
     voltCode () {
       return this.item.id !== 0 ? `봉사자코드 : ${this.item.area_code}-${this.item.id}` : '봉사자코드 확인이 필요합니다!'
@@ -177,6 +201,9 @@ export default {
         this.reset()
         this.$emit('close-input-item')
       }
+    },
+    isPassValidation () {
+      return this.refs === 'eac' || this.refs === 'codes' || this.refs === 'admin'
     }
   },
   watch: {
@@ -208,15 +235,20 @@ export default {
     } else if (this.refs === 'edus') {
       this.item.s_date = this.item.e_date = ''
       this.item.edu_code = this.item.edu_name = null
+    } else if (this.refs === 'admin') {
+      this.item.code = this.item.password = ''
+      this.item.name = this.item.ca_name = this.item.area_name = ''
     }
   },
   methods: {
     closeDialog () {
-      if (!this.item.id) return alert('코드 확인이 되지 않았습니다!')
-      if (!this.item.e_date || !this.item.s_date) return alert('기간을 확인해주세요!')
-      if (this.item.e_date < this.item.s_date) {
-        this.$refs['e_date'].setDate(null)
-        return alert('종료일이 시작일보다 빠릅니다!')
+      if (!this.isPassValidation) {
+        if (!this.item.id) return alert('코드 확인이 되지 않았습니다!')
+        if (!this.item.e_date || !this.item.s_date) return alert('기간을 확인해주세요!')
+        if (this.item.e_date < this.item.s_date) {
+          this.$refs['e_date'].setDate(null)
+          return alert('종료일이 시작일보다 빠릅니다!')
+        }
       }
       this.$emit('close-input-item', this.item)
       this.reset()
@@ -227,9 +259,8 @@ export default {
       const edr = this.$refs['e_date']; edr && edr.setDate(null)
     },
     setItem (data) {
-      this.item = data
+      if (data !== undefined) this.item = cloneDeep(data)
       const sdr = this.$refs['s_date']; sdr && sdr.setDate(data.s_date)
-
       const edr = this.$refs['e_date']; edr && edr.setDate(data.e_date)
     },
     onPicked (obj) {

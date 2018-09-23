@@ -1,6 +1,10 @@
 import { AdminService } from '@/common/api.service'
-import { LOGIN_ADMIN } from './actions.type'
-import { SET_ADMIN } from './mutations.type'
+import {
+  LOGIN_ADMIN
+} from './actions.type'
+import {
+  SET_ADMIN
+} from './mutations.type'
 
 const state = {
   isLogin: false,
@@ -22,6 +26,7 @@ const actions = {
       .then(({data}) => {
         // console.log(res)
         context.commit(SET_ADMIN, data === 'OK')
+        // return Promise.resolve(data === 'OK')
       })
       .catch((error) => {
         throw new Error(error)
