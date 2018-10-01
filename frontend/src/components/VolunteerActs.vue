@@ -85,16 +85,14 @@ export default {
     },
     async updateActItem (item) {
       if (isUndefined(this.selected.id)) {
+        const res = this.actCodes.find(a => a.code === item.act_code)
+        res && (item.act_name = res.name)
         await this.$store.dispatch(CREATE_VOLUNTEER_ACT, item)
         this.$showSnackBar('추가되었습니다.')
       } else {
         await this.$store.dispatch(UPDATE_VOLUNTEER_ACT, item)
         this.$showSnackBar('수정되었습니다.')
       }
-
-      this.$nextTick(() => {
-        this.fetchData()
-      })
     },
     deleteActItem (id) {
       this.$store.dispatch(DELETE_VOLUNTEER_ACT, id)

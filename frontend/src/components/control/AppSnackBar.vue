@@ -28,7 +28,7 @@ export default {
       snackBar: false,
       y: 'top',
       x: null,
-      mode: '',
+      mode: 'multi-line',
       timeout: 3000,
       text: 'Hello, I\'m a snackbar'
     }

@@ -38,11 +38,15 @@ export const RESET_FIND_VOLUNTEERS = 'resetFindVolunteers'
 export const SET_QUERY_INFO = 'setQueryInfo'
 
 // administration
-export const SET_AUTH = 'setAuth'
+export const SET_LOGIN = 'setLogin '
 export const FETCH_ADMINS_END = 'fetchAdmins'
 export const SET_ADMIN = 'setAdmin'
-export const ADD_ADMIN = 'addAdmin'
 export const REMOVE_ADMIN = 'removeAdmin'
+
+// authentication
+export const SET_AUTH = 'setAuth'
+export const INIT_AUTH = 'initAuth'
+export const REMOVE_AUTH = 'removeAuth'
 
 // codes
 export const FETCH_EDU_CODES_END = 'fetchEduCodes'

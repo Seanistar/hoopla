@@ -13,7 +13,7 @@
       <v-tabs slot="extension" v-model="tabIdx" color="blue lighten-2" grow>
         <v-tabs-slider color="yellow"></v-tabs-slider>
         <v-tab v-for="(item, index) in items" :key="index" ripple class="subheading"
-               :disabled="!isLogin" @click="onSelect(item.link)" >
+               :disabled="index !== 0 && !isAuth" @click="onSelect(item.link)" >
           {{ item.text }}
         </v-tab>
       </v-tabs>
@@ -22,7 +22,8 @@
 </template>
 
 <script>
-import {trimStart} from 'lodash/string'
+import { trimStart } from 'lodash/string'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Header',
@@ -36,23 +37,19 @@ export default {
         {text: '봉사자 관리', link: 'volunteers'},
         {text: '봉사자 조회', link: 'queries'},
         {text: '본당 현황 보고', link: 'reports'},
-        // {text: '관리자 설정', link: 'admins'},
         {text: '현황 집계', link: 'stats'},
         {text: '기타 관리', link: 'others'}
       ]
     }
   },
   computed: {
-    /* ...mapGetters([
-      'isLogin'
-    ]), */
-    isLogin () {
-      return true // this.$store.getters.isLogin
-    }
+    ...mapGetters([
+      'isAuth'
+    ])
   },
   methods: {
     onSelect (link) {
-      if (!this.isLogin && link !== 'home') {
+      if (!this.isAuth && link !== 'home') {
         alert('로그인이 필요합니다!')
         return setTimeout(() => { this.tabIdx = 0 }, 10)
       }

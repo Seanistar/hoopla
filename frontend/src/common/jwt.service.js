@@ -1,4 +1,4 @@
-const ID_TOKEN_KEY = 'id_token'
+const ID_TOKEN_KEY = 'ID_TOKEN'
 
 export default {
   getToken () {

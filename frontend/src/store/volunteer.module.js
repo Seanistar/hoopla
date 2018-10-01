@@ -66,7 +66,7 @@ const getters = {
 const actions = {
   [FETCH_VOLUNTEERS] (context, params) {
     context.commit(FETCH_START)
-    return VolunteerService.queries(params)
+    return VolunteerService.fetch(params)
       .then(({ data }) => {
         context.commit(FETCH_VOLUNTEERS_END, data)
       })

@@ -7,7 +7,7 @@
             <v-subheader class="body-2 pr-0">소속본당 : </v-subheader>
           </v-flex>
           <v-flex xs5>
-            <v-combobox class="body-2" @input="fetchReports()"
+            <v-combobox class="body-2" @input="fetchReports()" :disabled="authInfo.level === 'L3'"
                         v-model="model" :items="items" item-value="code" item-text="name"
                         :search-input.sync="search" clearable single-line>
               <template slot="no-data">
@@ -68,7 +68,7 @@ export default {
   computed: {
     ...mapGetters([
       'smallCodes',
-      'adminInfo',
+      'authInfo',
       'reportCode',
       'isReportsLoading',
       'changedCodes',
@@ -127,7 +127,7 @@ export default {
     },
     setLastChangedCode () {
       let code = this.changedCodes.rl_ac
-      if (!code) code = this.adminInfo.area_code
+      if (!code) code = this.authInfo.area_code
 
       this.setCodeInfo(code)
       this.fetchReports(code)

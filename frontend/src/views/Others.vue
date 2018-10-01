@@ -1,7 +1,8 @@
 <template>
   <v-container pt-0>
     <v-tabs left align-with-title fixed-tabs class="elevation-4">
-      <v-tab v-for="(item, idx) in title" :key="idx" @click="tabIdx = idx">
+      <v-tab v-for="(item, idx) in title" :key="idx" :disabled="isRestricted(idx)"
+             @click="tabIdx = idx">
         <strong>{{ item }}</strong>
       </v-tab>
     </v-tabs>
@@ -22,12 +23,21 @@ export default {
   computed: {
     targetComponents () {
       return ['ManageArea', 'ManageEdus', 'ManageAdmin']
+    },
+    adminLevel () {
+      const info = this.$store.getters.authInfo
+      return info.level
     }
   },
   data: () => ({
     tabIdx: 0,
     title: ['구역 설정', '교육 및 봉사', '관리자 설정']
-  })
+  }),
+  methods: {
+    isRestricted (idx) {
+      return this.adminLevel === 'L3' && idx === 2
+    }
+  }
 }
 </script>
 

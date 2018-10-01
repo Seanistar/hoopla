@@ -68,6 +68,7 @@ export default new Router({
       path: '/notices',
       name: 'notices',
       component: () => import('@/views/Notices')
-    }
+    },
+    { path: '*', redirect: '/' }
   ]
 })

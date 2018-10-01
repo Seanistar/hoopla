@@ -2,7 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import JwtService from '@/common/jwt.service'
-import {API_URL} from '@/common/config'
+import { API_URL } from '@/common/config'
 
 const ApiService = {
   init () {
@@ -11,19 +11,20 @@ const ApiService = {
   },
   setHeader () {
     Vue.axios.defaults.headers.common['Authorization'] = `Token ${JwtService.getToken()}`
+    Vue.axios.defaults.headers['x-access-token'] = JwtService.getToken()
   },
   query (resource, params) {
     return Vue.axios
       .get(resource, params)
       .catch((error) => {
-        throw new Error(`[scrapbook] ApiService ${error}`)
+        throw new Error(`ApiService ${error}`)
       })
   },
   get (resource, plug) {
     return Vue.axios
       .get(`${resource}/${plug}`)
       .catch((error) => {
-        throw new Error(`[scrapbook] ApiService ${error}`)
+        throw new Error(`ApiService ${error}`)
       })
   },
   create (resource, params) {
@@ -36,16 +37,32 @@ const ApiService = {
     return Vue.axios
       .delete(resource)
       .catch((error) => {
-        throw new Error(`[scrapbook] ApiService ${error}`)
+        throw new Error(`ApiService ${error}`)
       })
   }
 }
 
 export default ApiService
 
+export const AuthService = {
+  check_auth () {
+    ApiService.setHeader()
+    return ApiService.query('auth/check')
+  }
+}
+
 export const AdminService = {
-  get () {
+  fetch () {
     return ApiService.query('admin')
+  },
+  create (data) {
+    return ApiService.create('admin/register', data)
+  },
+  update (id, data) {
+    return ApiService.update(`admin/${id}`, data)
+  },
+  delete (id) {
+    return ApiService.delete(`admin/${id}`)
   },
   login (params) {
     return ApiService.update('admin/login', params)
@@ -53,7 +70,7 @@ export const AdminService = {
 }
 
 export const VolunteerService = {
-  queries (code) {
+  fetch (code) {
     return ApiService.query('volts', {params: {code}})
   },
   get (id) {

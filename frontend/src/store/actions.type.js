@@ -40,11 +40,13 @@ export const FIND_VOLUNTEERS = 'findVolunteers'
 
 // administration
 export const LOGIN_ADMIN = 'loginAdmin'
-export const CHECK_AUTH = 'checkAuth'
 export const FETCH_ADMINS = 'fetchAdmins'
-export const CREATE_ADMIN = 'createAdmins'
-export const UPDATE_ADMIN = 'updateAdmins'
-export const DELETE_ADMIN = 'deleteAdmins'
+export const REGISTER_ADMIN = 'registerAdmin'
+export const UPDATE_ADMIN = 'updateAdmin'
+export const DELETE_ADMIN = 'deleteAdmin'
+
+// authentication
+export const CHECK_AUTH = 'checkAuth'
 
 // state report for small area
 export const FETCH_REPORTS = 'fetchReports'

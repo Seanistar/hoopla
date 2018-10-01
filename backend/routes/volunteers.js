@@ -89,11 +89,11 @@ router.post('/page/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
   if (req.params.id === undefined) {
-    console.warn('error')
-    res.send('no id parameter')
+    console.warn('no id parameter')
+    return res.status(500).send('Internal Server Error')
   }
   const sql = [`DELETE FROM volunteers WHERE id=?`, req.params.id]
-  db.query(...sql, (err, rows) => {
+  db.query(...sql, (err) => {
     if (!err) {
       res.status(200).send({success: true})
     } else {

@@ -25,12 +25,9 @@
       </v-flex>
       <v-flex xs6>
         <v-subheader class="body-2 px-0 justify-center">
-          <!--<v-radio-group v-model="states.ro.r_half" row wrap>
-            <v-radio label="상반기" value="A"></v-radio>
-            <v-radio label="하반기" value="B"></v-radio>
-          </v-radio-group>-->
           <v-flex xs3>
             <v-select label="기간선택" class="pl-4 w-90 text-xs-center body-1" single-line
+                      :disabled="r_id !== undefined"
                       :items="[{nm: '상반기', vl: 'A'}, {nm: '하반기', vl: 'B'}]"
                       item-text="nm" item-value="vl" v-model="states.ro.r_half"></v-select>
           </v-flex>

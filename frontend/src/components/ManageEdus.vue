@@ -2,7 +2,8 @@
   <v-container class="elevation-2 mt-3 pt-1">
     <v-layout row align-baseline>
       <v-flex xs12 sm3>
-        <v-text-field label="편집할 항목을 선택하세요." single-line readonly :value="codeName"></v-text-field>
+        <v-text-field label="편집할 항목을 선택하세요." class="py-0"
+                      single-line readonly :value="codeName"></v-text-field>
       </v-flex>
       <v-flex xs12 sm2 offset-sm7>
         <menu-buttons refs="codes" :menu="['add', 'edit']" @click-menu="onClickMenu"/>

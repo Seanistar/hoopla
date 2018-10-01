@@ -2,22 +2,23 @@
   <v-container class="elevation-2 mt-3 pt-1">
     <v-layout row align-baseline>
       <v-flex xs12 sm3>
-        <v-text-field label="편집할 항목을 선택하세요." single-line readonly value=""></v-text-field>
+        <!--<v-text-field label="편집할 항목을 선택하세요." single-line readonly value=""></v-text-field>-->
       </v-flex>
       <v-flex xs12 sm2 offset-sm7>
-        <menu-buttons refs="admin" @click-menu="onClickMenu"/>
+        <menu-buttons refs="admin" class="mb-1" @click-menu="onClickMenu"/>
       </v-flex>
     </v-layout>
     <v-data-table :headers="headers" :items="admins" hide-actions
                   class="elevation-5">
       <template slot="items" slot-scope="props">
-        <tr @click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
+        <tr @click="selected = props.item"
+            :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
           <td class="text-xs-center">{{ props.item.id }}</td>
           <td class="text-xs-center">{{ props.item.admin_id }}</td>
-          <td class="text-xs-center">{{ props.item.name }}</td>
+          <td class="text-xs-center">{{ props.item.admin_name }}</td>
           <td class="text-xs-center">{{ props.item.ca_name }}</td>
           <td class="text-xs-center">{{ props.item.area_name }}</td>
-          <td class="text-xs-center">{{ props.item.registered }}</td>
+          <td class="text-xs-center">{{ props.item.reg_date }}</td>
         </tr>
       </template>
     </v-data-table>
@@ -29,11 +30,21 @@
 import MenuButtons from './control/MenuButtons'
 import ItemDialog from './control/InputItemDialog'
 import { isEmpty } from 'lodash/lang'
-// import {FETCH_ADMINS, CREATE_ADMIN, UPDATE_ADMIN, DELETE_ADMIN} from '../store/actions.type'
+import { find } from 'lodash/collection'
+import { pick } from 'lodash/object'
+import { mapGetters, mapActions } from 'vuex'
+import { FETCH_ADMINS, REGISTER_ADMIN, UPDATE_ADMIN, DELETE_ADMIN } from '../store/actions.type'
 
 export default {
   name: 'AdminList',
   components: { MenuButtons, ItemDialog },
+  computed: {
+    ...mapGetters([
+      'admins',
+      'areaCodes',
+      'isAdminLoading'
+    ])
+  },
   data: () => ({
     selected: {},
     inputDlg: false,
@@ -41,26 +52,26 @@ export default {
       { text: '관리 번호', value: 'id' },
       { text: '관리자 ID', value: 'admin_id' },
       { text: '관리자 성명', value: 'name' },
-      { text: '관리자 세례명',value: 'ca_name' },
-      { text: '구역코드', value: 'area_code' },
+      { text: '관리자 세례명', value: 'ca_name' },
+      { text: '구역 이름', value: 'area_name' },
       { text: '등록일', value: 'registered' }
-    ],
-    admins: [
-      {id: 123, admin_id: '은총', area_name: '01-02-03', name: '김성휘', ca_name: '베드로', registered: '2018-09-04'},
-      {id: 456, admin_id: '봉사', area_name: '02-04-12', name: '강하나', ca_name: '소피아', registered: '2018-09-17'},
-      {id: 789, admin_id: '소명', area_name: '01-04-02', name: '서예지', ca_name: '요세피나', registered: '2018-08-15'},
-      {id: 1592, admin_id: 'bible', area_name: '01-14-01', name: '김효진', ca_name: '유스티나', registered: '2018-08-03'},
-      {id: 2154, admin_id: 'bibleClass', area_name: '01-15-02', name: '최우빈', ca_name: '베네딕토', registered: '2018-07-19'}
     ]
   }),
   created () {
     this.headers.map(h => { h.class = ['text-xs-center', 'body-2', 'pl-39x'] })
+
     this.fetchData()
   },
   methods: {
+    ...mapActions([
+      FETCH_ADMINS,
+      REGISTER_ADMIN,
+      UPDATE_ADMIN,
+      DELETE_ADMIN
+    ]),
     async fetchData () {
       this.selected = {}
-      // await this.$store.dispatch(FETCH_ADMINS)
+      await this[FETCH_ADMINS]()
     },
     onClickMenu (type) {
       if (type === 'add') {
@@ -69,9 +80,9 @@ export default {
         return
       }
       if (isEmpty(this.selected)) return alert('관리자를 선택해주세요!')
-      if (type === 'remove') confirm('선택한 관리자를 정말 삭제하시겠습니까?') && this.deleteItem()
+      if (type === 'remove') confirm('선택한 관리자를 정말 삭제하시겠습니까?') && this.deleteItem(this.selected.id)
       else if (type === 'edit') { // update
-        this.$refs.admin.setItem()
+        this.$refs.admin.setItem(this.selected)
         this.inputDlg = true
       }
     },
@@ -79,16 +90,27 @@ export default {
       this.inputDlg = false
       if (data === undefined) return
 
-      [data.type, data.code] = data.code.split('-')
+      data.area_code = data.s_code
+      data = pick(data, ['area_code', 'admin_id', 'admin_name', 'ca_name', 'password'])
       console.log('input item...', data)
       this.updateItem(data)
-      this.$showSnackBar('처리되었습니다!')
     },
-    updateItem (item) {
-      // this.$store.dispatch(UPDATE_ADMIN, item)
+    async updateItem (item) {
+      if (item.id === undefined) {
+        const one = find(this.admins, a => item.admin_id.indexOf(a.admin_id) >= 0)
+        if (one) return this.$showSnackBar('동일한 ID가 존재합니다!')
+        const area = find(this.areaCodes, (o) => o.a_code === item.area_code)
+        if (area) item.area_name = `${area.l_name} 교구 / ${area.s_name} 본당`
+
+        await this[REGISTER_ADMIN](item)
+        this.$showSnackBar('추가되었습니다.')
+      } else {
+        await this[UPDATE_ADMIN](item)
+        this.$showSnackBar('수정되었습니다.')
+      }
     },
     deleteItem (id) {
-      // this.$store.dispatch(DELETE_ADMIN, id)
+      this[DELETE_ADMIN](id)
     }
   }
 }

@@ -39,6 +39,9 @@ export default {
       this.$refs.bar.show(msg)
     },
     showConfirm (title, msg, cb) {
+    },
+    checkPerm () {
+
     }
   }
 }

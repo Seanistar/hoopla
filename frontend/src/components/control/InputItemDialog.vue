@@ -129,20 +129,26 @@
           <v-container grid-list-md v-else-if="refs === 'admin'">
             <v-layout wrap>
               <v-flex xs12>
-                <v-text-field label="관리자 ID" v-model="item.code" readonly></v-text-field>
+                <v-text-field label="관리자 ID" v-model="item.admin_id"></v-text-field>
               </v-flex>
-              <v-flex xs12>
-                <v-text-field label="관리자 비밀번호" v-model="item.password" type="password"></v-text-field>
-              </v-flex>
+              <v-layout v-if="!item.id">
+                <v-flex xs6>
+                  <v-text-field label="관리자 비밀번호" v-model="item.password" type="password"></v-text-field>
+                </v-flex>
+                <v-flex xs6>
+                  <v-text-field label="관리자 비밀번호 확인" @change="onConfirm"
+                                v-model="item.pwd_check" type="password"></v-text-field>
+                </v-flex>
+              </v-layout>
               <v-flex xs6>
-                <v-text-field label="관리자 성명" v-model="item.name"></v-text-field>
+                <v-text-field label="관리자 성명" v-model="item.admin_name"></v-text-field>
               </v-flex>
               <v-flex xs6>
                 <v-text-field label="관리자 세례명" v-model="item.ca_name"></v-text-field>
               </v-flex>
               <v-flex xs12>
                 <v-text-field label="봉사한 구역 (본당)" clearable hide-details
-                              @focus="churchFinder = true" v-model="item.area_name"></v-text-field>
+                              @focus="churchFinder = true" v-model="item.s_name"></v-text-field>
               </v-flex>
             </v-layout>
           </v-container>
@@ -237,7 +243,7 @@ export default {
       this.item.edu_code = this.item.edu_name = null
     } else if (this.refs === 'admin') {
       this.item.code = this.item.password = ''
-      this.item.name = this.item.ca_name = this.item.area_name = ''
+      this.item.name = this.item.ca_name = ''
     }
   },
   methods: {
@@ -286,6 +292,13 @@ export default {
       this.item.s_code = data.s_code
       this.item.s_name = data.s_name
       console.log('found church...', this.item)
+    },
+    onConfirm () {
+      const pwd2 = this.item.pwd_check
+      if (!pwd2) return
+      if (!this.item.password) return alert('비밀번호를 먼저 입력하세요.')
+
+      pwd2 !== this.item.password && alert('비밀번호가 일치하지 않습니다!')
     }
   }
 }

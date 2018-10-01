@@ -6,6 +6,9 @@ import router from '@/router'
 import store from '@/store'
 import SweetAlert from 'vue-sweetalert2'
 import ApiService from '@/common/api.service'
+import JwtService from '@/common/jwt.service'
+import { CHECK_AUTH } from '@/store/actions.type'
+import { REMOVE_AUTH } from '@/store/mutations.type'
 import '@/assets/base.css'
 import 'vuetify/dist/vuetify.min.css' // Ensure you are using css-loader
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
@@ -100,13 +103,20 @@ Vue.prototype.$eventBus = new Vue()
 ApiService.init()
 
 // Ensure we checked auth before each page load.
-/* router.beforeEach(
+router.beforeEach(
   (to, from, next) => {
+    if (to.name === 'home' && !JwtService.getToken()) return next()
+
     return Promise
       .all([store.dispatch(CHECK_AUTH)])
       .then(next)
+      .catch(err => {
+        console.warn(err.message)
+        store.commit(REMOVE_AUTH)
+        location.replace('/')
+      })
   }
-) */
+)
 
 /* eslint-disable no-new */
 new Vue({
