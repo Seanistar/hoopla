@@ -412,7 +412,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style scoped>
   table, th, td {
     border: 1px solid grey;
     border-collapse: collapse;
@@ -444,22 +444,13 @@ export default {
     width: 35%;
   }
   .input-box {
-    width: 60%; // 76%;
+    width: 60%;
   }
   td .w-100 {
     width: 100% !important;
   }
   td .w-80 {
     width: 80% !important;
-  }
-  .v-input--radio-group {
-    max-width: 36.5%;
-    max-height: 25px;
-    margin-top: 0px !important;
-    padding-top: 0px !important;
-    .v-radio input {
-      font-size: 13px !important;
-    }
   }
   input.mw-25 {
     max-width: 18% !important;

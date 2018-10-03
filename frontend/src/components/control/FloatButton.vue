@@ -19,7 +19,7 @@ export default {
 
 <style scoped>
   .back-float {
-    position: fixed;
+    position: fixed !important;
     top: 45%;
     left: 20px;
   }
