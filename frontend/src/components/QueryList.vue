@@ -22,16 +22,16 @@
           </v-layout>
           <v-layout row wrap pl-2>
             <v-flex xs3>
-              <v-select label="선서연도" v-model="params.au_date" hide-details
+              <v-select label="선서 연도" v-model="params.au_date" hide-details
                         :items="years"
               ></v-select>
             </v-flex>
             <v-flex xs3>
-              <v-text-field label="봉사자이름" v-model="params.v_name" @keyup.enter="submit"></v-text-field>
+              <v-text-field label="봉사자 이름" v-model="params.v_name" hide-details></v-text-field>
             </v-flex>
             <v-flex xs3>
-              <v-combobox label="본당이름"
-                          v-model="small.model" :items="small.items" item-value="code" item-text="name"
+              <v-combobox label="본당 이름" v-model="small.model" hide-details
+                          :items="small.items" item-value="code" item-text="name"
                           :search-input.sync="small.search" @input="onBlur" clearable>
                 <template slot="no-data">
                   <v-list-tile>
@@ -45,11 +45,12 @@
               </v-combobox>
             </v-flex>
             <v-flex xs3>
-              <v-layout align-end justify-end row>
-                <v-btn color="orange accent-2" outline class="mt-3" @click="reset">초기화</v-btn>
-                <v-btn color="indigo accent-2" outline class="mt-3" @click="submit">조회</v-btn>
-              </v-layout>
+              <v-text-field label="메모 내용" v-model="params.memo" hide-details></v-text-field>
             </v-flex>
+          </v-layout>
+          <v-layout justify-end row class="my-1">
+            <v-btn color="orange accent-2" outline @click="reset">초기화</v-btn>
+            <v-btn color="indigo accent-2" outline @click="submit">조회</v-btn>
           </v-layout>
         </v-container>
       </transition>
@@ -75,13 +76,15 @@
           <tr @click="selected = props.item" @dblclick="onClickResult(props.item)"
               :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
             <td class="text-xs-center w-10">{{ props.item.id }}</td>
-            <td class="text-xs-center w-15">{{ props.item.name }}</td>
+            <td class="text-xs-center w-10">{{ props.item.name }}</td>
             <td class="text-xs-center w-15">{{ props.item.ca_name }}</td>
             <td class="text-xs-center w-10">{{ props.item.au_date|yearstamp }}</td>
             <td class="text-xs-center w-15">{{ props.item.la_name }}</td>
             <td class="text-xs-center w-15">{{ props.item.sa_name }}</td>
-            <td class="text-xs-center w-10">{{ props.item.edu_count }}</td>
-            <td class="text-xs-center w-10">{{ props.item.act_count }}</td>
+            <td class="text-xs-center w-5">{{ props.item.edu_count }}</td>
+            <td class="text-xs-center w-5">{{ props.item.act_count }}</td>
+            <td class="text-xs-center w-15 memo-link" :class="props.item.memo ? 'memo-over' : ''"
+                @click.stop.prevent="onClickMemo(props.item)">{{ props.item.memo }}</td>
           </tr>
         </template>
         <template slot="no-data" v-if="queried">
@@ -121,6 +124,7 @@ export default {
       return {
         a_code: this.params.area_code,
         v_name: this.params.v_name,
+        memo: this.params.memo,
         au_date: this.params.au_date,
         sa_code: this.small.model ? this.small.model.code : ''
       }
@@ -138,11 +142,25 @@ export default {
     }
   },
   created () {
-    this.headers.map(h => { h.class = ['text-xs-center', 'body-2', 'pl-39x'] })
+    this.headers.map(h => {
+      h.class = ['text-xs-center', 'body-2', 'pl-39x',
+        h.value.indexOf('_cnt') > 0 ? 'w-5' : 'w-10']
+    })
     const list = map(this.smallCodes, o => {
       return {code: o.s_code, name: o.s_name}
     })
     this.small.items = orderBy(list, ['name'])
+  },
+  mounted () {
+    const list = document.getElementsByClassName('v-input')
+    this.$nextTick(() => {
+      for (let d of list) {
+        const input = d && d.getElementsByTagName('input')[0]
+        if (input) input.style.fontSize = '14px'
+        const label = d && d.getElementsByTagName('label')[0]
+        if (label) label.style.fontSize = '14px'
+      }
+    })
   },
   data: () => ({
     small: {
@@ -165,9 +183,10 @@ export default {
       { text: '세례명', value: 'ca_name' },
       { text: '선서일', value: 'au_date' },
       { text: '교구명', value: 'la_name' },
-      { text: '본당명', value: 'san_ame' },
-      { text: '교육 횟수', value: 'edu_cnt' },
-      { text: '봉사 횟수', value: 'act_cnt' }
+      { text: '본당명', value: 'sa_name' },
+      { text: '교육', value: 'edu_cnt' },
+      { text: '봉사', value: 'act_cnt' },
+      { text: '메모', value: 'memo' }
     ]
   }),
   methods: {
@@ -198,6 +217,10 @@ export default {
         this.$router.push({name: 'view-query'})
       }, 10)
     },
+    onClickMemo (item) {
+      if (!item.memo) return
+      this.$router.push({path: `/volunteers/edit/${item.id}`})
+    },
     onPeopleFound (data) {
       console.log('found people...', data)
       this.peopleFinder = false
@@ -214,14 +237,23 @@ export default {
 </script>
 
 <style scoped>
-  .v-input label {
-    font-size: 13px !important;
-  }
   .t-35p {
     top: 35%;
   }
   .t-18p {
     top: 18%;
+  }
+  .w-5 {
+    width: 5% !important;
+  }
+  .memo-link {
+    overflow-x: hidden;
+    white-space: nowrap;
+    max-width: 150px;
+    text-overflow: ellipsis;
+  }
+  .memo-over {
+    cursor: pointer
   }
   .slide-fade-enter-active {
     transition: all .3s ease;

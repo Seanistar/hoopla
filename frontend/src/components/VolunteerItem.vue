@@ -328,7 +328,7 @@ export default {
       })
     },
     submit () {
-      /* if (!this.$refs.form.validate()) {
+      if (!this.$refs.form.validate()) {
         return alert('입력 데이터를 확인해주세요.')
       }
       /* this.formHasErrors = false

@@ -254,7 +254,7 @@ router.delete('/act/:id', (req, res) => {
  * volunteer querying
  */
 router.get('/query', (req, res) => {
-  const {a_code, au_date, v_name, sa_code} = req.query
+  const {a_code, au_date, v_name, sa_code, memo} = req.query
   let sql = `
     SELECT vl.*, ac.l_name la_name, ac.m_name ma_name, ac.s_name sa_name,
     (SELECT COUNT(DISTINCT id) FROM edus WHERE v_id = vl.id) edu_count,
@@ -265,6 +265,7 @@ router.get('/query', (req, res) => {
   if (au_date) sql += ` AND YEAR(vl.au_date) >= ${au_date}`
   if (v_name) sql += ` AND vl.name like (\'%${v_name}%\')`
   if (sa_code) sql += ` AND vl.area_code = (\'${sa_code}\')`
+  if (memo) sql += ` AND vl.memo like (\'%${memo}%\')`
   console.log('query... ', sql, req.query)
   db.query(sql, (err, rows) => {
     if (!err) {

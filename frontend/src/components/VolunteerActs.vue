@@ -14,7 +14,7 @@
             :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
           <td class="text-xs-center w-10">{{ props.item.idx }}</td>
           <td class="text-xs-center w-10">{{ props.item.act_name }}</td>
-          <td class="text-xs-center w-10">{{ props.item.numbers }}</td>
+          <td class="text-xs-center w-10">{{ props.item.numbers }}명</td>
           <td class="text-xs-center w-15">{{ props.item.s_date }}</td>
           <td class="text-xs-center w-15">{{ props.item.e_date }}</td>
           <td class="text-xs-center w-15">{{ props.item.s_name }} 본당</td>
