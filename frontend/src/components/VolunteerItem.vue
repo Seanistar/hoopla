@@ -102,9 +102,8 @@
       <v-container>
         <v-layout row wrap>
           <v-flex xs4>
-            <v-text-field label="이메일"
-                          v-model="params.email" :rules="[rules.email]"
-            ></v-text-field><!--prepend-icon="email"-->
+            <v-text-field label="이메일" v-model="params.email"
+            ></v-text-field><!--prepend-icon="email" :rules="[rules.email]"-->
           </v-flex>
           <v-flex xs4>
             <v-text-field label="전화번호" persistent-hint
@@ -174,6 +173,7 @@ export default {
   props: { v_id: undefined },
   computed: {
     ...mapGetters([
+      'changedCodes',
       'smallLeader'
     ]),
     form () { return this.$data.params },
@@ -224,6 +224,7 @@ export default {
   created () {
     this.isEditMode = !isUndefined(this.v_id)
     if (this.isEditMode) this.fetchData()
+    else this.changedCodes.vl_ac && this.assignCode(this.changedCodes.vl_ac)
   },
   mounted () {
     /* const ts = document.getElementsByTagName('INPUT')
@@ -360,8 +361,9 @@ export default {
       // const targetUrl = `${location.origin}${location.pathname}/${vid}`
       this.$nextTick(() => {
         // location.replace(targetUrl)
-        console.log('submit...', vid)
+        console.log('submit...', vid, this.form)
         this.$parent.VID = vid
+        this.$parent.VOLT = pick(this.form, ['area_code', 'name', 'ca_name', 'ca_id'])
       })
     }
   }

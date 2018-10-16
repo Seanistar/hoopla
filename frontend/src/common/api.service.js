@@ -17,21 +17,29 @@ const ApiService = {
     return Vue.axios
       .get(resource, params)
       .catch((error) => {
-        throw new Error(`ApiService ${error}`)
+        throw new Error(`ApiService query ${error}`)
       })
   },
   get (resource, plug) {
     return Vue.axios
       .get(`${resource}/${plug}`)
       .catch((error) => {
-        throw new Error(`ApiService ${error}`)
+        throw new Error(`ApiService get ${error}`)
       })
   },
   create (resource, params) {
-    return Vue.axios.put(`${resource}`, params)
+    return Vue.axios
+      .put(`${resource}`, params)
+      .catch((error) => {
+        throw new Error(`ApiService create ${error}`)
+      })
   },
   update (resource, params) {
-    return Vue.axios.post(`${resource}`, params)
+    return Vue.axios
+      .post(`${resource}`, params)
+      .catch((error) => {
+        throw new Error(`ApiService update ${error}`)
+      })
   },
   delete (resource) {
     return Vue.axios
