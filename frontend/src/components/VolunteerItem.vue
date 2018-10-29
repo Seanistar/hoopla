@@ -8,28 +8,10 @@
       <v-divider></v-divider>
       <v-container mb-4>
         <v-layout>
-          <v-flex xs4>
-            <date-picker ref="au_date" title="선서일"
-                         @close-date-picker="onPicked" refs="au_date"></date-picker>
-          </v-flex>
-          <v-flex xs4>
-            <v-text-field label="봉사자 코드" :rules="[rules.required]"
-                          clearable v-model="params.ca_id"></v-text-field>
-          </v-flex>
-          <v-flex xs4>
-            <v-select label="활동 상태" v-model="params.state" :rules="[rules.required]"
-                      :items="a_states" item-text="nm" item-value="cd" ></v-select><!--prepend-icon="contacts"-->
-          </v-flex>
-        </v-layout>
-        <v-layout>
           <v-flex>
-            <v-text-field label="성명" v-model="params.name" :rules="[rules.required]"
-                          :clearable="true" hint="실명으로 입력해 주세요."
+            <v-text-field label="성명" v-model="params.name" :rules="[rules.name]"
+                          :clearable="true" hint="공백없이 실명으로 입력해 주세요."
             ></v-text-field>
-          </v-flex>
-          <v-flex>
-            <date-picker ref="br_date" title="생년월일"
-                         @close-date-picker="onPicked" refs="br_date"></date-picker>
           </v-flex>
           <v-flex>
             <v-text-field label="세례명" :rules="[rules.required]"
@@ -37,27 +19,45 @@
             ></v-text-field>
           </v-flex>
           <v-flex>
+            <date-picker ref="br_date" title="생년월일"
+                         @close-date-picker="onPicked" refs="br_date"></date-picker>
+          </v-flex>
+          <v-flex>
             <date-picker ref="ca_date" title="세례일"
                          @close-date-picker="onPicked" refs="ca_date"></date-picker>
           </v-flex>
         </v-layout>
         <v-layout>
-          <v-flex xs4>
+          <v-flex xs3>
             <v-select label="교구 코드" v-model="areaCode.la_code" @change="onChangeCode"
                       :items="lAreaCodes" item-text="l_name" item-value="l_code"
             ></v-select>
           </v-flex>
-          <v-flex xs4>
+          <v-flex xs3>
             <v-select label="지구 코드" v-model="areaCode.ma_code"
                       @change="onChangeCode" no-data-text="지구 자료가 없습니다."
                       :items="mAreaCodes" item-text="m_name" item-value="m_code" :disabled="areaCode.la_code === ''"
             ></v-select>
           </v-flex>
-          <v-flex xs4>
+          <v-flex xs3>
             <v-select label="본당 코드" v-model="areaCode.sa_code"
                       @change="onChangeCode" no-data-text="본당 자료가 없습니다."
                       :items="sAreaCodes" item-text="s_name" item-value="s_code" :disabled="areaCode.ma_code === ''"
             ></v-select>
+          </v-flex>
+          <v-flex xs3>
+            <v-text-field label="봉사자 코드" :rules="[rules.vcode]"
+                          clearable v-model="params.ca_id"></v-text-field>
+          </v-flex>
+        </v-layout>
+        <v-layout>
+          <v-flex xs3>
+            <date-picker ref="au_date" title="선서일"
+                         @close-date-picker="onPicked" refs="au_date"></date-picker>
+          </v-flex>
+          <v-flex xs3>
+            <v-select label="활동 상태" v-model="params.state" :rules="[rules.required]"
+                      :items="a_states" item-text="nm" item-value="cd" ></v-select><!--prepend-icon="contacts"-->
           </v-flex>
         </v-layout>
       </v-container>
@@ -174,7 +174,8 @@ export default {
   computed: {
     ...mapGetters([
       'changedCodes',
-      'smallLeader'
+      'smallLeader',
+      'authInfo'
     ]),
     form () { return this.$data.params },
     volunteerInfo: {
@@ -203,8 +204,9 @@ export default {
       phone: value => {
         const pattern = /(\d{3})(\d{4})(\d{4})/
         return pattern.test(value) || '잘못된 형식입니다.'
-      }
-      // name: v => v.length <= 10 || 'Name must be less than 10 characters'
+      },
+      vcode: v => (v && v.length === 12) || '12자리 입력이 필요합니다.',
+      name: v => v.search(' ') < 0 || '이름은 공란없이 필요해주세요.'
     },
     degrees: ['초졸', '중졸', '고졸', '초대졸', '대졸', '대학원졸'],
     l_states: LEADER_STATES,
@@ -225,6 +227,7 @@ export default {
     this.isEditMode = !isUndefined(this.v_id)
     if (this.isEditMode) this.fetchData()
     else this.changedCodes.vl_ac && this.assignCode(this.changedCodes.vl_ac)
+    this.params.ca_id = this.authInfo.id
   },
   mounted () {
     /* const ts = document.getElementsByTagName('INPUT')
