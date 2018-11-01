@@ -120,7 +120,8 @@ export default {
       'queryCount',
       'queryVolunteers'
     ]),
-    formData () {
+    formData () { return this.$data.params },
+    /* formData () {
       return {
         a_code: this.params.area_code,
         v_name: this.params.v_name,
@@ -128,17 +129,18 @@ export default {
         au_date: this.params.au_date,
         sa_code: this.small.model ? this.small.model.code : ''
       }
-    },
+    }, */
     years () {
       const start = (new Date()).getFullYear()
       return ['선택없음'].concat(range(start, 1972, -1))
     }
   },
   watch: {
-    'small.model' (val) {
-      if (val && val.length > 5) {
+    'small.model' (obj) {
+      /* if (val && val.length > 5) {
         this.$nextTick(() => this.small.model.pop())
-      }
+      } */
+      this.params.sa_code = obj ? obj.code : ''
     },
     'params.au_date' (val) {
       if (val && val === '선택없음') this.params.au_date = ''
@@ -207,7 +209,7 @@ export default {
         if (f === 'v_name') this.params.v_name = obj && obj.replace(/\s*/g, '')
       })
       if (isEmpty) return alert('조회할 항목을 설정하세요.')
-      console.table(this.formData)
+      console.log(this.formData)
       this.$store.dispatch(QUERY_VOLUNTEERS, this.formData)
       this.queried = true
     },
@@ -240,7 +242,9 @@ export default {
     onChangedCode (type, val) {
       if (type === 'm' && !val) this.params.area_code = this.areaCode.la_code
       else if (type === 's' && !val) this.params.area_code = this.areaCode.ma_code
-      console.log(type, val, this.params.area_code)
+
+      this.params.a_code = this.params.area_code
+      console.log(type, val, this.params.a_code)
     }
   }
 }
