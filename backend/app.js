@@ -22,13 +22,11 @@ app.use(require('connect-history-api-fallback')())
 app.use(express.static(path.join(__dirname, 'public')))
 
 // routes
+/*app.use((req, res, next) => {
+  console.log('cookies', req.cookies)
+  next();
+});*/
 app.use('/api', require('./routes'))
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-  console.warn('404 not found...')
-});
 
 // error handler
 app.use(function(err, req, res, next) {

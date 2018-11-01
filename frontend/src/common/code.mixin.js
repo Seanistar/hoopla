@@ -38,17 +38,20 @@ const CodeMixin = {
     }
   },
   watch: {
-    'areaCode.la_code' (nv) {
+    'areaCode.la_code' (nv, ov) {
       this.params.area_code = nv
       this.params.la_name = this.getCodeName(nv)
+      this.onChangedCode('l', nv, ov)
     },
-    'areaCode.ma_code' (nv) {
+    'areaCode.ma_code' (nv, ov) {
       this.params.area_code = nv
       this.params.ma_name = this.getCodeName(nv)
+      this.onChangedCode('m', nv, ov)
     },
-    'areaCode.sa_code' (nv) {
+    'areaCode.sa_code' (nv, ov) {
       this.params.area_code = nv
       this.params.sa_name = this.getCodeName(nv)
+      this.onChangedCode('s', nv, ov)
     }
   },
   methods: {
@@ -61,7 +64,7 @@ const CodeMixin = {
       this.areaCode.ma_code = code.slice(0, 5)
       this.areaCode.sa_code = code
     },
-    changedCode (type, val) {
+    onChangedCode (type, val) {
       // if it needs to use this function. should do overriding on target component
     },
     getCodeName (code) {

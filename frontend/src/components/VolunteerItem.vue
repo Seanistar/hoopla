@@ -2,7 +2,7 @@
   <v-container pt-4 pb-3 px-5 mt-2 elevation-3>
     <v-form ref="form">
       <v-layout pt-3>
-        <div class="font-weight-bold grey--text subheading">
+        <div class="font-weight-bold black--text subheading">
           <span class="mb-4">기본 정보</span></div>
       </v-layout>
       <v-divider></v-divider>
@@ -29,24 +29,24 @@
         </v-layout>
         <v-layout>
           <v-flex xs3>
-            <v-select label="교구 코드" v-model="areaCode.la_code" @change="onChangeCode"
+            <v-select label="교구 코드" v-model="areaCode.la_code" @change="onChangeAreaCode"
                       :items="lAreaCodes" item-text="l_name" item-value="l_code"
             ></v-select>
           </v-flex>
           <v-flex xs3>
             <v-select label="지구 코드" v-model="areaCode.ma_code"
-                      @change="onChangeCode" no-data-text="지구 자료가 없습니다."
+                      @change="onChangeAreaCode" no-data-text="지구 자료가 없습니다."
                       :items="mAreaCodes" item-text="m_name" item-value="m_code" :disabled="areaCode.la_code === ''"
             ></v-select>
           </v-flex>
           <v-flex xs3>
             <v-select label="본당 코드" v-model="areaCode.sa_code"
-                      @change="onChangeCode" no-data-text="본당 자료가 없습니다."
+                      @change="onChangeAreaCode" no-data-text="본당 자료가 없습니다."
                       :items="sAreaCodes" item-text="s_name" item-value="s_code" :disabled="areaCode.ma_code === ''"
             ></v-select>
           </v-flex>
           <v-flex xs3>
-            <v-text-field label="봉사자 코드" :rules="[rules.vcode]"
+            <v-text-field label="봉사자 코드" :rules="[rules.vcode]" mask="##-##-##-##-####"
                           clearable v-model="params.ca_id"></v-text-field>
           </v-flex>
         </v-layout>
@@ -63,7 +63,7 @@
       </v-container>
 
       <v-layout>
-        <div class="font-weight-bold grey--text subheading">대표 봉사자 정보
+        <div class="font-weight-bold black--text subheading">대표 봉사자 정보
           <span class="grey--text caption">※ 임기 중이면 종료일은 설정하지 않습니다.</span></div>
       </v-layout>
       <v-divider></v-divider>
@@ -96,7 +96,7 @@
       </v-container>
 
       <v-layout>
-        <div class="font-weight-bold grey--text subheading">부가 정보</div>
+        <div class="font-weight-bold black--text subheading">부가 정보</div>
       </v-layout>
       <v-divider></v-divider>
       <v-container>
@@ -187,7 +187,7 @@ export default {
     isEditMode: false,
     isDisabled: false,
     isLeader: false,
-    formHasErrors: false,
+    CA_ID: '',
     params: { // is equal to bible's column
       sex: 'F',
       area_code: '01-01-01',
@@ -205,8 +205,11 @@ export default {
         const pattern = /(\d{3})(\d{4})(\d{4})/
         return pattern.test(value) || '잘못된 형식입니다.'
       },
-      vcode: v => (v && v.length === 12) || '12자리 입력이 필요합니다.',
-      name: v => v.search(' ') < 0 || '이름은 공란없이 필요해주세요.'
+      vcode: val => {
+        const pattern = /(\d{2})(\d{6})(\d{4})/
+        return (pattern.test(val) && val.length === 12) || '12자리 입력이 필요합니다.'
+      },
+      name: val => (val && val.search(' ') < 0) || '이름은 공란없이 작성해주세요.'
     },
     degrees: ['초졸', '중졸', '고졸', '초대졸', '대졸', '대학원졸'],
     l_states: LEADER_STATES,
@@ -264,6 +267,10 @@ export default {
           if (k.indexOf('_date') > 0) {
             this.$refs[k] && this.$refs[k].setDate(item[k])
           }
+          if (k === 'ca_id') {
+            let cd = item['area_code']
+            item[k] = `${this.authInfo.id}${cd.replace(/-/g, '')}${item['ca_id']}`
+          }
         })
         this.initItem(item)
       })
@@ -279,7 +286,7 @@ export default {
       console.log('picked date...', obj.type, obj.date)
       this.params[obj.type] = obj.date
     },
-    async onChangeCode () {
+    async onChangeAreaCode () {
       if (this.v_id === undefined || !this.params.sa_name) return
       if (!isEqual(this.volunteerInfo.sa_name, this.params.sa_name) && confirm('본당 정보를 변경하시겠습니까?')) {
         const history = {
@@ -325,7 +332,6 @@ export default {
       }
     },
     reset () {
-      this.formHasErrors = false
       Object.keys(this.form).forEach(f => {
         this.$refs[f] !== undefined && this.$refs[f].reset()
         this.$data.params[f] = null
@@ -335,12 +341,12 @@ export default {
       if (!this.$refs.form.validate()) {
         return alert('입력 데이터를 확인해주세요.')
       }
-      /* this.formHasErrors = false
+
       Object.keys(this.form).forEach(f => {
-        console.log(f + ' : ' + this.form[f])
-        if (!this.form[f]) this.formHasErrors = true
-        this.$refs[f].validate(true)
-      }) */
+        let obj = this.form[f]
+        if (obj && f === 'ca_id') this.params.ca_id = obj.substr(8)
+        console.log(obj)
+      })
 
       // console.log(this.form)
       if (!this.isEditMode) {
@@ -368,10 +374,30 @@ export default {
         this.$parent.VID = vid
         this.$parent.VOLT = pick(this.form, ['area_code', 'name', 'ca_name', 'ca_id'])
       })
+    },
+    onChangedCode (type, nv, ov) {
+      // console.log(type, val.replace(/-/g, ''))
+      let target = ''
+      if (type === 's') {
+        target = nv ? nv.replace(/-/g, '') : this.areaCode.ma_code
+      } else if (type === 'm') {
+        target = nv ? nv.replace(/-/g, '') : this.areaCode.la_code
+      } else if (type === 'l') {
+        target = nv && nv.replace(/-/g, '')
+        ov && nv && (this.areaCode.ma_code = this.areaCode.sa_code = '')
+      }
+
+      if (ov && nv) {
+        let obj = this.$parent.VOLT
+        this.params.ca_id = `${this.authInfo.id}${target}${obj['ca_id'].substr(8)}`
+      }
     }
   }
 }
 </script>
 
 <style scoped>
+    .black--text {
+      color: #000000 !important;
+    }
 </style>

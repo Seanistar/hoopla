@@ -12,7 +12,7 @@
         <v-card-text class="pa-0">
           <v-container grid-list-md v-if="refs === 'volts'">
             <v-layout row wrap>
-                <v-flex xs4><span class="subheading grey--text">봉사자 고유코드 :</span></v-flex>
+                <v-flex xs4><span class="subheading black--text">봉사자 고유코드 :</span></v-flex>
                 <v-flex xs6><span class="subheading" :class="item.id ? 'green--text' : 'red--text' ">{{voltCode}}</span></v-flex>
             </v-layout>
             <v-layout wrap>
@@ -105,9 +105,13 @@
                 <date-picker ref="e_date" title="교육 종료일"
                              @close-date-picker="onPicked" refs="e_date"></date-picker>
               </v-flex>
-              <v-flex xs12>
+              <v-flex xs8>
                 <v-text-field label="봉사자 이름" v-model="item.gv_name"
-                              @focus="finder = true" clearable hide-details></v-text-field>
+                              @focus="finder = false" clearable hide-details></v-text-field>
+              </v-flex>
+              <v-flex xs4>
+                <v-btn color="blue darken-1" outline flat class="finder"
+                       @click.prevent="finder = true">봉사자 찾기</v-btn>
               </v-flex>
               <v-flex xs12>
                 <v-text-field label="참고 사항" v-model="item.memo" hide-details></v-text-field>
@@ -310,5 +314,9 @@ export default {
   }
   .w-41 {
     width: 37%;
+  }
+  .finder {
+    top: 7px;
+    left: 25px;
   }
 </style>

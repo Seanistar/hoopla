@@ -10,12 +10,12 @@
               ></v-select>
             </v-flex>
             <v-flex xs12 sm3>
-              <v-select label="교구 > 지구" v-model="areaCode.ma_code" hide-details no-data-text="지구 자료가 없습니다."
+              <v-select label="교구 > 지구" v-model="areaCode.ma_code" hide-details class="body-1" no-data-text="지구 자료가 없습니다."
                         :items="mAreaCodes" item-text="m_name" item-value="m_code" :disabled="areaCode.la_code === ''"
               ></v-select>
             </v-flex>
             <v-flex xs12 sm3>
-              <v-select label="교구 > 지구 > 본당" v-model="areaCode.sa_code" hide-details no-data-text="본당 자료가 없습니다."
+              <v-select label="교구 > 지구 > 본당" v-model="areaCode.sa_code" hide-details class="body-1" no-data-text="본당 자료가 없습니다."
                         :items="sAreaCodes" item-text="s_name" item-value="s_code" :disabled="areaCode.ma_code === ''"
               ></v-select>
             </v-flex>
@@ -23,7 +23,7 @@
           <v-layout row wrap pl-2>
             <v-flex xs3>
               <v-select label="선서 연도" v-model="params.au_date" hide-details
-                        :items="years"
+                        :items="years" class="body-1"
               ></v-select>
             </v-flex>
             <v-flex xs3>
@@ -131,7 +131,7 @@ export default {
     },
     years () {
       const start = (new Date()).getFullYear()
-      return range(start, 1972, -1)
+      return ['선택없음'].concat(range(start, 1972, -1))
     }
   },
   watch: {
@@ -139,6 +139,9 @@ export default {
       if (val && val.length > 5) {
         this.$nextTick(() => this.small.model.pop())
       }
+    },
+    'params.au_date' (val) {
+      if (val && val === '선택없음') this.params.au_date = ''
     }
   },
   created () {
@@ -199,10 +202,12 @@ export default {
     submit () {
       let isEmpty = true
       Object.keys(this.formData).forEach(f => {
-        if (this.formData[f]) isEmpty = false
+        const obj = this.formData[f]
+        if (obj) isEmpty = false
+        if (f === 'v_name') this.params.v_name = obj && obj.replace(/\s*/g, '')
       })
       if (isEmpty) return alert('조회할 항목을 설정하세요.')
-
+      console.table(this.formData)
       this.$store.dispatch(QUERY_VOLUNTEERS, this.formData)
       this.queried = true
     },
@@ -231,6 +236,11 @@ export default {
     },
     onBlur () {
       console.log('blur', this.small.model)
+    },
+    onChangedCode (type, val) {
+      if (type === 'm' && !val) this.params.area_code = this.areaCode.la_code
+      else if (type === 's' && !val) this.params.area_code = this.areaCode.ma_code
+      console.log(type, val, this.params.area_code)
     }
   }
 }

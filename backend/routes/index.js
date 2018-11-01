@@ -6,11 +6,13 @@ const volunteer = require('./volunteers')
 const coder = require('./codes')
 const admin = require('./admin')
 const report = require('./reports')
+const itsm = require('./itsm')
 
 router.use('/auth', auth)
 router.use('/volts', volunteer)
 router.use('/codes', coder)
 router.use('/admin', admin)
 router.use('/reports', report)
+router.use('/itsm', itsm)
 
 module.exports = router
