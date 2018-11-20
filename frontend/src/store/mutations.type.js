@@ -67,9 +67,14 @@ export const ADD_REPORT_ACT = 'addReportAct'
 export const REMOVE_REPORT_ACT = 'removeReportAct'
 export const FETCH_REPORT_VOLTS_END = 'fetchReportVolts'
 
+// utils
 export const SET_SMALL_LEADER = 'setSmallLeader'
 export const SET_CHANGED_CODE = 'setChangedCode'
 export const FETCH_DYNAMIC_STATE_END = 'fetchDynamicState'
+
+// stats
+export const FETCH_STAT_YEARLY_END = 'fetchStatYearly'
+export const FETCH_STAT_CHURCH_END = 'fetchStatChurch'
 
 // will be obsoleted
 export const SET_TOPIC = 'setTopic'

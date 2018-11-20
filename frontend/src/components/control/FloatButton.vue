@@ -21,6 +21,6 @@ export default {
   .back-float {
     position: fixed !important;
     top: 45%;
-    left: 20px;
+    left: 10px;
   }
 </style>

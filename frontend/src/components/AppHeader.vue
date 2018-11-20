@@ -33,7 +33,7 @@ export default {
       tabIdx: null,
       alert: {show: false, message: '로그인이 필요합니다.'},
       items: [
-        {text: '성서와 함께', link: 'home'},
+        {text: '성서모임 안내', link: 'home'},
         {text: '봉사자 관리', link: 'volunteers'},
         {text: '봉사자 조회', link: 'queries'},
         {text: '본당 현황 보고', link: 'reports'},

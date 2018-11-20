@@ -77,6 +77,15 @@ export const AdminService = {
   }
 }
 
+export const StatService = {
+  get_yearly () {
+    return ApiService.query('stats/yearly')
+  },
+  get_church () {
+    return ApiService.query('stats/church')
+  }
+}
+
 export const VolunteerService = {
   fetch (code) {
     return ApiService.query('volts', {params: {code}})

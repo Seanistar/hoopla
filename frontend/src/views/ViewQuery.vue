@@ -7,7 +7,7 @@
       </v-tab>
     </v-tabs>
     <v-layout mt-4 pt-0 class="elevation-3">
-      <component :is="targetComponents[tabIdx]" :r_id="id"/>
+      <component :is="targetComponents[tabIdx]" :v_id="id"/>
     </v-layout>
     <float-button/>
   </v-container>

@@ -2,7 +2,7 @@
   <v-container class="elevation-2 mt-3 pt-1">
     <v-layout row align-baseline>
       <v-flex xs12 sm3>
-        <v-text-field label="편집할 항목을 선택하세요." class="py-0"
+        <v-text-field label="편집할 항목을 선택하세요." class="py-0 body-1"
                       single-line readonly :value="codeName"></v-text-field>
       </v-flex>
       <v-flex xs12 sm2 offset-sm7>
@@ -18,8 +18,8 @@
               <span class="full-width">기본교육 코드</span>
             </v-subheader>
             <v-radio-group v-model="code.e" mandatory class="pl-2">
-              <template v-for="(item, index) in ebsCodes">
-                <v-list-tile :key="item.code + index" ripple>
+              <template v-for="(item) in ebsCodes">
+                <v-list-tile :key="item.code" ripple>
                   <v-list-tile-action>
                     <v-radio :value="item.code"></v-radio>
                   </v-list-tile-action>
@@ -40,8 +40,8 @@
               <span class="full-width">성서연수 코드</span>
             </v-subheader>
             <v-radio-group v-model="code.t" class="pl-2">
-              <template v-for="(item, index) in trnCodes">
-                <v-list-tile :key="item.code + index" ripple>
+              <template v-for="(item) in trnCodes">
+                <v-list-tile :key="item.code " ripple>
                   <v-list-tile-action>
                     <v-radio :value="item.code"></v-radio>
                   </v-list-tile-action>
@@ -62,8 +62,52 @@
               <span class="full-width">노트검사 코드</span>
             </v-subheader>
             <v-radio-group v-model="code.n" class="pl-2">
-              <template v-for="(item, index) in stdCodes">
-                <v-list-tile :key="item.code + index" ripple>
+              <template v-for="(item) in stdCodes">
+                <v-list-tile :key="item.code" ripple>
+                  <v-list-tile-action>
+                    <v-radio :value="item.code"></v-radio>
+                  </v-list-tile-action>
+                  <v-list-tile-content>
+                    <v-list-tile-title>{{ item.name|subject }}</v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+              </template>
+            </v-radio-group>
+          </v-list>
+        </v-card>
+      </v-flex>
+
+      <v-flex xs3 class="ml-3" @click="selected = 'G'">
+        <v-card :raised="selected === 'G'">
+          <v-list >
+            <v-subheader key="header" class="text-xs-center" :class="selected === 'G' ? 'active-card' : ''">
+              <span class="full-width">그룹공부 코드</span>
+            </v-subheader>
+            <v-radio-group v-model="code.g" class="pl-2">
+              <template v-for="(item) in grpCodes">
+                <v-list-tile :key="item.code" ripple>
+                  <v-list-tile-action>
+                    <v-radio :value="item.code"></v-radio>
+                  </v-list-tile-action>
+                  <v-list-tile-content>
+                    <v-list-tile-title>{{ item.name|subject }}</v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+              </template>
+            </v-radio-group>
+          </v-list>
+        </v-card>
+      </v-flex>
+
+      <v-flex xs3 class="ml-3" @click="selected = 'M'">
+        <v-card :raised="selected === 'M'">
+          <v-list >
+            <v-subheader key="header" class="text-xs-center" :class="selected === 'M' ? 'active-card' : ''">
+              <span class="full-width">마두명 코드</span>
+            </v-subheader>
+            <v-radio-group v-model="code.m" class="pl-2">
+              <template v-for="(item) in maoCodes">
+                <v-list-tile :key="item.code" ripple>
                   <v-list-tile-action>
                     <v-radio :value="item.code"></v-radio>
                   </v-list-tile-action>
@@ -84,8 +128,8 @@
               <span class="full-width">봉사활동 코드</span>
             </v-subheader>
             <v-radio-group v-model="code.a" class="pl-2">
-              <template v-for="(item, index) in actCodes">
-                <v-list-tile :key="item.code + index" ripple>
+              <template v-for="(item) in actCodes">
+                <v-list-tile :key="item.code" ripple>
                   <v-list-tile-action>
                     <v-radio :value="item.code"></v-radio>
                   </v-list-tile-action>
@@ -117,7 +161,7 @@ export default {
     selected: 'E',
     codeName: '',
     inputDlg: false,
-    code: {e: '', t: '', n: '', a: ''}
+    code: {e: '', t: '', n: '', a: '', g: '', m: ''}
   }),
   created () {
   },
@@ -126,7 +170,9 @@ export default {
       'stdCodes',
       'ebsCodes',
       'trnCodes',
-      'actCodes'
+      'actCodes',
+      'grpCodes',
+      'maoCodes'
     ]),
     getCode () {
       return this.code[this.selected.toLowerCase()]
@@ -138,6 +184,8 @@ export default {
       else if (this.selected === 'T') obj = this.trnCodes.find(o => o.code === cd)
       else if (this.selected === 'N') obj = this.stdCodes.find(o => o.code === cd)
       else if (this.selected === 'A') obj = this.actCodes.find(o => o.code === cd)
+      else if (this.selected === 'G') obj = this.grpCodes.find(o => o.code === cd)
+      else if (this.selected === 'M') obj = this.maoCodes.find(o => o.code === cd)
       return obj.name
     },
     getLastCode () {
@@ -146,6 +194,8 @@ export default {
       else if (this.selected === 'T') codes = this.trnCodes.map(o => o.code)
       else if (this.selected === 'N') codes = this.stdCodes.map(o => o.code)
       else if (this.selected === 'A') codes = this.actCodes.map(o => o.code)
+      else if (this.selected === 'G') codes = this.grpCodes.find(o => o.code)
+      else if (this.selected === 'M') codes = this.maoCodes.find(o => o.code)
       return last(codes) + 1
     }
   },
@@ -155,6 +205,8 @@ export default {
       else if (val === 'T') this.codeName = '성서 연수 코드 추가'
       else if (val === 'N') this.codeName = '노트 검사 코드 추가'
       else if (val === 'A') this.codeName = '봉사 활동 코드 추가'
+      else if (val === 'G') this.codeName = '그룹 공부 코드 추가'
+      else if (val === 'M') this.codeName = '마두명 코드 추가'
     },
     code: {
       handler: function (obj) {

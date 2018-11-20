@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const db = require('../common/db.mysql')
-// const _promise = require('bluebird')
+const _promise = require('bluebird')
 
 /****************************************************************
  * volunteer information
@@ -108,7 +108,7 @@ router.delete('/:id', (req, res) => {
  */
 router.get('/edu/:id', (req, res) => {
   const select = `
-    SELECT e.*, c.name edu_name, CONCAT(v.name, ' ', v.ca_name) gv_name
+    SELECT e.*, c.name edu_name, IF(ISNULL(e.gv_name), CONCAT(v.name, ' ', v.ca_name), e.gv_name) gv_name
     FROM edus e
     LEFT JOIN volunteers v ON v.id = e.gv_id
     LEFT JOIN edu_code c ON e.edu_code=c.code
@@ -124,32 +124,70 @@ router.get('/edu/:id', (req, res) => {
   })
 })
 
-router.put('/edu', (req, res) => {
-  const {v_id, edu_code, s_date, e_date, gv_id, area_code, memo} = req.body
-  const sql = [`
-    INSERT INTO edus (v_id, edu_code, s_date, e_date, area_code, gv_id, memo) 
-    VALUES (?,?,?,?,?,?,?)`,
-    [v_id, edu_code, s_date, e_date, area_code, gv_id, memo]
-  ]
-  db.query(...sql, (err, rows) => {
-    if (!err) {
-      console.log('edu has been inserted')
-      res.status(200).send({newID: rows.insertId})
-    } else {
-      console.warn('query error : ' + err)
-      res.status(500).send('Internal Server Error')
+router.put('/edu', async (req, res) => {
+  const {v_id, edu_code, s_date, e_date, gv_id, area_code, gv_name, months, memo} = req.body
+  if (edu_code === 53) { // 월교육 다중 생성
+    const mns = months && months.split(',')
+    let ms = []
+    for (let m of mns) {
+      let r = await insertEduItem(v_id, edu_code, m, gv_id, area_code, gv_name, memo)
+      if(!r) return res.status(500).send('Internal Server Error')
+      else ms.push(r)
     }
-  })
+    res.status(200).send({newID: JSON.stringify(ms)})
+  } else {
+    const sql = [`
+    INSERT INTO edus (v_id, edu_code, s_date, e_date, area_code, gv_id, gv_name, memo) 
+    VALUES (?,?,?,?,?,?,?,?)`,
+      [v_id, edu_code, s_date, e_date, area_code, gv_id, gv_name, memo]
+    ]
+    db.query(...sql, (err, rows) => {
+      if (!err) {
+        console.log('edu has been inserted')
+        res.status(200).send({newID: rows.insertId})
+      } else {
+        console.warn('query error : ' + err)
+        res.status(500).send('Internal Server Error')
+      }
+    })
+  }
 })
+
+const insertEduItem = (v_id, e_code, month, gv_id, area_code, gv_name, memo) => {
+  return new _promise(function(resolve) {
+    let d = new Date()
+    d.setMonth(month-1)
+    d.setDate(1)
+    const s_date = d.toISOString().substr(0, 10)
+    d.setMonth(d.getMonth() + 1)
+    d.setDate(d.getDate() - 1)
+    const e_date = d.toISOString().substr(0, 10)
+    // console.log(s_date, e_date)
+    const sql = [`
+    INSERT INTO edus (v_id, edu_code, s_date, e_date, area_code, gv_id, gv_name, memo) 
+    VALUES (?,?,?,?,?,?,?,?)`,
+      [v_id, e_code, s_date, e_date, area_code, gv_id, gv_name, memo]
+    ]
+    return db.query(...sql, (err, rows) => {
+      if (!err) {
+        console.log('insertEduItem query has done')
+        resolve(rows.insertId)
+      } else {
+        console.warn('insertEduItem query error : ' + err)
+        resolve(false)
+      }
+    })
+  })
+}
 
 router.post('/edu/:id', (req, res) => {
   const id = req.params.id
-  const {v_id, edu_code, s_date, e_date, area_code, memo} = req.body
+  const {v_id, edu_code, s_date, e_date, area_code, gv_name, memo} = req.body
   const sql = [`
     UPDATE edus 
-    SET v_id=?, edu_code=?, s_date=?, e_date=?, area_code=?, memo=?
+    SET v_id=?, edu_code=?, s_date=?, e_date=?, area_code=?, memo=?, gv_name=?
     WHERE id=?`,
-    [v_id, edu_code, s_date, e_date, area_code, memo, id]
+    [v_id, edu_code, s_date, e_date, area_code, memo, gv_name, id]
   ]
   db.query(...sql, (err, rows) => {
     if (!err) {
@@ -262,7 +300,7 @@ router.get('/query', (req, res) => {
     FROM volunteers vl LEFT JOIN area_code ac ON vl.area_code = ac.a_code
     WHERE 1 = 1`
   if (a_code) sql += ` AND vl.area_code like (\'${a_code}%\')`
-  if (au_date) sql += ` AND YEAR(vl.au_date) >= ${au_date}`
+  if (au_date) sql += ` AND YEAR(vl.au_date) = ${au_date}`
   if (v_name) sql += ` AND vl.name like (\'%${v_name}%\')`
   if (sa_code) sql += ` AND vl.area_code = (\'${sa_code}\')`
   if (memo) sql += ` AND vl.memo like (\'%${memo}%\')`
@@ -394,8 +432,9 @@ router.get('/history/:id', (req, res) => {
   })
 })
 
-router.put('/history', (req, res) => {
+router.put('/history', async (req, res) => {
   const {v_id, in_code, in_name, out_code, out_name} = req.body
+  await updateAreaCode(v_id, in_code)
   const sql = [`
     INSERT INTO histories (v_id, in_code, in_name, out_code, out_name) 
     VALUES (?,?,?,?,?)`,
@@ -411,5 +450,23 @@ router.put('/history', (req, res) => {
     }
   })
 })
+
+const updateAreaCode = (id, a_code) => {
+  return new _promise(function(resolve) {
+    const sql = [`
+      UPDATE volunteers
+      SET area_code = ?
+      WHERE id = ?`, [a_code, id]]
+    return db.query(...sql, (err, rows) => {
+      if (!err) {
+        console.log('updateAreaCode query has done')
+        resolve(true)
+      } else {
+        console.warn('updateAreaCode query error : ' + err)
+        resolve(false)
+      }
+    })
+  })
+}
 
 module.exports = router

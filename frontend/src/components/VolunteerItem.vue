@@ -8,26 +8,6 @@
       <v-divider></v-divider>
       <v-container mb-4>
         <v-layout>
-          <v-flex>
-            <v-text-field label="성명" v-model="params.name" :rules="[rules.name]"
-                          :clearable="true" hint="공백없이 실명으로 입력해 주세요."
-            ></v-text-field>
-          </v-flex>
-          <v-flex>
-            <v-text-field label="세례명" :rules="[rules.required]"
-                          clearable v-model="params.ca_name"
-            ></v-text-field>
-          </v-flex>
-          <v-flex>
-            <date-picker ref="br_date" title="생년월일"
-                         @close-date-picker="onPicked" refs="br_date"></date-picker>
-          </v-flex>
-          <v-flex>
-            <date-picker ref="ca_date" title="세례일"
-                         @close-date-picker="onPicked" refs="ca_date"></date-picker>
-          </v-flex>
-        </v-layout>
-        <v-layout>
           <v-flex xs3>
             <v-select label="교구 코드" v-model="areaCode.la_code" @change="onChangeAreaCode"
                       :items="lAreaCodes" item-text="l_name" item-value="l_code"
@@ -46,8 +26,28 @@
             ></v-select>
           </v-flex>
           <v-flex xs3>
-            <v-text-field label="봉사자 코드" :rules="[rules.vcode]" mask="##-##-##-##-####"
+            <v-text-field label="봉사자 코드" :rules="[rules.vcode]" mask="##-####"
                           clearable v-model="params.ca_id"></v-text-field>
+          </v-flex>
+        </v-layout>
+        <v-layout>
+          <v-flex>
+            <v-text-field label="성명" v-model="params.name" :rules="[rules.name]"
+                          :clearable="true" hint="공백없이 실명으로 입력해 주세요."
+            ></v-text-field>
+          </v-flex>
+          <v-flex>
+            <v-text-field label="세례명" :rules="[rules.required]"
+                          clearable v-model="params.ca_name"
+            ></v-text-field>
+          </v-flex>
+          <v-flex>
+            <date-picker ref="br_date" title="생년월일"
+                         @close-date-picker="onPicked" refs="br_date"></date-picker>
+          </v-flex>
+          <v-flex>
+            <date-picker ref="ca_date" title="세례일"
+                         @close-date-picker="onPicked" refs="ca_date"></date-picker>
           </v-flex>
         </v-layout>
         <v-layout>
@@ -187,7 +187,6 @@ export default {
     isEditMode: false,
     isDisabled: false,
     isLeader: false,
-    CA_ID: '',
     params: { // is equal to bible's column
       sex: 'F',
       area_code: '01-01-01',
@@ -206,8 +205,8 @@ export default {
         return pattern.test(value) || '잘못된 형식입니다.'
       },
       vcode: val => {
-        const pattern = /(\d{2})(\d{6})(\d{4})/
-        return (pattern.test(val) && val.length === 12) || '12자리 입력이 필요합니다.'
+        const pattern = /(\d{2})(\d{4})/
+        return (pattern.test(val) && val.length === 6) || '6자리 입력이 필요합니다.'
       },
       name: val => (val && val.search(' ') < 0) || '이름은 공란없이 작성해주세요.'
     },
@@ -230,7 +229,7 @@ export default {
     this.isEditMode = !isUndefined(this.v_id)
     if (this.isEditMode) this.fetchData()
     else this.changedCodes.vl_ac && this.assignCode(this.changedCodes.vl_ac)
-    this.params.ca_id = this.authInfo.id
+    // this.params.ca_id = this.authInfo.id
   },
   mounted () {
     /* const ts = document.getElementsByTagName('INPUT')
@@ -267,10 +266,10 @@ export default {
           if (k.indexOf('_date') > 0) {
             this.$refs[k] && this.$refs[k].setDate(item[k])
           }
-          if (k === 'ca_id') {
+          /* if (k === 'ca_id') {
             let cd = item['area_code']
             item[k] = `${this.authInfo.id}${cd.replace(/-/g, '')}${item['ca_id']}`
-          }
+          } */
         })
         this.initItem(item)
       })
@@ -342,11 +341,11 @@ export default {
         return alert('입력 데이터를 확인해주세요.')
       }
 
-      Object.keys(this.form).forEach(f => {
+      /* Object.keys(this.form).forEach(f => {
         let obj = this.form[f]
         if (obj && f === 'ca_id') this.params.ca_id = obj.substr(8)
         console.log(obj)
-      })
+      }) */
 
       // console.log(this.form)
       if (!this.isEditMode) {
@@ -374,9 +373,8 @@ export default {
         this.$parent.VID = vid
         this.$parent.VOLT = pick(this.form, ['area_code', 'name', 'ca_name', 'ca_id'])
       })
-    },
-    onChangedCode (type, nv, ov) {
-      // console.log(type, val.replace(/-/g, ''))
+    }
+    /* onChangedCode (type, nv, ov) {
       let target = ''
       if (type === 's') {
         target = nv ? nv.replace(/-/g, '') : this.areaCode.ma_code
@@ -391,7 +389,7 @@ export default {
         let obj = this.$parent.VOLT
         this.params.ca_id = `${this.authInfo.id}${target}${obj['ca_id'].substr(8)}`
       }
-    }
+    } */
   }
 }
 </script>

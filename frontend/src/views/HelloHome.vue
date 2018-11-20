@@ -34,6 +34,11 @@
           </v-responsive>
         </v-flex>
       </v-layout>
+      <!--<v-layout>
+        <v-flex xs12>
+          <v-img src="../static/cblm.jpg" max-width="580" aspect-ratio="3.0"></v-img>
+        </v-flex>
+      </v-layout>-->
     </v-container>
 
     <v-dialog v-model="dialog" width="500" persistent>

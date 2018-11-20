@@ -64,6 +64,10 @@ export const FETCH_DYNAMIC_STATE = 'fetchDynamicState'
 // utilize
 export const FETCH_SMALL_LEADER = 'fetchSmallLeader'
 
+// statistics
+export const FETCH_STAT_YEARLY = 'fetchStatYearly'
+export const FETCH_STAT_CHURCH = 'fetchStatChurch'
+
 // will be obsoleted
 export const DELETE_AUTHOR = 'deleteAuthor'
 export const CREATE_AUTHOR = 'createAuthor'

@@ -31,6 +31,12 @@ const getters = {
   stdCodes (state) {
     return filter(state.eduCodes, o => o.type === 'N')
   },
+  grpCodes (state) {
+    return filter(state.eduCodes, o => o.type === 'G')
+  },
+  maoCodes (state) {
+    return filter(state.eduCodes, o => o.type === 'M')
+  },
   areaCodes (state) {
     return state.areaCodes
   },

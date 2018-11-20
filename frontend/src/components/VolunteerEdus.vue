@@ -29,25 +29,26 @@
         <menu-buttons class="pt-0" refs="edus" @click-menu="onClickMenu"/>
       </v-flex>
     </v-layout>
-    <item-dialog ref="edus" :visible="inputDlg" @close-input-item="onInputItem" refs="edus"/>
+    <edus-dialog ref="edus" :visible="inputDlg" @close-input-item="onInputItem"/>
   </v-container>
 </template>
 
 <script>
 import MenuButtons from './control/MenuButtons'
-import ItemDialog from './control/InputItemDialog'
+// import ItemDialog from './control/InputItemDialog'
+import EdusDialog from './control/EdusDialog'
 import DatePicker from './control/DatePicker'
 import { isUndefined } from 'lodash/lang'
 import { FETCH_VOLUNTEER_EDUS, CREATE_VOLUNTEER_EDU, UPDATE_VOLUNTEER_EDU, DELETE_VOLUNTEER_EDU } from '../store/actions.type'
 
 export default {
   name: 'VolunteerEdus',
-  components: { ItemDialog, MenuButtons, DatePicker },
+  components: { EdusDialog, MenuButtons, DatePicker },
   props: { v_id: undefined },
   computed: {
     volunteerEdus: {
       get () { return this.$store.getters.volunteerEdus },
-      set (data) { this.$store.dispatch(CREATE_VOLUNTEER_EDU, data) }
+      async set (data) { await this.$store.dispatch(CREATE_VOLUNTEER_EDU, data) }
     },
     volunteerInfo () {
       return this.$store.getters.volunteerInfo(parseInt(this.v_id))
@@ -84,15 +85,15 @@ export default {
       !isUndefined(this.v_id) && await this.$store.dispatch(FETCH_VOLUNTEER_EDUS, this.v_id)
       this.fetched = true
     },
-    updateEduItem (item) {
-      this.$store.dispatch(UPDATE_VOLUNTEER_EDU, item)
+    async updateEduItem (item) {
+      await this.$store.dispatch(UPDATE_VOLUNTEER_EDU, item)
     },
     deleteEduItem (id) {
       this.$store.dispatch(DELETE_VOLUNTEER_EDU, id)
     },
     onClickMenu (type) {
       if (type === 'add') {
-        this.$refs.edus.setItem(Object.assign({id: this.v_id}, this.$parent.VOLT))
+        this.$refs.edus.setItem(Object.assign({v_id: this.v_id}, this.$parent.VOLT))
         this.inputDlg = true
         return
       }
@@ -112,6 +113,10 @@ export default {
       console.log('input item...', data)
       if (isUndefined(this.selected.id)) this.volunteerEdus = data
       else this.updateEduItem(data)
+
+      setTimeout(() => {
+        this.fetchData()
+      }, 300)
     }
   }
 }

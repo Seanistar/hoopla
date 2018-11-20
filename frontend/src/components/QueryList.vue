@@ -157,6 +157,7 @@ export default {
     this.small.items = orderBy(list, ['name'])
   },
   mounted () {
+    this.reset()
     const list = document.getElementsByClassName('v-input')
     this.$nextTick(() => {
       for (let d of list) {
@@ -221,7 +222,7 @@ export default {
       this.selected = item
       this.$store.commit(SET_QUERY_INFO, {cond: this.formData, good: item})
       setTimeout(() => {
-        this.$router.push({name: 'view-query'})
+        this.$router.push({name: 'view-query', params: {id: item.id}})
       }, 10)
     },
     onClickMemo (item) {
@@ -244,7 +245,7 @@ export default {
       else if (type === 's' && !val) this.params.area_code = this.areaCode.ma_code
 
       this.params.a_code = this.params.area_code
-      console.log(type, val, this.params.a_code)
+      // console.log(type, val, this.params.a_code)
     }
   }
 }

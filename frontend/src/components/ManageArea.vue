@@ -2,7 +2,7 @@
   <v-container class="elevation-2 mt-3 pt-1">
     <v-layout row align-baseline>
       <v-flex xs12 sm4>
-        <v-text-field label="편집할 구역을 선택하세요." class="py-0"
+        <v-text-field label="편집할 구역을 선택하세요." class="py-0 body-1"
                       readonly single-line :value="codeName"></v-text-field>
       </v-flex>
       <v-flex xs12 sm2 offset-sm6>

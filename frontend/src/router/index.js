@@ -44,8 +44,9 @@ export default new Router({
       component: () => import('@/views/Queries')
     },
     {
-      path: '/queries/view',
+      path: '/queries/view/:id?',
       name: 'view-query',
+      props: true,
       component: () => import('@/views/ViewQuery')
     },
     {

@@ -49,7 +49,7 @@
                 <v-spacer></v-spacer>
                 <v-toolbar-items><v-btn dark flat @click.native="dialog = false">닫기</v-btn></v-toolbar-items>
               </v-toolbar>
-              <state-layout :code="states.ro.s_code" :year="states.ro.r_year" v-if="dialog"/>
+              <report-layout :code="states.ro.s_code" :year="states.ro.r_year" v-if="dialog"/>
             </v-card>
           </v-dialog>
         </v-layout>
@@ -165,11 +165,11 @@ import { FETCH_REPORT_STATE, CREATE_REPORT, UPDATE_REPORT } from '@/store/action
 import { reduce } from 'lodash/collection'
 import { pick, omit } from 'lodash/object'
 import MenuButtons from './control/MenuButtons'
-import StateLayout from './StateLayout'
+import ReportLayout from './ReportLayout'
 
 export default {
   name: 'ReportStates',
-  components: { MenuButtons, StateLayout },
+  components: { MenuButtons, ReportLayout },
   props: { r_id: undefined },
   computed: {
     ...mapGetters([
