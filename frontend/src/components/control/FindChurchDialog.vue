@@ -59,7 +59,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'smallCodes'
+      'smallCodes',
+      'authInfo'
     ]),
     dialog: {
       get () { return this.visible },
@@ -101,7 +102,7 @@ export default {
       // if (this.name.length < 2) return alert('2자 이상 입력하세요.')
 
       setTimeout(() => {
-        this.matches = filter(this.smallCodes, o => o.s_name.search(this.name) >= 0)
+        this.matches = filter(this.smallCodes(this.authInfo), o => o.s_name.search(this.name) >= 0)
         this.finding = true
       }, 10)
     },

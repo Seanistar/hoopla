@@ -8,10 +8,10 @@
           </v-flex>
           <v-flex xs5>
             <v-combobox class="body-2" v-model="model"
-                        @input="fetchVolunteers()" :disabled="authInfo.level === 'L3'"
+                        @input="fetchVolunteers()"
                         :items="items" item-value="code" item-text="name"
                         :search-input.sync="search" clearable single-line>
-              <template slot="no-data">
+              <template slot="no-data"><!--:disabled="authInfo.level === 'L3'"-->
                 <v-list-tile>
                   <v-list-tile-content>
                     <v-list-tile-title>
@@ -151,7 +151,7 @@ export default {
       this.fetchVolunteers(code)
     },
     setCodeInfo (code) {
-      const list = map(this.smallCodes, o => { return {code: o.s_code, name: o.s_name} })
+      const list = map(this.smallCodes(this.authInfo), o => { return {code: o.s_code, name: o.s_name} })
       this.items = orderBy(list, ['name'])
 
       const res = find(list, o => o.code === code)

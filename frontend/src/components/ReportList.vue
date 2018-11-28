@@ -7,9 +7,9 @@
             <v-subheader class="body-2 pr-0">소속본당 : </v-subheader>
           </v-flex>
           <v-flex xs5>
-            <v-combobox class="body-2" @input="fetchReports()" :disabled="authInfo.level === 'L3'"
+            <v-combobox class="body-2" @input="fetchReports()"
                         v-model="model" :items="items" item-value="code" item-text="name"
-                        :search-input.sync="search" clearable single-line>
+                        :search-input.sync="search" clearable single-line> <!--:disabled="authInfo.level === 'L3'"-->
               <template slot="no-data">
                 <v-list-tile>
                   <v-list-tile-content>
@@ -133,7 +133,7 @@ export default {
       this.fetchReports(code)
     },
     setCodeInfo (code) {
-      const list = map(this.smallCodes, o => { return {code: o.s_code, name: o.s_name} })
+      const list = map(this.smallCodes(this.authInfo), o => { return {code: o.s_code, name: o.s_name} })
       this.items = orderBy(list, ['name'])
 
       const res = find(list, o => o.code === code)

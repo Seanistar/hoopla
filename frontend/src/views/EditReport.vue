@@ -61,7 +61,7 @@ export default {
     getSmall () {
       let sc = this.changedCodes.rl_ac
       if (!sc) sc = this.adminInfo.area_code
-      return this.smallCodes.find(o => o.s_code === sc)
+      return this.smallCodes(this.adminInfo).find(o => o.s_code === sc)
     }
   }
 }

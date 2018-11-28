@@ -151,7 +151,7 @@ export default {
       h.class = ['text-xs-center', 'body-2', 'pl-39x',
         h.value.indexOf('_cnt') > 0 ? 'w-5' : 'w-10']
     })
-    const list = map(this.smallCodes, o => {
+    const list = map(this.smallCodes(null), o => {
       return {code: o.s_code, name: o.s_name}
     })
     this.small.items = orderBy(list, ['name'])

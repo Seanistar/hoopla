@@ -26,7 +26,7 @@
                   <h4 class="display-1 pb-4">인증 완료</h4>
                   <span class="subheading">{{authInfo.level === 'L4' ? '최고' : '일반'}} 관리자로 로그인되었습니다.</span>
                   <v-divider class="my-4"></v-divider>
-                  <div class="title my-3">ID : {{authInfo.id}} ({{authInfo.name}} {{authInfo.ca_name}})</div>
+                  <div class="title my-3">ID : {{authInfo.id}} ({{authInfo.name}})</div>
                   <v-btn class="mx-0 mt-4" color="brown darken-2" large outline @click="logout">LOGOUT</v-btn>
                 </v-flex>
               </v-layout>

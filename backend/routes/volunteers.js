@@ -47,11 +47,11 @@ router.get('/page/:id', (req, res) => {
 })
 
 router.put('/', (req, res) => {
-  const {name, ca_name, br_date, ca_date, state, area_code, ca_id, email, phone, address, job, degree, au_date, memo} = req.body
+  const {name, ca_name, br_date, ca_date, state, area_code, sex, ca_id, email, phone, address, job, degree, au_date, memo} = req.body
   const sql = [`
-    INSERT INTO volunteers (name, ca_name, br_date, ca_date, state, area_code, ca_id, email, phone, address, job, degree, au_date, memo) 
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-    [name, ca_name, br_date, ca_date, state, area_code, ca_id, email, phone, address, job, degree, au_date, memo]
+    INSERT INTO volunteers (name, ca_name, br_date, ca_date, state, area_code, sex, ca_id, email, phone, address, job, degree, au_date, memo) 
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    [name, ca_name, br_date, ca_date, state, area_code, sex, ca_id, email, phone, address, job, degree, au_date, memo]
   ]
   db.query(...sql, (err, rows) => {
     if (!err) {

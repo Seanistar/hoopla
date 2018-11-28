@@ -43,8 +43,13 @@ const getters = {
   isCodesLoading (state) {
     return state.isLoading
   },
-  smallCodes (state) { // 본당 코드
-    return filter(state.areaCodes, o => o.s_code !== null)
+  smallCodes: (state) => (info) => {
+    // 최고 관리자는 모든 본당 접근 가능, 일반 관리자는 자신의 교구내 본당만 접근 가능
+    if (!info || info.level === 'L4') {
+      return filter(state.areaCodes, o => o.s_code !== null)
+    }
+    const large = info.area_code.substring(0, 2)
+    return filter(state.areaCodes, (ac) => ac.l_code === large && ac.s_code !== null)
   }
 }
 

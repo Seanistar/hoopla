@@ -349,7 +349,6 @@ export default {
 
       // console.log(this.form)
       if (!this.isEditMode) {
-        this.$showSnackBar('추가되었습니다.')
         this.isDisabled = true
         this.createItem()
       } else {
@@ -361,6 +360,7 @@ export default {
       let vid = null
       try {
         vid = await this[CREATE_VOLUNTEER](this.form)
+        this.$showSnackBar('추가되었습니다.')
       } catch (e) {
         console.warn(e)
         return alert('실패하였습니다.')
