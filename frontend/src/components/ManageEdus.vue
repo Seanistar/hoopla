@@ -257,7 +257,7 @@ export default {
   }
   .active-card {
     background-color: #2c3e50;
-    color: #c4e6f5;
+    color: #c4e6f5 !important;
     font-weight: bold;
   }
   .v-list__tile__action {
