@@ -80,7 +80,7 @@
             </v-layout>
           </v-container>
 
-          <v-container grid-list-md v-else-if="refs === 'edus'">
+          <!--<v-container grid-list-md v-else-if="refs === 'edus'">
             <v-layout wrap>
               <v-flex xs6>
                 <v-text-field label="이름" v-model="item.name"
@@ -117,7 +117,7 @@
                 <v-text-field label="참고 사항" v-model="item.memo" hide-details></v-text-field>
               </v-flex>
             </v-layout>
-          </v-container>
+          </v-container>-->
 
           <v-container grid-list-md v-else-if="refs === 'codes' || refs === 'eac'">
             <v-layout wrap>
@@ -203,7 +203,10 @@ export default {
       else if (this.refs === 'admin') return '관리자 정보'
     },
     voltCode () {
-      return this.item.id !== 0 ? `봉사자코드 : ${this.item.area_code}-${this.item.id}` : '봉사자코드 확인이 필요합니다!'
+      if (!this.item.id) return '봉사자코드 확인이 필요합니다!'
+      const caID = this.item.ca_id.toString()
+      const code = caID.substring(0, 2) + '-' + caID.substring(2)
+      return `봉사자코드 : ${code}`
     },
     dialog: {
       get () { return this.visible },

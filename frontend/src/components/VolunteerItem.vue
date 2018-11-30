@@ -9,24 +9,24 @@
       <v-container mb-4>
         <v-layout>
           <v-flex xs3>
-            <v-select label="교구 코드" v-model="areaCode.la_code" @change="onChangeAreaCode"
+            <v-select label="교구" v-model="areaCode.la_code" @change="onChangeAreaCode"
                       :items="lAreaCodes" item-text="l_name" item-value="l_code"
             ></v-select>
           </v-flex>
           <v-flex xs3>
-            <v-select label="지구 코드" v-model="areaCode.ma_code"
+            <v-select label="지구" v-model="areaCode.ma_code"
                       @change="onChangeAreaCode" no-data-text="지구 자료가 없습니다."
                       :items="mAreaCodes" item-text="m_name" item-value="m_code" :disabled="areaCode.la_code === ''"
             ></v-select>
           </v-flex>
           <v-flex xs3>
-            <v-select label="본당 코드" v-model="areaCode.sa_code"
+            <v-select label="본당" v-model="areaCode.sa_code"
                       @change="onChangeAreaCode" no-data-text="본당 자료가 없습니다."
                       :items="sAreaCodes" item-text="s_name" item-value="s_code" :disabled="areaCode.ma_code === ''"
             ></v-select>
           </v-flex>
           <v-flex xs3>
-            <v-text-field label="봉사자 코드" :rules="[rules.vcode]" mask="##-####"
+            <v-text-field label="봉사자 번호" :rules="[rules.vcode]" mask="##-####"
                           clearable v-model="params.ca_id"></v-text-field>
           </v-flex>
         </v-layout>

@@ -90,10 +90,8 @@ export default {
       { text: '성명', value: 'name' },
       { text: '세례명', value: 'ca_name' },
       { text: '활동상태', value: 'area_code' },
-      // { text: '소속교구', value: 'la_name' },
-      // { text: '소속지구', value: 'ma_name' },
       { text: '소속본당', value: 'sa_name' },
-      { text: '선서일', value: 'auth_date' },
+      { text: '선서일', value: 'au_date' },
       { text: '생년월일', value: 'br_date' },
       { text: '편집', value: 'edit', sortable: false }
     ]
