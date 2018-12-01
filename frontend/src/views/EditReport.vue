@@ -29,7 +29,7 @@ export default {
     ...mapGetters([
       'smallCodes',
       'changedCodes',
-      'adminInfo'
+      'authInfo'
     ]),
     targetComponents () {
       return ['ReportStates', 'ReportVolunteers', 'ReportActs']
@@ -45,10 +45,20 @@ export default {
     E_DATE: {
       get () { return this.e_date },
       set (date) { if (this.e_date === undefined) this.e_date = date }
+    },
+    S_CODE: {
+      get () { return this.s_code },
+      set (code) { this.s_code = code }
+    },
+    S_NAME: {
+      get () { return this.s_name },
+      set (name) { this.s_name = name }
     }
   },
   data: () => ({
     r_id: undefined,
+    s_code: undefined, // 현재 조회 중인 본당 코드
+    s_name: undefined, // 현재 조회 중인 본당 이름
     e_date: undefined,
     s_date: undefined,
     tabIdx: 0,
@@ -58,10 +68,17 @@ export default {
     this.r_id = this.id
   },
   methods: {
-    getSmall () {
+    getSmall () { // 신규 생성에서 접근할 때
+      if (this.S_CODE && this.S_NAME) return { s_code: this.S_CODE, s_name: this.S_NAME }
       let sc = this.changedCodes.rl_ac
-      if (!sc) sc = this.adminInfo.area_code
-      return this.smallCodes(this.adminInfo).find(o => o.s_code === sc)
+      if (!sc) sc = this.authInfo.area_code
+      return this.smallCodes(this.authInfo).find(o => o.s_code === sc)
+    },
+    isAccessible () {
+      if (!this.$parent.S_CODE) return true // 신규인 경우는 가능
+      if (!this.authInfo || !this.authInfo.area_code) return false
+      else if (this.authInfo.level === 'L4') return true
+      return this.S_CODE.substr(0, 2) === this.authInfo.area_code.substr(0, 2)
     }
   }
 }

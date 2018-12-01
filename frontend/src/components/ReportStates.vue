@@ -152,7 +152,7 @@
       <v-flex xs6>
         <v-layout justify-end>
           <v-btn color="orange accent-2" outline @click="$router.back()">취소</v-btn>
-          <v-btn color="indigo accent-2" outline :disabled="!isChanged" @click="submit">현황 {{r_id ? '수정' : '저장'}}</v-btn>
+          <v-btn color="indigo accent-2" outline :disabled="!isEnabled" @click="submit">현황 {{r_id ? '수정' : '저장'}}</v-btn>
         </v-layout>
       </v-flex>
     </v-layout>
@@ -279,6 +279,7 @@ export default {
     },
     fetched: false,
     dialog: false,
+    isEnabled: true,
     changed: {rb: false, rs: false, rt: false, ro: false}
   }),
   methods: {
@@ -297,6 +298,12 @@ export default {
           this.$parent.E_DATE = eDate
           this.states.ro.e_date = eDate.slice(0, 7)
         }
+        this.$parent.S_CODE = this.states.ro.s_code
+        this.$parent.S_NAME = this.states.ro.s_name
+        if (!this.$parent.isAccessible()) {
+          console.log('access failed')
+          this.isEnabled = false
+        }
         this.fetched = true
       })
     },
@@ -307,12 +314,14 @@ export default {
       return `${this.trnCodes[index].code}`
     },
     onChangeRS (topic, index) {
+      if (!this.isEnabled) return alert('수정 권한이 없습니다!')
       if (!this.states.ro.r_half) return alert('보고 기간부터 확인해주세요!')
       const rsv = event.currentTarget.value
       this.states.rs[topic][this.rsCode(index)] = rsv === '' ? 0 : rsv
       this.states.rs.tt[topic] = this.sumData(this.states.rs[topic])
     },
     onChangeRT (topic, index) {
+      if (!this.isEnabled) return alert('수정 권한이 없습니다!')
       if (!this.states.ro.r_half) return alert('보고 기간부터 확인해주세요!')
       const rtv = event.currentTarget.value
       this.states.rt[topic][this.rtCode(index)] = rtv === '' ? 0 : rtv
@@ -338,7 +347,7 @@ export default {
         if (data.rb === undefined) return alert('현황 정보를 입력해주세요!')
         this.createState(data)
       }
-      this.changed.rb = this.changed.ro = this.changed.rt = this.changed.rt = false
+      this.changed.rb = this.changed.ro = this.changed.rt = this.changed.rs = false
       this.$showSnackBar(`${(this.r_id ? '수정' : '저장')}되었습니다.`)
     },
     async createState (data) {

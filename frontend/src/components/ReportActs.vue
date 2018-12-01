@@ -56,7 +56,7 @@
     </v-data-table>
     <v-layout justify-end pt-2 pb-0>
       <v-flex xs12>
-        <menu-buttons refs="acts" :disabled="isEditable" @click-menu="onClickMenu"/>
+        <menu-buttons refs="acts" :disabled="!isEnabled" @click-menu="onClickMenu"/>
       </v-flex>
     </v-layout>
     <item-dialog ref="acts" :visible="inputDlg" @close-input-item="onInputItem" refs="acts"/>
@@ -112,6 +112,7 @@ export default {
     forked: {},
     inputDlg: false,
     fetched: false,
+    isEnabled: true,
     small: { nm: '', cd: '' },
     headers: [
       { text: '번호', value: 'idx' },
@@ -133,6 +134,7 @@ export default {
     async fetchData (code) {
       const [sd, ed] = [this.$parent.S_DATE, this.$parent.E_DATE]
       await this[FETCH_REPORT_ACTS]({a_code: code, s_date: sd, e_date: ed})
+      if (!this.$parent.isAccessible(code)) this.isEnabled = false
       this.fetched = true
       this.mapData()
     },
