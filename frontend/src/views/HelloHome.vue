@@ -79,7 +79,7 @@
 
 <script>
 import { LOGIN_ADMIN } from '@/store/actions.type'
-import { REMOVE_AUTH } from '@/store/mutations.type'
+import { REMOVE_AUTH, SET_CHANGED_CODE } from '@/store/mutations.type'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -112,7 +112,11 @@ export default {
       })
     },
     logout () {
-      confirm('로그아웃하시겠습니까?') && this.$store.commit(REMOVE_AUTH)
+      if (confirm('로그아웃하시겠습니까?')) {
+        this.$store.commit(REMOVE_AUTH)
+        this.$store.commit(SET_CHANGED_CODE, {type: 'rl_ac', code: null})
+        this.$store.commit(SET_CHANGED_CODE, {type: 'vl_ac', code: null})
+      }
     }
   }
 }
