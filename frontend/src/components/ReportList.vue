@@ -69,6 +69,7 @@ export default {
     ...mapGetters([
       'smallCodes',
       'authInfo',
+      'areaCodes',
       'reportCode',
       'isReportsLoading',
       'changedCodes',
@@ -132,7 +133,8 @@ export default {
       this.setCodeInfo(code)
       this.fetchReports(code)
     },
-    setCodeInfo (code) {
+    async setCodeInfo (code) {
+      if (!this.areaCodes.length) await this.$store.dispatch('fetchAreaCodes')
       const list = map(this.smallCodes(this.authInfo), o => { return {code: o.s_code, name: o.s_name} })
       this.items = orderBy(list, ['name'])
 

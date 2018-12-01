@@ -279,6 +279,7 @@ export default {
       if (item.l_work === 'Y') this.isLeader = true
       this.assignCode(item.area_code)
 
+      if (!this.$parent.isAccessible()) this.isDisabled = true
       this.params = item
     },
     onPicked (obj) {

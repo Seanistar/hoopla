@@ -53,6 +53,15 @@ export default {
   }),
   created () {
     this.v_id = this.id
+  },
+  methods: {
+    isAccessible () {
+      const auth = this.$store.getters.authInfo
+      if (!auth || !auth.area_code) return false
+      else if (auth.level === 'L4') return true
+      // console.log(this.VOLT.area_code.substr(0, 2), auth.area_code.substr(0, 2))
+      return this.VOLT.area_code.substr(0, 2) === auth.area_code.substr(0, 2)
+    }
   }
 }
 </script>

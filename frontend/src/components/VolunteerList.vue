@@ -37,7 +37,7 @@
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
         <tr @dblclick="editItem(props.item)">
-          <td class="text-xs-center"><span>{{ props.item.id }}</span></td>
+          <td class="text-xs-center"><span>{{(pagination.page - 1) * pagination.rowsPerPage + (props.index + 1)}}</span></td>
           <td class="text-xs-center">
             <span>{{ props.item.name }}</span>
             <v-badge color="orange" class="badge-pos"
@@ -86,7 +86,7 @@ export default {
     perPage: [10, 25, {text: '$vuetify.dataIterator.rowsPerPageAll', value: -1}],
     pagination: { sortBy: 'id' },
     headers: [
-      { text: '코드', value: 'id' },
+      { text: '번호', value: 'id', sortable: false },
       { text: '성명', value: 'name' },
       { text: '세례명', value: 'ca_name' },
       { text: '활동상태', value: 'area_code' },
@@ -99,6 +99,7 @@ export default {
   computed: {
     ...mapGetters([
       'smallCodes',
+      'areaCodes',
       'authInfo',
       'volunteers',
       'volunteersCount',
@@ -114,7 +115,8 @@ export default {
       if (val && val.length > 5) {
         this.$nextTick(() => this.model.pop())
       }
-    }
+    },
+    pagination (val) { console.log(val) }
   },
   created () {
     this.headers.map(h => { h.class = ['text-xs-center', 'body-2', 'pl-39x'] })
@@ -148,7 +150,8 @@ export default {
       this.setCodeInfo(code)
       this.fetchVolunteers(code)
     },
-    setCodeInfo (code) {
+    async setCodeInfo (code) {
+      if (!this.areaCodes.length) await this.$store.dispatch('fetchAreaCodes')
       const list = map(this.smallCodes(this.authInfo), o => { return {code: o.s_code, name: o.s_name} })
       this.items = orderBy(list, ['name'])
 

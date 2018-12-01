@@ -26,7 +26,7 @@
     </v-data-table>
     <v-layout row justify-end>
       <v-flex xs12 sm2 offset-sm4>
-        <menu-buttons class="pt-0" refs="edus" @click-menu="onClickMenu"/>
+        <menu-buttons class="pt-0" refs="edus" :disabled="isDisable" @click-menu="onClickMenu"/>
       </v-flex>
     </v-layout>
     <edus-dialog ref="edus" :visible="inputDlg" @close-input-item="onInputItem"/>
@@ -66,6 +66,7 @@ export default {
     selected: {},
     inputDlg: false,
     fetched: false,
+    isDisable: false,
     headers: [
       { text: '번호', value: 'idx' },
       { text: '교육 내용', value: 'edu_name' },
@@ -79,10 +80,14 @@ export default {
     this.headers.map(h => { h.class = ['text-xs-center', 'body-2', 'pl-39x'] })
     this.fetchData()
   },
+  mounted () {
+    if (!this.$parent.isAccessible()) this.isDisable = true
+  },
   methods: {
     async fetchData () {
       this.selected = {}
       !isUndefined(this.v_id) && await this.$store.dispatch(FETCH_VOLUNTEER_EDUS, this.v_id)
+
       this.fetched = true
     },
     async updateEduItem (item) {

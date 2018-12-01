@@ -65,7 +65,7 @@ export default {
         yg[k] = groupBy(yg[k], 'e_code')
         const area = find(_this.areaCodes, (o) => o.a_code === k)
         if (area) {
-          let obj = {}; obj[area.s_name] = yg[k]
+          let obj = {}; obj[`(${area.l_name}) ${area.s_name}`] = yg[k]
           this.items.push(obj)
         }
       })

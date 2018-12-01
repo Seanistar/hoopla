@@ -27,7 +27,7 @@
     </v-data-table>
     <v-layout row justify-end>
       <v-flex xs12 sm2 offset-sm4>
-        <menu-buttons class="pt-0" refs="acts" @click-menu="onClickMenu"/>
+        <menu-buttons class="pt-0" refs="acts" :disabled="isDisable" @click-menu="onClickMenu"/>
       </v-flex>
     </v-layout>
     <item-dialog ref="acts" :visible="inputDlg" @close-input-item="onInputItem" refs="acts"/>
@@ -63,6 +63,7 @@ export default {
     selected: {},
     inputDlg: false,
     fetched: false,
+    isDisable: false,
     headers: [
       { text: '번호', value: 'idx' },
       { text: '봉사 그룹', value: 'act_name' },
@@ -76,6 +77,9 @@ export default {
   created () {
     this.headers.map(h => { h.class = ['text-xs-center', 'body-1', 'pl-39x'] })
     this.fetchData()
+  },
+  mounted () {
+    if (!this.$parent.isAccessible()) this.isDisable = true
   },
   methods: {
     async fetchData () {
