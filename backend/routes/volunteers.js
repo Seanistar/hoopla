@@ -87,12 +87,17 @@ router.post('/page/:id', (req, res) => {
   })
 })
 
-router.delete('/:id', (req, res) => {
-  if (req.params.id === undefined) {
+router.delete('/:id', async (req, res) => {
+  const v_id = req.params.id
+  if (v_id === undefined) {
     console.warn('no id parameter')
     return res.status(500).send('Internal Server Error')
   }
-  const sql = [`DELETE FROM volunteers WHERE id=?`, req.params.id]
+  let e = await deleteAllItems('edus', v_id)
+  let a = await deleteAllItems('acts', v_id)
+  if(!e || !a) return res.status(500).send('Internal Server Error')
+
+  const sql = [`DELETE FROM volunteers WHERE id=?`, v_id]
   db.query(...sql, (err) => {
     if (!err) {
       res.status(200).send({success: true})
@@ -102,6 +107,23 @@ router.delete('/:id', (req, res) => {
     }
   })
 })
+
+const deleteAllItems = (target, id) => {
+  return new _promise(function(resolve) {
+    const sql = [`
+      DELETE FROM ${target}
+      WHERE v_id = ?`, [id]]
+    return db.query(...sql, (err, rows) => {
+      if (!err) {
+        console.log(`deleteAllItems ${target} query has done`)
+        resolve(true)
+      } else {
+        console.warn(`deleteAllItems ${target} query error : ` + err)
+        resolve(false)
+      }
+    })
+  })
+}
 
 /*******************************************************************
  * volunteer educations
