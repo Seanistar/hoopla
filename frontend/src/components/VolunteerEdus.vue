@@ -35,8 +35,7 @@
 
 <script>
 import MenuButtons from './control/MenuButtons'
-// import ItemDialog from './control/InputItemDialog'
-import EdusDialog from './control/EdusDialog'
+import EdusDialog from './control/InputEdusDialog'
 import DatePicker from './control/DatePicker'
 import { isUndefined } from 'lodash/lang'
 import { FETCH_VOLUNTEER_EDUS, CREATE_VOLUNTEER_EDU, UPDATE_VOLUNTEER_EDU, DELETE_VOLUNTEER_EDU } from '../store/actions.type'

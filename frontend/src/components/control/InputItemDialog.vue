@@ -4,9 +4,9 @@
       <v-card>
         <v-card-title class="pb-0">
           <span class="headline pa-2">{{title}}</span>
-          <span v-if="refs === 'acts'" class="pl-3"
-                :class="item.id ? ['green--text', 'subheading', 'font-weight-bold'] : ['red--text'] ">{{voltCode}}
-          </span>
+          <!--<span v-if="refs === 'acts'" class="pl-3"
+                :class="item.id ? ['green&#45;&#45;text', 'subheading', 'font-weight-bold'] : ['red&#45;&#45;text'] ">{{voltCode}}
+          </span>-->
         </v-card-title>
 
         <v-card-text class="pa-0">
@@ -42,7 +42,7 @@
             </v-layout>
           </v-container>
 
-          <v-container grid-list-md v-else-if="refs === 'acts'" class="pt-0">
+         <!-- <v-container grid-list-md v-else-if="refs === 'acts'" class="pt-0">
             <v-layout wrap>
               <v-flex xs6>
                 <v-text-field label="봉사자 이름" v-model="item.name"
@@ -78,7 +78,7 @@
                 <v-text-field v-model="item.content" hide-details label="봉사활동 내용"></v-text-field>
               </v-flex>
             </v-layout>
-          </v-container>
+          </v-container>-->
 
           <!--<v-container grid-list-md v-else-if="refs === 'edus'">
             <v-layout wrap>
@@ -198,7 +198,7 @@ export default {
       if (this.refs === 'volts') return '봉사자 정보'
       else if (this.refs === 'acts') return '봉사활동 정보'
       else if (this.refs === 'codes') return '구역코드 정보'
-      else if (this.refs === 'edus') return '교육 정보'
+      // else if (this.refs === 'edus') return '교육 정보'
       else if (this.refs === 'eac') return '교육 및 봉사 코드 정보'
       else if (this.refs === 'admin') return '관리자 정보'
     },
@@ -245,13 +245,13 @@ export default {
       this.item.state = 'ACT'
     } else if (this.refs === 'acts') {
       this.item.s_date = this.item.e_date = ''
-    } else if (this.refs === 'edus') {
-      this.item.s_date = this.item.e_date = ''
-      this.item.edu_code = this.item.edu_name = null
     } else if (this.refs === 'admin') {
       this.item.code = this.item.password = ''
       this.item.name = this.item.ca_name = ''
-    }
+    } /* else if (this.refs === 'edus') {
+      this.item.s_date = this.item.e_date = ''
+      this.item.edu_code = this.item.edu_name = null
+    } */
   },
   methods: {
     closeDialog () {
@@ -288,7 +288,7 @@ export default {
 
       this.finder = false
       if (this.refs === 'acts') Object.assign(this.item, pick(data, ['id', 'name', 'ca_name', 'state', 'area_code']))
-      else if (this.refs === 'edus') Object.assign(this.item, {gv_id: data.id, gv_name: `${data.name} ${data.ca_name}`})
+      // else if (this.refs === 'edus') Object.assign(this.item, {gv_id: data.id, gv_name: `${data.name} ${data.ca_name}`})
       else this.item = pick(data, ['id', 'name', 'ca_name', 'phone', 'address', 'state', 'br_date', 'area_code'])
       console.log('found people...', this.item)
     },

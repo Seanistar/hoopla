@@ -27,24 +27,24 @@
     </v-data-table>
     <v-layout row justify-end>
       <v-flex xs12 sm2 offset-sm4>
-        <menu-buttons class="pt-0" refs="acts" :disabled="isDisable" @click-menu="onClickMenu"/>
+        <menu-buttons class="pt-0" :disabled="isDisable" @click-menu="onClickMenu" refs="acts"/>
       </v-flex>
     </v-layout>
-    <item-dialog ref="acts" :visible="inputDlg" @close-input-item="onInputItem" refs="acts"/>
+    <acts-dialog ref="acts" :visible="inputDlg" @close-input-item="onInputItem" refs="volunteer"/>
   </v-container>
 </template>
 
 <script>
 import MenuButtons from './control/MenuButtons'
 import DatePicker from './control/DatePicker'
-import ItemDialog from './control/InputItemDialog'
+import ActsDialog from './control/InputActsDialog'
 import { isUndefined } from 'lodash/lang'
 import { FETCH_VOLUNTEER_ACTS, CREATE_VOLUNTEER_ACT, UPDATE_VOLUNTEER_ACT, DELETE_VOLUNTEER_ACT } from '../store/actions.type'
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'VolunteerActs',
-  components: { DatePicker, MenuButtons, ItemDialog },
+  components: { DatePicker, MenuButtons, ActsDialog },
   props: { v_id: undefined },
   computed: {
     ...mapGetters([

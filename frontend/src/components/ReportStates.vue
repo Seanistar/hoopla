@@ -25,11 +25,14 @@
       </v-flex>
       <v-flex xs6>
         <v-subheader class="body-2 px-0 justify-center">
-          <v-flex xs3>
-            <v-select label="기간선택" class="pl-4 w-90 text-xs-center body-1" single-line
-                      :disabled="r_id !== undefined"
-                      :items="[{nm: '상반기', vl: 'A'}, {nm: '하반기', vl: 'B'}]"
-                      item-text="nm" item-value="vl" v-model="states.ro.r_half"></v-select>
+          <v-flex xs2>
+<!--            <v-select label="기간선택" class="pl-4 w-90 text-xs-center body-1" single-line
+                    :disabled="r_id !== undefined"
+                    :items="[{nm: '상반기', vl: 'A'}, {nm: '하반기', vl: 'B'}]"
+                    item-text="nm" item-value="vl" v-model="states.ro.r_half"></v-select>-->
+            <v-subheader class="subheading font-weight-bold px-0 half">
+              {{states.ro.r_half === 'A' ? '상반기' : '하반기'}} :
+            </v-subheader>
           </v-flex>
           <input v-model="states.ro.s_date" id="s_date" tag="rb" readonly
                  type="text" class="pa-1 input-box mw-25">&nbsp;~&nbsp;
@@ -162,7 +165,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { FETCH_REPORT_STATE, CREATE_REPORT, UPDATE_REPORT } from '@/store/actions.type'
-import { reduce } from 'lodash/collection'
+import { reduce, find } from 'lodash/collection'
 import { pick, omit } from 'lodash/object'
 import MenuButtons from './control/MenuButtons'
 import ReportLayout from './ReportLayout'
@@ -176,6 +179,7 @@ export default {
       'trnCodes',
       'stdCodes',
       'reportInfo',
+      'reports',
       'smallLeader'
     ]),
     topics () {
@@ -189,9 +193,10 @@ export default {
     }
   },
   watch: {
-    'states.ro.r_half' (val) {
+    /* 'states.ro.r_half' (val) {
       if (this.r_id || !val) return
-      const thisYear = (new Date()).getFullYear()
+      const _d = new Date()
+      const thisYear = _d.getFullYear()
       if (val === 'A') { // 2017-09-01 ~ 2018-02-28
         this.states.ro.s_date = `${thisYear - 1}-09`
         this.states.ro.e_date = `${thisYear}-02`
@@ -200,7 +205,7 @@ export default {
         this.states.ro.e_date = `${thisYear}-08`
       }
       this.changed.rb = true
-    },
+    }, */
     'states.rs.dg': {
       handler: function () {
         this.states.rs.tt.dg = this.sumData(this.states.rs.dg)
@@ -251,13 +256,20 @@ export default {
     }
   },
   created () {
-    if (this.r_id) this.fetch()
-    else {
+    if (this.r_id) {
+      this.fetch()
+    } else {
       const res = this.$parent.getSmall()
       if (res) {
         this.states.ro.s_name = res.s_name
         this.states.ro.s_code = res.s_code
-        this.states.ro.r_year = (new Date()).getFullYear()
+        this.arrangeDate()
+        const rcd = `${res.s_code}-${this.states.ro.r_year}-${this.states.ro.r_half}`
+        const one = find(this.reports, o => o.r_code === rcd)
+        if (one) {
+          alert('이미 보고된 리포트가 존재합니다! 해당 리포트로 이동합니다.')
+          this.fetch(this.$parent.RID = one.id)
+        }
       }
     }
   },
@@ -275,16 +287,16 @@ export default {
     states: {
       rs: {dg: {}, dp: {}, ng: {}, np: {}, tt: {dg: 0, dp: 0, ng: 0, np: 0}},
       rt: {dg: {}, dp: {}, ng: {}, np: {}, tt: {dg: 0, dp: 0, ng: 0, np: 0}},
-      ro: {r_half: null}
+      ro: {r_half: ''}
     },
     fetched: false,
     dialog: false,
     isEnabled: true,
-    changed: {rb: false, rs: false, rt: false, ro: false}
+    changed: {rb: true, rs: false, rt: false, ro: false}
   }),
   methods: {
-    async fetch () {
-      await this.$store.dispatch(FETCH_REPORT_STATE, this.r_id)
+    async fetch (rid = null) {
+      await this.$store.dispatch(FETCH_REPORT_STATE, !rid ? this.r_id : rid)
       this.$nextTick(() => {
         this.states = this.reportInfo
         this.states.rs.tt = {dg: 0, dp: 0, ng: 0, np: 0}
@@ -394,6 +406,33 @@ export default {
           })
         })
       })
+    },
+    arrangeDate () { // 현재 날짜에 따른 보고 기간 자동 설정
+      const _d = new Date()
+      const thisYear = _d.getFullYear()
+      const thisMonth = _d.getMonth() + 1
+      if (thisMonth >= 1 && thisMonth <= 2) {
+        // 01 ~ 02 : 2018-A
+        this.states.ro.s_date = `${thisYear - 1}-09`
+        this.states.ro.e_date = `${thisYear}-02`
+        this.states.ro.r_year = thisYear
+        this.states.ro.r_half = 'A'
+      } else if (thisMonth >= 3 && thisMonth <= 8) {
+        // 03 ~ 08 : 2018-B
+        this.states.ro.s_date = `${thisYear}-03`
+        this.states.ro.e_date = `${thisYear}-08`
+        this.states.ro.r_year = thisYear
+        this.states.ro.r_half = 'B'
+      } else if (thisMonth >= 9) {
+        // 09 ~ 12 : 2019-A
+        this.states.ro.s_date = `${thisYear}-09`
+        this.states.ro.e_date = `${thisYear + 1}-02`
+        this.states.ro.r_year = thisYear + 1
+        this.states.ro.r_half = 'A'
+      }
+      const lastDay = this.states.ro.r_half === 'A' ? '28' : '31'
+      this.$parent.S_DATE = `${this.states.ro.s_date}-01`
+      this.$parent.E_DATE = `${this.states.ro.e_date}-${lastDay}`
     }
     /* onChangePhone (phone) {
       let no = phone !== undefined ? phone : event.currentTarget.value
@@ -463,5 +502,9 @@ export default {
   }
   input.mw-25 {
     max-width: 18% !important;
+  }
+  .half {
+    width: 85px;
+    float: right;
   }
 </style>

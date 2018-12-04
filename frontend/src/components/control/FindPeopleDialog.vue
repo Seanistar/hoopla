@@ -27,7 +27,7 @@
                   <td class="text-xs-center">{{ props.item.ca_name }}</td>
                   <td class="text-xs-center">{{ props.item.sa_name }}</td>
                   <td class="text-xs-center">{{ activityState[props.item.state] }}</td>
-                  <td class="text-xs-center">{{props.item.br_date}}</td>
+                  <td class="text-xs-center">{{props.item.au_date}}</td>
                 </tr>
               </template>
               <template slot="no-data" v-if="found">
@@ -84,7 +84,7 @@ export default {
       { text: '세례명', value: 'caName' },
       { text: '본당명', value: 'saName' },
       { text: '활동상태', value: 'state' },
-      { text: '생년월일', value: 'brDate' }
+      { text: '선서일', value: 'auDate' }
     ]
   }),
   watch: {

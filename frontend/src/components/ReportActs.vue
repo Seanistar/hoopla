@@ -56,16 +56,16 @@
     </v-data-table>
     <v-layout justify-end pt-2 pb-0>
       <v-flex xs12>
-        <menu-buttons refs="acts" :disabled="!isEnabled" @click-menu="onClickMenu"/>
+        <menu-buttons :disabled="!isEnabled" @click-menu="onClickMenu" refs="acts" />
       </v-flex>
     </v-layout>
-    <item-dialog ref="acts" :visible="inputDlg" @close-input-item="onInputItem" refs="acts"/>
+    <acts-dialog ref="acts" :visible="inputDlg" @close-input-item="onInputItem" refs="report"/>
   </v-container>
 </template>
 
 <script>
 import MenuButtons from './control/MenuButtons'
-import ItemDialog from './control/InputItemDialog'
+import ActsDialog from './control/InputActsDialog'
 import { pick } from 'lodash/object'
 import { isEmpty } from 'lodash/lang'
 import { groupBy, map, reduce } from 'lodash/collection'
@@ -80,7 +80,7 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'ReportActs',
-  components: { MenuButtons, ItemDialog },
+  components: { MenuButtons, ActsDialog },
   computed: {
     ...mapGetters([
       'reportActs',
@@ -155,8 +155,12 @@ export default {
         return t + n
       }, 0)
     },
-    deleteActItem (id) {
-      this[DELETE_REPORT_ACT](id)
+    async deleteActItem (id) {
+      await this[DELETE_REPORT_ACT](id)
+      this.$nextTick(() => {
+        this.fetchData(this.small.cd)
+        // this.mapData()
+      })
     },
     onClickMenu (type) {
       if (type === 'add') {
@@ -194,8 +198,8 @@ export default {
       }
 
       this.$nextTick(() => {
-        // this.fetchData(this.small.cd)
-        this.mapData()
+        this.fetchData(this.small.cd)
+        // this.mapData()
       })
     }
   }

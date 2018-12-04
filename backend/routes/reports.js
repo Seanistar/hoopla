@@ -30,6 +30,7 @@ router.get('/volts', (req, res) => {
     WHERE area_code=? AND registered <= DATE_FORMAT(?, '%Y-%m-%d %H:%i:%s')`,
     [a_code, e_date]
   ]
+  console.log('report volts...' + sql)
   db.query(...sql, (err, rows) => {
     if (!err) {
       console.log('volts query has done')
@@ -49,9 +50,10 @@ router.get('/acts', (req, res) => {
     FROM acts a
     LEFT JOIN volunteers v ON a.v_id = v.id
     LEFT JOIN edu_code e ON e.code = a.act_code
-    WHERE a.area_code=? AND a.s_date>=? AND a.e_date<=?`,
-    [a_code, s_date, e_date]
+    WHERE a.area_code=? AND a.s_date>=?`, //  AND a.e_date<=?
+    [a_code, s_date] // e_date
   ]
+  console.log('report acts...' + sql)
   db.query(...sql, (err, rows) => {
     if (!err) {
       console.log('acts query has done')
