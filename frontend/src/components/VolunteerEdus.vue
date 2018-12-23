@@ -45,9 +45,8 @@ export default {
   components: { EdusDialog, MenuButtons, DatePicker },
   props: { v_id: undefined },
   computed: {
-    volunteerEdus: {
-      get () { return this.$store.getters.volunteerEdus },
-      async set (data) { await this.$store.dispatch(CREATE_VOLUNTEER_EDU, data) }
+    volunteerEdus () {
+      return this.$store.getters.volunteerEdus
     },
     volunteerInfo () {
       return this.$store.getters.volunteerInfo(parseInt(this.v_id))
@@ -89,11 +88,15 @@ export default {
 
       this.fetched = true
     },
+    async createEduItem (item) {
+      await this.$store.dispatch(CREATE_VOLUNTEER_EDU, item)
+    },
     async updateEduItem (item) {
       await this.$store.dispatch(UPDATE_VOLUNTEER_EDU, item)
     },
     deleteEduItem (id) {
       this.$store.dispatch(DELETE_VOLUNTEER_EDU, id)
+      this.selected = {}
     },
     onClickMenu (type) {
       if (type === 'add') {
@@ -115,7 +118,7 @@ export default {
 
       if (isUndefined(data.v_id)) data.v_id = data.id
       console.log('input item...', data)
-      if (isUndefined(this.selected.id)) this.volunteerEdus = data
+      if (isUndefined(this.selected.id)) this.createEduItem(data)
       else this.updateEduItem(data)
 
       setTimeout(() => {

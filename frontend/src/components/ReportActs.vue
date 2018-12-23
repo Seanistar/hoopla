@@ -157,6 +157,7 @@ export default {
     },
     async deleteActItem (id) {
       await this[DELETE_REPORT_ACT](id)
+      this.selected = {}
       this.$nextTick(() => {
         this.fetchData(this.small.cd)
         // this.mapData()

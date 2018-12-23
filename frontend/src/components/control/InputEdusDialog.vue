@@ -27,7 +27,7 @@
                           :items="eduCodes" item-text="name" item-value="code"
                 ></v-select>
               </v-flex>
-              <v-flex xs12 v-if="item.edu_code === 53 && !item.id"> <!-- 월교육인 경우에만 보여줌 -->
+              <v-flex xs12 v-if="isMonthEdu"> <!-- 월교육인 경우에만 보여줌 -->
                 <v-layout wrap>
                   <v-checkbox v-model="selected" label="3월" value="3"></v-checkbox>
                   <v-checkbox v-model="selected" label="4월" value="4"></v-checkbox>
@@ -44,11 +44,11 @@
                 </v-layout>
               </v-flex>
               <v-flex xs6>
-                <date-picker ref="s_date" title="교육 시작일"
+                <date-picker ref="s_date" title="교육 시작일" :disabled="isMonthEdu"
                              @close-date-picker="onPicked" refs="s_date"></date-picker>
               </v-flex>
               <v-flex xs6>
-                <date-picker ref="e_date" title="교육 종료일"
+                <date-picker ref="e_date" title="교육 종료일" :disabled="isMonthEdu"
                              @close-date-picker="onPicked" refs="e_date"></date-picker>
               </v-flex>
               <v-flex xs8>
@@ -105,6 +105,9 @@ export default {
         this.reset()
         this.$emit('close-input-item')
       }
+    },
+    isMonthEdu () {
+      return this.item.edu_code === 53 && !this.item.id
     }
   },
   watch: {

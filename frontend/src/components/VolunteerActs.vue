@@ -100,6 +100,7 @@ export default {
     },
     deleteActItem (id) {
       this.$store.dispatch(DELETE_VOLUNTEER_ACT, id)
+      this.selected = {}
       this.$showSnackBar('삭제되었습니다.')
     },
     onClickMenu (type) {

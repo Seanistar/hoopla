@@ -8,6 +8,7 @@
       lazy
       transition="scale-transition"
       offset-y
+      :disabled="disable"
       full-width
       min-width="290px"
     >
@@ -37,7 +38,8 @@ export default {
   name: 'DatePicker',
   props: {
     title: '',
-    refs: ''
+    refs: '',
+    disable: true
   },
   data: () => ({
     date: null,

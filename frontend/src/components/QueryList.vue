@@ -30,7 +30,7 @@
               <v-text-field label="봉사자 이름" v-model="params.v_name" hide-details></v-text-field>
             </v-flex>
             <v-flex xs3>
-              <v-combobox label="본당 이름" v-model="small.model" hide-details
+              <!--<v-combobox label="본당 이름" v-model="small.model" hide-details
                           :items="small.items" item-value="code" item-text="name"
                           :search-input.sync="small.search" @input="onBlur" clearable>
                 <template slot="no-data">
@@ -42,7 +42,8 @@
                     </v-list-tile-content>
                   </v-list-tile>
                 </template>
-              </v-combobox>
+              </v-combobox>-->
+              <v-text-field label="본당 이름" v-model="params.s_name" hide-details></v-text-field>
             </v-flex>
             <v-flex xs3>
               <v-text-field label="메모 내용" v-model="params.memo" hide-details></v-text-field>
@@ -69,7 +70,8 @@
         </v-flex>
       </v-layout>
       <v-data-table :headers="headers" :items="queryVolunteers" :loading="queried && isQuerying"
-                    hide-actions no-data-text="조회 조건을 선택하세요."
+                    :pagination.sync="pagination" :rows-per-page-items="perPage"
+                    rows-per-page-text="페이지 당 보기 개수" no-data-text="조회 조건을 선택하세요."
       >
         <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
         <template slot="items" slot-scope="props">
@@ -86,6 +88,9 @@
             <td class="text-xs-center w-15 memo-link" :class="props.item.memo ? 'memo-over' : ''"
                 @click.stop.prevent="onClickMemo(props.item)">{{ props.item.memo }}</td>
           </tr>
+        </template>
+        <template slot="pageText" slot-scope="{pageStart, pageStop, itemsLength}">
+          전체 {{itemsLength}}개 중 {{ pageStart }} ~ {{ pageStop }}
         </template>
         <template slot="no-data" v-if="queried">
           <div class="text-xs-center">결과 내역이 없습니다.</div>
@@ -179,9 +184,12 @@ export default {
     selected: {},
     peopleFinder: false,
     churchFinder: false,
+    perPage: [50, 100, 200, {text: '$vuetify.dataIterator.rowsPerPageAll', value: -1}],
+    pagination: { sortBy: 'id' },
     params: {
       au_date: null,
-      v_name: ''
+      v_name: '',
+      s_name: ''
     },
     headers: [
       { text: 'ID', value: 'id' },
@@ -200,16 +208,17 @@ export default {
       this.resetCode()
       this.params.au_date = null
       this.params.v_name = ''
+      this.params.s_name = ''
       this.small.model = ''
     },
     submit () {
-      let isEmpty = true
+      // let isEmpty = true
       Object.keys(this.formData).forEach(f => {
         const obj = this.formData[f]
-        if (obj) isEmpty = false
+        // if (obj) isEmpty = false
         if (f === 'v_name') this.params.v_name = obj && obj.replace(/\s*/g, '')
       })
-      if (isEmpty) return alert('조회할 항목을 설정하세요.')
+      // if (isEmpty) return alert('조회할 항목을 설정하세요.')
       console.log(this.formData)
       this.$store.dispatch(QUERY_VOLUNTEERS, this.formData)
       this.queried = true

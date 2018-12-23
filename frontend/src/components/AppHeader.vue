@@ -1,7 +1,8 @@
 <template>
   <div>
     <v-toolbar color="blue lighten-4" light tabs app>
-      <v-icon>account_balance</v-icon>
+      <!--<v-img src="../static/logo.png" width="100" height="50"></v-img>-->
+      <div class="logo"></div>
       <v-toolbar-title class="headline font-weight-medium" @click="onSelect('home')">가톨릭성서모임</v-toolbar-title>
       <v-spacer></v-spacer>
       <!--<v-btn icon>
@@ -70,5 +71,11 @@ export default {
 <style scoped>
   .header {
     padding: 15px 0;
+  }
+  .logo {
+    height:50px;
+    width:100px;
+    background: url('/static/logo.png') no-repeat;
+    background-size: cover;
   }
 </style>

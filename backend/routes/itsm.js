@@ -16,6 +16,11 @@ router.get('/actionLogin.do', (req, res) => {
   const data = {userNm: '관리자', result: is}
   res.status(200).send({data})
 })
+router.get('/actionBypass.do', (req, res) => {
+  console.log('check byBass')
+  const data = {userNm: '관리자', result: true}
+  res.status(200).send({data})
+})
 router.get('/actionLogout.do', (req, res) => {
   res.status(200).send({isSuccess: true})
 })

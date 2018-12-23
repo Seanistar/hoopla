@@ -37,6 +37,7 @@ export default {
   name: 'QueryEdus',
   mixins: [ QueryMixin ],
   components: { InlineTextBox },
+  created () { this.e_type = 'E' },
   methods: {
     twoLine (name) {
       return name.replace('-', '<br>')

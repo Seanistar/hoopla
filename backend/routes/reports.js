@@ -50,8 +50,8 @@ router.get('/acts', (req, res) => {
     FROM acts a
     LEFT JOIN volunteers v ON a.v_id = v.id
     LEFT JOIN edu_code e ON e.code = a.act_code
-    WHERE a.area_code=? AND a.s_date>=?`, //  AND a.e_date<=?
-    [a_code, s_date] // e_date
+    WHERE a.area_code=? AND (a.s_date>=? AND a.s_date<=?)`, //  AND a.e_date<=?
+    [a_code, s_date, e_date]
   ]
   console.log('report acts...' + sql)
   db.query(...sql, (err, rows) => {
