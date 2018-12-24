@@ -1,12 +1,12 @@
 import { CodeService } from '@/common/api.service'
 import {
   FETCH_EDU_CODES, UPDATE_EDUS_CODE,
-  FETCH_AREA_CODES, UPDATE_AREA_CODE, DELETE_AREA_CODE } from './actions.type'
+  FETCH_AREA_CODES, UPDATE_AREA_CODE, DELETE_AREA_CODE } from '../actions.type'
 import {
   FETCH_START,
   FETCH_EDU_CODES_END, SET_EDUS_CODE,
   FETCH_AREA_CODES_END,
-  SET_AREA_CODE, REMOVE_AREA_CODE } from './mutations.type'
+  SET_AREA_CODE, REMOVE_AREA_CODE } from '../mutations.type'
 import { filter } from 'lodash/collection'
 
 const state = {

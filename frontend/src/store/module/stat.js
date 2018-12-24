@@ -1,6 +1,6 @@
 import { StatService } from '@/common/api.service'
-import { FETCH_STAT_YEARLY, FETCH_STAT_CHURCH } from './actions.type'
-import { FETCH_STAT_YEARLY_END, FETCH_STAT_CHURCH_END, FETCH_START } from './mutations.type'
+import { FETCH_STAT_YEARLY, FETCH_STAT_CHURCH } from '../actions.type'
+import { FETCH_STAT_YEARLY_END, FETCH_STAT_CHURCH_END, FETCH_START } from '../mutations.type'
 
 const state = {
   isLoading: false,

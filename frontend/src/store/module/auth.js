@@ -1,6 +1,6 @@
 import { AuthService } from '@/common/api.service'
-import { CHECK_AUTH } from './actions.type'
-import { SET_AUTH, INIT_AUTH, REMOVE_AUTH } from './mutations.type'
+import { CHECK_AUTH } from '../actions.type'
+import { SET_AUTH, INIT_AUTH, REMOVE_AUTH } from '../mutations.type'
 import JwtService from '@/common/jwt.service'
 
 const state = {

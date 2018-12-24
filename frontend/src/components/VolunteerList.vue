@@ -3,12 +3,12 @@
     <v-layout row align-baseline pb-0>
       <v-flex xs6>
         <v-layout row align-baseline>
-          <v-flex xs2>
+          <!--<v-flex xs2>
             <v-subheader class="body-2 pr-0"><span>소속본당 : </span></v-subheader>
-          </v-flex>
-          <v-flex xs5>
+          </v-flex>-->
+          <v-flex xs3>
             <v-combobox class="body-2" v-model="model"
-                        @input="fetchVolunteers()"
+                        @input="fetchVolunteers()" label="소속 본당"
                         :items="items" item-value="code" item-text="name"
                         :search-input.sync="search" clearable single-line>
               <template slot="no-data"><!--:disabled="authInfo.level === 'L3'"-->

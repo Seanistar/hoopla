@@ -259,17 +259,16 @@ export default {
     if (this.r_id) {
       this.fetch()
     } else {
-      const res = this.$parent.getSmall()
-      if (res) {
-        this.states.ro.s_name = res.s_name
-        this.states.ro.s_code = res.s_code
-        this.arrangeDate()
-        const rcd = `${res.s_code}-${this.states.ro.r_year}-${this.states.ro.r_half}`
-        const one = find(this.reports, o => o.r_code === rcd)
-        if (one) {
-          alert('이미 보고된 리포트가 존재합니다! 해당 리포트로 이동합니다.')
-          this.fetch(this.$parent.RID = one.id)
-        }
+      const {sName, sCode, rYear, rHalf} = this.$parent.getReportInfo()
+
+      this.states.ro.s_name = sName
+      this.states.ro.s_code = sCode
+      this.arrangeDate(rYear, rHalf)
+      const rcd = `${sCode}-${this.states.ro.r_year}-${this.states.ro.r_half}`
+      const one = find(this.reports, o => o.r_code === rcd)
+      if (one) {
+        alert('이미 보고된 리포트가 존재합니다! 해당 리포트로 이동합니다.')
+        this.fetch(this.$parent.RID = one.id)
       }
     }
   },
@@ -407,7 +406,23 @@ export default {
         })
       })
     },
-    arrangeDate () { // 현재 날짜에 따른 보고 기간 자동 설정
+    arrangeDate (rYear, rHalf) {
+      if (rHalf === 'A') {
+        this.states.ro.s_date = `${rYear - 1}-09`
+        this.states.ro.e_date = `${rYear}-02`
+        this.states.ro.r_year = rYear
+        this.states.ro.r_half = 'A'
+      } else {
+        this.states.ro.s_date = `${rYear}-03`
+        this.states.ro.e_date = `${rYear}-08`
+        this.states.ro.r_year = rYear
+        this.states.ro.r_half = 'B'
+      }
+      const lastDay = rHalf === 'A' ? '28' : '31'
+      this.$parent.S_DATE = `${this.states.ro.s_date}-01`
+      this.$parent.E_DATE = `${this.states.ro.e_date}-${lastDay}`
+    },
+    arrangeDate2 () { // 현재 날짜에 따른 보고 기간 자동 설정
       const _d = new Date()
       const thisYear = _d.getFullYear()
       const thisMonth = _d.getMonth() + 1

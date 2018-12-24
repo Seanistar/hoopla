@@ -1,6 +1,6 @@
 import { AuthorService } from '@/common/api.service'
-import { FETCH_AUTHORS } from './actions.type'
-import { FETCH_START, FETCH_AUTHORS_END } from './mutations.type'
+import { FETCH_AUTHORS } from '../actions.type'
+import { FETCH_START, FETCH_AUTHORS_END } from '../mutations.type'
 
 const state = {
   authors: [],

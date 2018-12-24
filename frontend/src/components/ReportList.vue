@@ -3,11 +3,11 @@
     <v-layout row wrap pb-0 align-baseline>
       <v-flex xs6>
         <v-layout row align-baseline>
-          <v-flex xs2>
+          <!--<v-flex xs2>
             <v-subheader class="body-2 pr-0">소속본당 : </v-subheader>
-          </v-flex>
-          <v-flex xs5>
-            <v-combobox class="body-2" @input="fetchReports()"
+          </v-flex>-->
+          <v-flex xs3>
+            <v-combobox label="소속본당" class="body-2" @input="fetchReports()"
                         v-model="model" :items="items" item-value="code" item-text="name"
                         :search-input.sync="search" clearable single-line> <!--:disabled="authInfo.level === 'L3'"-->
               <template slot="no-data">
@@ -20,6 +20,15 @@
                 </v-list-tile>
               </template>
             </v-combobox>
+          </v-flex>
+          <v-flex xs3>
+            <v-select label="연도선택" class="ml-3 pl-4 w-90 text-xs-center body-1" single-line
+                      :items="years" v-model="rYear"></v-select>
+          </v-flex>
+          <v-flex xs3>
+            <v-select label="기간선택" class="ml-3 pl-4 w-90 text-xs-center body-1" single-line
+                    :items="[{nm: '상반기', vl: 'A'}, {nm: '하반기', vl: 'B'}]"
+                    item-text="nm" item-value="vl" v-model="rHalf"></v-select>
           </v-flex>
         </v-layout>
       </v-flex>
@@ -39,6 +48,7 @@
             :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
           <td class="text-xs-center">{{ props.item.r_year }}</td>
           <td class="text-xs-center">{{ props.item.r_half === 'A' ? '상반기' : '하반기' }}</td>
+          <td class="text-xs-center">{{ props.item.area_name }}</td>
           <td class="text-xs-center">{{ props.item.name }}</td>
           <!--<td class="text-xs-center">{{ props.item.phone|formatted }}</td>-->
           <td class="text-xs-center">{{ props.item.created|datestamp }}</td>
@@ -60,6 +70,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { map, find, orderBy } from 'lodash/collection'
+import { range } from 'lodash/util'
 import { FETCH_REPORTS, DELETE_REPORT, FETCH_SMALL_LEADER } from '@/store/actions.type'
 import { SET_CHANGED_CODE } from '@/store/mutations.type'
 
@@ -75,7 +86,11 @@ export default {
       'changedCodes',
       'reports',
       'reportCount'
-    ])
+    ]),
+    years () {
+      const start = (new Date()).getFullYear() + 1
+      return ['선택없음'].concat(range(start, 2010, -1))
+    }
   },
   watch: {
     model (obj) {
@@ -88,10 +103,13 @@ export default {
     search: null,
     fetched: false,
     selected: {},
+    rYear: '',
+    rHalf: '',
     pagination: {descending: true},
     headers: [
       { text: '보고연도', value: 'r_code' },
-      { text: '상/하반기', value: 'r_half' },
+      { text: '기간구분', value: 'r_half' },
+      { text: '소속', value: 'area_name' },
       { text: '작성자', value: 'name' },
       { text: '작성일', value: 'created' },
       { text: '봉사자수', value: 'number' },
@@ -101,6 +119,10 @@ export default {
   }),
   created () {
     this.headers.map(h => { h.class = ['text-xs-center', 'body-1'] })
+  },
+  mounted () {
+    const label = document.getElementsByClassName('v-label')
+    console.log(label)
   },
   methods: {
     async fetchReports (code) {
@@ -112,9 +134,10 @@ export default {
       reqCode && this.$store.commit(SET_CHANGED_CODE, {type: 'rl_ac', code: reqCode})
     },
     async newReport () {
-      if (!this.model || !this.model.code) return alert('본당을 선택하세요!')
+      if (!this.model || !this.model.code || !this.rYear || !this.rHalf) return alert('보고서 조건을 선택하세요!')
       await this.$store.dispatch(FETCH_SMALL_LEADER, this.model.code)
-      this.$router.push({name: 'edit-report'})
+      const rObj = {sCode: this.model.code, sName: this.model.name, rYear: this.rYear, rHalf: this.rHalf}
+      this.$router.push({name: 'edit-report', params: {rObj}})
     },
     async editReport (id, sCode) {
       if (!sCode) return alert('본당을 선택하세요!')
@@ -158,4 +181,7 @@ export default {
 </script>
 
 <style scoped>
+  .w-100px {
+    width: 100px;
+  }
 </style>

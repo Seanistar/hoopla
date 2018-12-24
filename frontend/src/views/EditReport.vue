@@ -24,7 +24,7 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'EditReport',
   components: { ReportStates, ReportVolunteers, ReportActs, FloatButton },
-  props: { id: undefined },
+  props: { id: undefined, rObj: Object },
   computed: {
     ...mapGetters([
       'smallCodes',
@@ -67,7 +67,10 @@ export default {
   created () {
     this.r_id = this.id
   },
-  methods: {
+  methods: { // 신규 생성 시 무조건 지정해서 들어온다. (s_code, s_name, r_year, r_half)
+    getReportInfo () {
+      return this.rObj
+    },
     getSmall () { // 신규 생성에서 접근할 때
       if (this.S_CODE && this.S_NAME) return { s_code: this.S_CODE, s_name: this.S_NAME }
       let sc = this.changedCodes.rl_ac

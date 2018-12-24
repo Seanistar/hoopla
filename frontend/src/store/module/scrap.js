@@ -5,14 +5,14 @@ import {
   CREATE_SCRAP,
   UPDATE_SCRAP,
   DELETE_SCRAP
-} from './actions.type'
+} from '../actions.type'
 import {
   FETCH_START,
   FETCH_SCRAPS_END,
   ADD_SCRAP,
   SET_SCRAP,
   REMOVE_SCRAP
-} from './mutations.type'
+} from '../mutations.type'
 import DateFilter from '@/common/date.filter'
 
 const state = {

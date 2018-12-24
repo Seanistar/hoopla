@@ -6,7 +6,7 @@ import {
   REGISTER_ADMIN,
   UPDATE_ADMIN,
   DELETE_ADMIN
-} from './actions.type'
+} from '../actions.type'
 import {
   INIT_AUTH,
   SET_LOGIN,
@@ -14,7 +14,7 @@ import {
   FETCH_ADMINS_END,
   SET_ADMIN,
   REMOVE_ADMIN
-} from './mutations.type'
+} from '../mutations.type'
 
 const state = {
   isLogin: false,

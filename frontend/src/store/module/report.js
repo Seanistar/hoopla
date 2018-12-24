@@ -6,7 +6,7 @@ import {
   FETCH_SMALL_LEADER,
   CREATE_REPORT, UPDATE_REPORT, DELETE_REPORT,
   CREATE_REPORT_ACT, UPDATE_REPORT_ACT, DELETE_REPORT_ACT
-} from './actions.type'
+} from '../actions.type'
 import {
   FETCH_START,
   FETCH_REPORTS_END,
@@ -16,7 +16,8 @@ import {
   SET_SMALL_LEADER,
   ADD_REPORT, SET_REPORT, REMOVE_REPORT,
   SET_REPORT_ACT, ADD_REPORT_ACT, REMOVE_REPORT_ACT
-} from './mutations.type'
+} from '../mutations.type'
+import { map, find } from 'lodash/collection'
 
 const state = {
   reports: [],
@@ -168,7 +169,12 @@ const mutations = {
     state.isLoading = true
   },
   [FETCH_REPORTS_END] (state, reports) {
-    state.reports = reports
+    const mapped = map(reports, (ro) => {
+      const area = find(this.getters['areaCodes'], (o) => o.a_code === ro.s_code)
+      if (area) ro.area_name = `${area.l_name} 교구 / ${area.s_name} 본당`
+      return ro
+    })
+    state.reports = mapped
     state.reportsCount = reports.length
     state.isLoading = false
   },
