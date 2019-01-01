@@ -16,7 +16,7 @@
                   <span class="subheading">봉사자들의 그룹공부, 연수현황, 월교육, 재교육, 특강, 피정, 전출입, 노트검사 및 보완 교육 등을 체계적으로 정리하여 성서모임 수녀님들이 함께 공유하는 데 목적이 있습니다.</span>
                   <v-divider class="my-4"></v-divider>
                   <v-data-table hide-actions light
-                                :headers="headers" :items="bodies" class="elevation-1"
+                                :headers="headers" :items="bodies" class="elevation-1 admin-table"
                                 item-key="id">
                     <template slot="headers" slot-scope="props">
                       <tr>
@@ -152,6 +152,7 @@ export default {
     },
     onLogin (id) {
       this.admin.id = id
+      this.admin.pwd = ''
       this.dialog = true
     }
   }
@@ -165,5 +166,10 @@ export default {
   }
   td {
     cursor: pointer;
+  }
+  .admin-table {
+    overflow-x: auto;
+    width: 730px;
+    padding: 0 5px;
   }
 </style>
