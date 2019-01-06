@@ -20,7 +20,7 @@
             ></v-select>
           </v-flex>
           <v-flex xs3>
-            <v-select label="본당" v-model="areaCode.sa_code"
+            <v-select label="본당" v-model="areaCode.sa_code" :rules="[rules.required]"
                       @change="onChangeAreaCode" no-data-text="본당 자료가 없습니다."
                       :items="sAreaCodes" item-text="s_name" item-value="s_code" :disabled="areaCode.ma_code === ''"
             ></v-select>
@@ -191,7 +191,8 @@ export default {
       sex: 'F',
       area_code: '01-01-01',
       ls_date: null,
-      l_work: null
+      l_work: null,
+      state: {cd: 'ACT', nm: '활동중'}
     },
     rules: {
       required: value => !!value || '필수 항목입니다.',

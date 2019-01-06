@@ -1,7 +1,8 @@
 const FiltersMixin = {
   filters: {
     yearKey (val) {
-      return Object.keys(val)[0]
+      const key = Object.keys(val)[0]
+      return key === 'null' ? '일시 없음' : key
     },
     yearBy (val) {
       const key = Object.keys(val)[0]

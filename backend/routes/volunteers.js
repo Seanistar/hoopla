@@ -147,12 +147,12 @@ router.get('/edu/:id', (req, res) => {
 })
 
 router.put('/edu', async (req, res) => {
-  const {v_id, edu_code, s_date, e_date, gv_id, area_code, gv_name, months, memo} = req.body
+  const {v_id, edu_code, s_date, e_date, gv_id, area_code, gv_name, months, r_year, memo} = req.body
   if (edu_code === 53) { // 월교육 다중 생성
     const mns = months && months.split(',')
     let ms = []
     for (let m of mns) {
-      let r = await insertEduItem(v_id, edu_code, m, gv_id, area_code, gv_name, memo)
+      let r = await insertEduItem(v_id, edu_code, m, r_year, gv_id, area_code, gv_name, memo)
       if(!r) return res.status(500).send('Internal Server Error')
       else ms.push(r)
     }
@@ -175,9 +175,10 @@ router.put('/edu', async (req, res) => {
   }
 })
 
-const insertEduItem = (v_id, e_code, month, gv_id, area_code, gv_name, memo) => {
+const insertEduItem = (v_id, e_code, month, r_year, gv_id, area_code, gv_name, memo) => {
   return new _promise(function(resolve) {
     let d = new Date()
+    d.setFullYear(r_year)
     d.setMonth(month-1)
     d.setDate(1)
     const s_date = d.toISOString().substr(0, 10)
@@ -314,7 +315,7 @@ router.delete('/act/:id', (req, res) => {
  * volunteer querying
  */
 router.get('/query', async (req, res) => {
-  const {a_code, au_date, v_name, sa_code, s_name, memo} = req.query
+  const {a_code, au_s_date, au_e_date, v_name, sa_code, s_name, memo} = req.query
   const sns = s_name && await getSmallCodes(s_name)
   let sql = `
     SELECT vl.*, ac.l_name la_name, ac.m_name ma_name, ac.s_name sa_name,
@@ -322,8 +323,11 @@ router.get('/query', async (req, res) => {
     (SELECT COUNT(DISTINCT id) FROM acts WHERE v_id = vl.id) act_count 
     FROM volunteers vl LEFT JOIN area_code ac ON vl.area_code = ac.a_code
     WHERE 1 = 1`
+  // (SELECT COUNT(DISTINCT id) FROM edus e INNER JOIN edu_code ec ON e.edu_code = ec.code WHERE v_id = vl.id AND ec.type ='G') grp_count,
+  if (au_s_date && au_e_date) sql += ` AND YEAR(vl.au_date) >= ${au_s_date} AND YEAR(vl.au_date) <= ${au_e_date}`
+  else if (au_s_date) sql += ` AND YEAR(vl.au_date) >= ${au_s_date}`
+  else if (au_e_date) sql += ` AND YEAR(vl.au_date) <= ${au_e_date}`
   if (a_code) sql += ` AND vl.area_code like (\'${a_code}%\')`
-  if (au_date) sql += ` AND YEAR(vl.au_date) = ${au_date}`
   if (v_name) sql += ` AND vl.name like (\'%${v_name}%\')`
   if (sa_code) sql += ` AND vl.area_code = (\'${sa_code}\')`
   if (memo) sql += ` AND vl.memo like (\'%${memo}%\')`

@@ -18,15 +18,16 @@ import QueryEdus from '@/components/QueryEdus'
 import QueryBibles from '@/components/QueryBibles'
 import QueryActs from '@/components/QueryActs'
 import QueryNotes from '@/components/QueryNotes'
+import QueryGroup from '@/components/QueryGroup'
 import FloatButton from '@/components/control/FloatButton'
 
 export default {
   name: 'PartQuery',
-  components: { QueryEdus, QueryNotes, QueryBibles, QueryActs, FloatButton },
+  components: { QueryEdus, QueryNotes, QueryBibles, QueryGroup, QueryActs, FloatButton },
   props: { id: null },
   computed: {
     targetComponents () {
-      return ['QueryEdus', 'QueryBibles', 'QueryNotes', 'QueryActs']
+      return ['QueryEdus', 'QueryBibles', 'QueryNotes', 'QueryGroup', 'QueryActs']
     }
   },
   watch: {
@@ -35,7 +36,7 @@ export default {
   },
   data: () => ({
     tabIdx: 0,
-    titles: ['기본 교육 현황', '성서 연수 현황', '노트 검사 현황', '그룹 봉사 현황']
+    titles: ['기본 교육 현황', '성서 연수 현황', '노트 검사 현황', '그룹 공부 현황', '봉사 현황']
   })
 }
 </script>

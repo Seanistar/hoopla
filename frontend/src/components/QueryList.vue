@@ -22,9 +22,18 @@
           </v-layout>
           <v-layout row wrap pl-2>
             <v-flex xs3>
-              <v-select label="선서 연도" v-model="params.au_date" hide-details
-                        :items="years" class="body-1"
-              ></v-select>
+              <v-layout>
+                <v-flex xs6>
+                <v-select label="선서연도 시작" v-model="params.au_s_date" hide-details
+                          :items="years" class="body-1"
+                ></v-select>
+                </v-flex>
+                <v-flex xs6 ml-2>
+                  <v-select label="선서연도 끝" v-model="params.au_e_date" hide-details
+                            :items="years" class="body-1"
+                  ></v-select>
+                </v-flex>
+              </v-layout>
             </v-flex>
             <v-flex xs3>
               <v-text-field label="봉사자 이름" v-model="params.v_name" hide-details></v-text-field>
@@ -84,6 +93,7 @@
             <td class="text-xs-center w-15">{{ props.item.la_name }}</td>
             <td class="text-xs-center w-15">{{ props.item.sa_name }}</td>
             <td class="text-xs-center w-5">{{ props.item.edu_count }}</td>
+            <!--<td class="text-xs-center w-5">{{ props.item.grp_count }}</td>-->
             <td class="text-xs-center w-5">{{ props.item.act_count }}</td>
             <td class="text-xs-center w-15 memo-link" :class="props.item.memo ? 'memo-over' : ''"
                 @click.stop.prevent="onClickMemo(props.item)">{{ props.item.memo }}</td>
@@ -147,8 +157,8 @@ export default {
       } */
       this.params.sa_code = obj ? obj.code : ''
     },
-    'params.au_date' (val) {
-      if (val && val === '선택없음') this.params.au_date = ''
+    'params.au_s_date' (val) {
+      if (val && val === '선택없음') this.params.au_s_date = ''
     }
   },
   created () {
@@ -187,9 +197,11 @@ export default {
     perPage: [50, 100, 200, {text: '$vuetify.dataIterator.rowsPerPageAll', value: -1}],
     pagination: { sortBy: 'id' },
     params: {
-      au_date: null,
+      au_s_date: null,
+      au_e_date: null,
       v_name: '',
-      s_name: ''
+      s_name: '',
+      memo: ''
     },
     headers: [
       { text: 'ID', value: 'id' },
@@ -199,6 +211,7 @@ export default {
       { text: '교구명', value: 'la_name' },
       { text: '본당명', value: 'sa_name' },
       { text: '교육', value: 'edu_cnt' },
+      // { text: '그룹', value: 'grp_cnt' },
       { text: '봉사', value: 'act_cnt' },
       { text: '메모', value: 'memo' }
     ]
@@ -206,9 +219,8 @@ export default {
   methods: {
     reset () {
       this.resetCode()
-      this.params.au_date = null
-      this.params.v_name = ''
-      this.params.s_name = ''
+      this.params.au_s_date = this.params.au_e_date = null
+      this.params.v_name = this.params.s_name = this.params.memo = ''
       this.small.model = ''
     },
     submit () {

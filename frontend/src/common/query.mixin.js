@@ -10,6 +10,7 @@ const QueryMixin = {
       'trnCodes', // bible train
       'actCodes',
       'stdCodes', // check notes
+      'grpCodes',
       'queryInfo',
       'queriedVoltItems'
     ])

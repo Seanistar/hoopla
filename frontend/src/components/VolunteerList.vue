@@ -131,8 +131,8 @@ export default {
       reqCode && this.$store.commit(SET_CHANGED_CODE, {type: 'vl_ac', code: reqCode})
     },
     async newVolunteer () {
-      if (!this.model || !this.model.code) return alert('본당을 선택하세요!')
-      await this.$store.dispatch(FETCH_SMALL_LEADER, this.model.code)
+      // if (!this.model || !this.model.code) return alert('본당을 선택하세요!')
+      // await this.$store.dispatch(FETCH_SMALL_LEADER, this.model.code)
       this.$router.push({name: 'edit-volunteer'})
     },
     editItem (item) {

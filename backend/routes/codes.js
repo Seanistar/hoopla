@@ -4,7 +4,7 @@ const db = require('../common/db.mysql')
 const _promise = require('bluebird')
 
 router.get('/edu', (req, res)=> {
-  db.query('SELECT * FROM edu_code', (err, rows) => {
+  db.query('SELECT * FROM edu_code WHERE used=\'Y\'', (err, rows) => {
     if (!err) {
       res.status(200).send(rows)
     } else {

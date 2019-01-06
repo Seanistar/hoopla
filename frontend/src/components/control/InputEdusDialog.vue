@@ -22,10 +22,15 @@
                               :disabled="item.id !== 0 || (item.id === 0 && item.name !== undefined)"
                               hide-details></v-text-field>
               </v-flex>
-              <v-flex xs12>
+              <v-flex :class="isMonthEdu ? 'xs6' : 'xs12'">
                 <v-select label="교육 항목" v-model="item.edu_code" hide-details
                           :items="eduCodes" item-text="name" item-value="code"
                 ></v-select>
+              </v-flex>
+              <v-flex xs6 v-if="isMonthEdu">
+              <v-select label="연도선택" class="ml-3 pl-4 w-90 text-xs-center body-1" single-line
+                        :items="years" v-model="item.r_year"
+              ></v-select>
               </v-flex>
               <v-flex xs12 v-if="isMonthEdu"> <!-- 월교육인 경우에만 보여줌 -->
                 <v-layout wrap>
@@ -43,14 +48,16 @@
                   <v-checkbox v-model="selected" label="12월" value="12"></v-checkbox>
                 </v-layout>
               </v-flex>
-              <v-flex xs6>
-                <date-picker ref="s_date" title="교육 시작일" :disabled="isMonthEdu"
-                             @close-date-picker="onPicked" refs="s_date"></date-picker>
-              </v-flex>
-              <v-flex xs6>
-                <date-picker ref="e_date" title="교육 종료일" :disabled="isMonthEdu"
-                             @close-date-picker="onPicked" refs="e_date"></date-picker>
-              </v-flex>
+              <template v-else>
+                <v-flex xs6>
+                  <date-picker ref="s_date" title="교육 시작일" :disabled="isMonthEdu"
+                               @close-date-picker="onPicked" refs="s_date"></date-picker>
+                </v-flex>
+                <v-flex xs6>
+                  <date-picker ref="e_date" title="교육 종료일" :disabled="isMonthEdu"
+                               @close-date-picker="onPicked" refs="e_date"></date-picker>
+                </v-flex>
+              </template>
               <v-flex xs8>
                 <v-text-field label="봉사자 이름" v-model="item.gv_name"
                               @focus="finder = false" clearable hide-details></v-text-field>
@@ -85,6 +92,7 @@ import PeopleDialog from './FindPeopleDialog'
 import { ACTIVITY_STATES } from '../../common/const.info'
 import { mapGetters } from 'vuex'
 import { cloneDeep } from 'lodash/lang'
+import { range } from 'lodash/util'
 
 export default {
   name: 'EdusDialog',
@@ -108,6 +116,10 @@ export default {
     },
     isMonthEdu () {
       return this.item.edu_code === 53 && !this.item.id
+    },
+    years () {
+      const start = (new Date()).getFullYear()
+      return ['선택없음'].concat(range(start, 2010, -1))
     }
   },
   watch: {
@@ -131,12 +143,14 @@ export default {
     item: { id: 0 }
   }),
   created () {
-    this.item.s_date = this.item.e_date = ''
+    this.item.s_date = this.item.e_date = this.item.r_year = ''
     this.item.edu_code = this.item.edu_name = null
   },
   methods: {
     closeDialog () {
-      if (this.item.edu_code !== 53) {
+      if (this.item.edu_code === 53) {
+        if (!this.item.r_year) return alert('시작 연도를 확인해주세요!')
+      } else {
         if (!this.item.e_date || !this.item.s_date) return alert('기간을 확인해주세요!')
         if (this.item.e_date < this.item.s_date) {
           this.$refs['e_date'].setDate(null)

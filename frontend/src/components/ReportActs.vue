@@ -2,7 +2,7 @@
   <v-container pt-2 pb-2>
     <v-layout row wrap align-center mb-1>
       <v-flex xs3>
-        <v-subheader class="subheading font-weight-bold pr-0">{{small.nm}} 본당
+        <v-subheader class="subheading font-weight-bold pr-0">{{small.nm}} 본당 ({{reportYear}})
         </v-subheader>
       </v-flex>
       <v-flex xs9>
@@ -105,6 +105,7 @@ export default {
       this.small.nm = res.s_name
       this.fetchData(this.small.cd = res.s_code)
     }
+    this.reportYear = parseInt(this.$parent.E_DATE.slice(0, 4))
   },
   data: () => ({
     items: [],
@@ -113,6 +114,7 @@ export default {
     inputDlg: false,
     fetched: false,
     isEnabled: true,
+    reportYear: '',
     small: { nm: '', cd: '' },
     headers: [
       { text: '번호', value: 'idx' },
