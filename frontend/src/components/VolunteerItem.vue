@@ -136,13 +136,13 @@
       </v-container>
 
       <v-layout justify-end mb-1>
-        <div>
+        <v-flex xs9>
+        <!--<v-btn color="indigo accent-2" outline class="mb-2" @click="reset">신규 봉사자</v-btn>-->
+        </v-flex>
+        <v-flex xs3 offset-xs2>
           <v-btn color="black accent-2" outline class="mb-2" @click="$router.back()">취소</v-btn>
-        </div>
-        <div>
-          <v-btn color="orange accent-2" outline class="mb-2" @click="reset" v-if="false">초기화</v-btn>
           <v-btn color="indigo accent-2" outline class="mb-2" @click="submit" :disabled="isDisabled">{{!isEditMode ? '추가' : '수정'}}</v-btn>
-        </div>
+        </v-flex>
       </v-layout>
     </v-form>
   </v-container>
@@ -333,21 +333,22 @@ export default {
       }
     },
     reset () {
-      Object.keys(this.form).forEach(f => {
+      /* Object.keys(this.form).forEach(f => {
         this.$refs[f] !== undefined && this.$refs[f].reset()
         this.$data.params[f] = null
-      })
+      }) */
+      this.$router.replace({name: 'edit-volunteer', params: {id: 0}})
     },
     submit () {
       if (!this.$refs.form.validate()) {
         return alert('입력 데이터를 확인해주세요.')
       }
 
-      /* Object.keys(this.form).forEach(f => {
+      Object.keys(this.form).forEach(f => {
         let obj = this.form[f]
-        if (obj && f === 'ca_id') this.params.ca_id = obj.substr(8)
-        console.log(obj)
-      }) */
+        if (obj && f === 'state') this.form[f] = obj.cd
+        // console.log(obj)
+      })
 
       // console.log(this.form)
       if (!this.isEditMode) {
