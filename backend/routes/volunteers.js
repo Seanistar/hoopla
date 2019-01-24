@@ -21,7 +21,7 @@ router.get('', (req, res) => {
     if (!err) {
       res.status(200).send(rows)
     } else {
-      console.warn('query error : ' + err)
+      console.warn('query v error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })
@@ -40,13 +40,14 @@ router.get('/page/:id', (req, res) => {
     if (!err) {
       res.status(200).send(rows)
     } else {
-      console.warn('query error : ' + err)
+      console.warn('query vl error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })
 })
 
 router.put('/', (req, res) => {
+  console.log(req.body)
   const {name, ca_name, br_date, ca_date, state, area_code, sex, ca_id, email, phone, address, job, degree, au_date, memo} = req.body
   const sql = [`
     INSERT INTO volunteers (name, ca_name, br_date, ca_date, state, area_code, sex, ca_id, email, phone, address, job, degree, au_date, memo) 
@@ -59,7 +60,7 @@ router.put('/', (req, res) => {
       res.status(200).send({newID: rows.insertId})
       // res.redirect(`/scrap/${rows.insertId}`)
     } else {
-      console.warn('query error : ' + err)
+      console.warn('query insert error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })
@@ -81,7 +82,7 @@ router.post('/page/:id', (req, res) => {
       res.status(200).send({success: true})
       // res.redirect(`/scrap/${id}`)
     } else {
-      console.log('query error : ' + err)
+      console.log('query update error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })

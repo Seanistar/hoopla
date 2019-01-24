@@ -19,6 +19,8 @@ import {
   FETCH_VOLUNTEER_HISTORY_END, ADD_VOLUNTEER_HISTORY
 } from '../mutations.type'
 
+import { orderBy } from 'lodash/collection'
+
 const state = {
   volunteers: [],
   volunteerEdus: [],
@@ -362,7 +364,7 @@ const mutations = {
   },
   [QUERY_VOLUNTEERS_END] (state, results) {
     // console.log(results)
-    state.queryResult = results
+    state.queryResult = orderBy(results, ['au_date', 'sa_name'], ['desc', 'asc'])
     state.queryCount = results.length
     state.isQuerying = false
   },

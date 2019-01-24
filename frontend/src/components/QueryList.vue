@@ -78,23 +78,25 @@
           <div>조회 결과 수 : {{queryCount}} 건</div>
         </v-flex>
       </v-layout>
-      <v-data-table :headers="headers" :items="queryVolunteers" :loading="queried && isQuerying"
-                    :pagination.sync="pagination" :rows-per-page-items="perPage"
+      <v-data-table :headers="headers" :items="queryVolunteers"
+                    :loading="queried && isQuerying" :disable-initial-sort="true"
+                    :rows-per-page-items="perPage"
                     rows-per-page-text="페이지 당 보기 개수" no-data-text="조회 조건을 선택하세요."
-      >
+      > <!--:pagination.sync="pagination"-->
         <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
         <template slot="items" slot-scope="props">
           <tr @click="selected = props.item" @dblclick="onClickResult(props.item)"
               :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
-            <td class="text-xs-center w-10">{{ props.item.id }}</td>
+            <td class="text-xs-center w-4">{{ props.index + 1 }}</td>
+            <td class="text-xs-center w-10">{{ props.item.ca_id }}</td>
             <td class="text-xs-center w-10">{{ props.item.name }}</td>
             <td class="text-xs-center w-15">{{ props.item.ca_name }}</td>
-            <td class="text-xs-center w-10">{{ props.item.au_date|yearstamp }}</td>
-            <td class="text-xs-center w-15">{{ props.item.la_name }}</td>
+            <td class="text-xs-center w-10">{{ props.item.au_date|monthstamp }}</td>
+            <td class="text-xs-center w-13">{{ props.item.la_name }}</td>
             <td class="text-xs-center w-15">{{ props.item.sa_name }}</td>
-            <td class="text-xs-center w-5">{{ props.item.edu_count }}</td>
+            <td class="text-xs-center w-4">{{ props.item.edu_count }}</td>
             <!--<td class="text-xs-center w-5">{{ props.item.grp_count }}</td>-->
-            <td class="text-xs-center w-5">{{ props.item.act_count }}</td>
+            <td class="text-xs-center w-4">{{ props.item.act_count }}</td>
             <td class="text-xs-center w-15 memo-link" :class="props.item.memo ? 'memo-over' : ''"
                 @click.stop.prevent="onClickMemo(props.item)">{{ props.item.memo }}</td>
           </tr>
@@ -163,7 +165,7 @@ export default {
   },
   created () {
     this.headers.map(h => {
-      h.class = ['text-xs-center', 'body-2', 'pl-39x',
+      h.class = ['text-xs-center', 'body-2', 'pl-20x',
         h.value.indexOf('_cnt') > 0 ? 'w-5' : 'w-10']
     })
     const list = map(this.smallCodes(null), o => {
@@ -204,14 +206,14 @@ export default {
       memo: ''
     },
     headers: [
-      { text: 'ID', value: 'id' },
+      { text: '순번', value: 'idx_cnt' },
+      { text: '고유번호', value: 'ca_id' },
       { text: '성명', value: 'name' },
       { text: '세례명', value: 'ca_name' },
       { text: '선서일', value: 'au_date' },
       { text: '교구명', value: 'la_name' },
       { text: '본당명', value: 'sa_name' },
       { text: '교육', value: 'edu_cnt' },
-      // { text: '그룹', value: 'grp_cnt' },
       { text: '봉사', value: 'act_cnt' },
       { text: '메모', value: 'memo' }
     ]
@@ -279,9 +281,17 @@ export default {
   .t-18p {
     top: 18%;
   }
-  .w-5 {
-    width: 5% !important;
+  tr td { padding: 0 !important;}
+  .w-4 {
+    width: 4% !important;
   }
+  .w-13 {
+    width: 13% !important;
+  }
+  .w-15 {
+    width: 15% !important;
+  }
+  .pl-20x { padding-left: 35px !important; }
   .memo-link {
     overflow-x: hidden;
     white-space: nowrap;

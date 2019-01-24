@@ -52,7 +52,7 @@ export default {
     title: ['봉사자 정보', '교육 현황', '봉사 현황', '대표 이력', '전출입 이력']
   }),
   created () {
-    this.v_id = this.id
+    if (this.id > 0) this.v_id = this.id
   },
   methods: {
     isAccessible () {
