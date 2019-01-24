@@ -27,26 +27,53 @@
                           :items="eduCodes" item-text="name" item-value="code"
                 ></v-select>
               </v-flex>
-              <v-flex xs6 v-if="isMonthEdu">
-              <v-select label="연도선택" class="ml-3 pl-4 w-90 text-xs-center body-1" single-line
-                        :items="years" v-model="item.r_year"
-              ></v-select>
+             <v-flex xs6 v-if="isMonthEdu">
+                <v-layout row>
+                  <v-flex xs4>
+                    <v-checkbox label="횟수" v-model="isECount"></v-checkbox>
+                  </v-flex>
+                  <v-flex xs8>
+                    <v-select label="연도선택" class="ml-3 text-xs-center body-1" single-line
+                              :items="years" v-model="item.r_year"
+                    ></v-select>
+                  </v-flex>
+                </v-layout>
               </v-flex>
-              <v-flex xs12 v-if="isMonthEdu"> <!-- 월교육인 경우에만 보여줌 -->
-                <v-layout wrap>
-                  <v-checkbox v-model="selected" label="3월" value="3"></v-checkbox>
-                  <v-checkbox v-model="selected" label="4월" value="4"></v-checkbox>
-                  <v-checkbox v-model="selected" label="5월" value="5"></v-checkbox>
-                  <v-checkbox v-model="selected" label="6월" value="6"></v-checkbox>
-                  <v-checkbox v-model="selected" label="7월" value="7"></v-checkbox>
-                </v-layout>
-                <v-layout wrap>
-                  <v-checkbox v-model="selected" label="8월" value="8"></v-checkbox>
-                  <v-checkbox v-model="selected" label="9월" value="9"></v-checkbox>
-                  <v-checkbox v-model="selected" label="10월" value="10"></v-checkbox>
-                  <v-checkbox v-model="selected" label="11월" value="11"></v-checkbox>
-                  <v-checkbox v-model="selected" label="12월" value="12"></v-checkbox>
-                </v-layout>
+              <v-flex xs12 v-if="isMonthEdu">
+                <template v-if="isECount">
+                  <v-radio-group v-model="selected" row>
+                    <v-layout wrap>
+                      <v-radio label="1회" value="1"></v-radio>
+                      <v-radio label="2회" value="2"></v-radio>
+                      <v-radio label="3회" value="3"></v-radio>
+                      <v-radio label="4회" value="4"></v-radio>
+                      <v-radio label="5회" value="5"></v-radio>
+                    </v-layout>
+                    <v-layout wrap>
+                      <v-radio label="6회" value="6"></v-radio>
+                      <v-radio label="7회" value="7"></v-radio>
+                      <v-radio label="8회" value="8"></v-radio>
+                      <v-radio label="9회" value="9"></v-radio>
+                      <v-radio label="10회" value="10"></v-radio>
+                    </v-layout>
+                  </v-radio-group>
+                </template>
+                <template v-else>
+                  <v-layout wrap>
+                    <v-checkbox v-model="selected" label="3월" value="3"></v-checkbox>
+                    <v-checkbox v-model="selected" label="4월" value="4"></v-checkbox>
+                    <v-checkbox v-model="selected" label="5월" value="5"></v-checkbox>
+                    <v-checkbox v-model="selected" label="6월" value="6"></v-checkbox>
+                    <v-checkbox v-model="selected" label="7월" value="7"></v-checkbox>
+                  </v-layout>
+                  <v-layout wrap>
+                    <v-checkbox v-model="selected" label="8월" value="8"></v-checkbox>
+                    <v-checkbox v-model="selected" label="9월" value="9"></v-checkbox>
+                    <v-checkbox v-model="selected" label="10월" value="10"></v-checkbox>
+                    <v-checkbox v-model="selected" label="11월" value="11"></v-checkbox>
+                    <v-checkbox v-model="selected" label="12월" value="12"></v-checkbox>
+                  </v-layout>
+                </template>
               </v-flex>
               <template v-else>
                 <v-flex xs6>
@@ -140,6 +167,7 @@ export default {
     finder: false,
     states: ACTIVITY_STATES,
     selected: [],
+    isECount: false,
     item: { id: 0 }
   }),
   created () {
@@ -157,11 +185,13 @@ export default {
           return alert('종료일이 시작일보다 빠릅니다!')
         }
       }
+      if (this.isECount) this.selected = range(3, 3 + parseInt(this.selected[0]))
       this.item.months = this.selected.join(',')
       this.$emit('close-input-item', this.item)
       this.reset()
     },
     reset () {
+      this.isECount = false
       this.item = { v_id: 0 }; this.selected = []
       const sdr = this.$refs['s_date']; sdr && sdr.setDate(null)
       const edr = this.$refs['e_date']; edr && edr.setDate(null)
