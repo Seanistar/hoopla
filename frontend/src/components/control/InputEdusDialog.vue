@@ -22,7 +22,7 @@
                               :disabled="item.id !== 0 || (item.id === 0 && item.name !== undefined)"
                               hide-details></v-text-field>
               </v-flex>
-              <v-flex :class="isMonthEdu ? 'xs6' : 'xs12'">
+              <v-flex :class="isMonthEdu || isNoteCheck ? 'xs6' : 'xs12'">
                 <v-select label="교육 항목" v-model="item.edu_code" hide-details
                           :items="eduCodes" item-text="name" item-value="code"
                 ></v-select>
@@ -30,14 +30,18 @@
              <v-flex xs6 v-if="isMonthEdu">
                 <v-layout row>
                   <v-flex xs4>
-                    <v-checkbox label="횟수" v-model="isECount"></v-checkbox>
+                    <v-checkbox label="횟수" hide-details v-model="isECount"></v-checkbox>
                   </v-flex>
                   <v-flex xs8>
-                    <v-select label="연도선택" class="ml-3 text-xs-center body-1" single-line
+                    <v-select label="연도선택" class="ml-3 text-xs-center body-1"
+                              single-line hide-details
                               :items="years" v-model="item.r_year"
                     ></v-select>
                   </v-flex>
                 </v-layout>
+              </v-flex>
+              <v-flex xs6 v-else-if="isNoteCheck">
+                <v-checkbox label="날짜 미상" hide-details v-model="isECount"></v-checkbox>
               </v-flex>
               <v-flex xs12 v-if="isMonthEdu">
                 <template v-if="isECount">
@@ -75,7 +79,7 @@
                   </v-layout>
                 </template>
               </v-flex>
-              <template v-else>
+              <template v-else-if="!isNoteCheck || !isECount">
                 <v-flex xs6>
                   <date-picker ref="s_date" title="교육 시작일" :disabled="isMonthEdu"
                                @close-date-picker="onPicked" refs="s_date"></date-picker>
@@ -144,6 +148,9 @@ export default {
     isMonthEdu () {
       return this.item.edu_code === 53 && !this.item.id
     },
+    isNoteCheck () {
+      return this.item.edu_code >= 70 && this.item.edu_code <= 80
+    },
     years () {
       const start = (new Date()).getFullYear()
       return ['선택없음'].concat(range(start, 2010, -1))
@@ -154,6 +161,7 @@ export default {
       if (!code) return
       const res = this.eduCodes.find(e => e.code === code)
       if (res) this.item.edu_name = res.name
+      this.isECount = false
     },
     'item.e_date' (date) {
       if (!this.item.s_date || !date) return
@@ -176,8 +184,13 @@ export default {
   },
   methods: {
     closeDialog () {
+      if (this.isNoteCheck && this.isECount) {
+        this.$emit('close-input-item', this.item)
+        this.reset()
+        return
+      }
       if (this.item.edu_code === 53) {
-        if (!this.item.r_year) return alert('시작 연도를 확인해주세요!')
+        if (!this.item.r_year || this.item.r_year === '선택없음') return alert('시작 연도를 확인해주세요!')
       } else {
         if (!this.item.e_date || !this.item.s_date) return alert('기간을 확인해주세요!')
         if (this.item.e_date < this.item.s_date) {

@@ -6,7 +6,7 @@
           <!--<v-flex xs2>
             <v-subheader class="body-2 pr-0"><span>소속본당 : </span></v-subheader>
           </v-flex>-->
-          <v-flex xs3>
+          <v-flex xs6>
             <v-combobox class="body-2" v-model="model"
                         @input="fetchVolunteers()" label="소속 본당"
                         :items="items" item-value="code" item-text="name"
@@ -83,7 +83,7 @@ export default {
     model: null,
     search: null,
     fetched: false,
-    perPage: [10, 25, {text: '$vuetify.dataIterator.rowsPerPageAll', value: -1}],
+    perPage: [25, 50, 100, {text: '$vuetify.dataIterator.rowsPerPageAll', value: -1}],
     pagination: { sortBy: 'id' },
     headers: [
       { text: '번호', value: 'id', sortable: false },
@@ -152,13 +152,15 @@ export default {
     },
     async setCodeInfo (code) {
       if (!this.areaCodes.length) await this.$store.dispatch('fetchAreaCodes')
-      const list = map(this.smallCodes(this.authInfo), o => { return {code: o.s_code, name: o.s_name} })
+      const list = map(this.smallCodes(this.authInfo), o => {
+        const full = `${o.s_name} (${o.l_name}-${o.m_name})`
+        return {code: o.s_code, name: full}
+      })
       this.items = orderBy(list, ['name'])
 
       const res = find(list, o => o.code === code)
       res && this.$nextTick(() => {
         this.model = {name: res.name, code: res.code}
-        // console.log(this.model.name, this.model.code)
       })
     }
   }

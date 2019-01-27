@@ -8,22 +8,29 @@
       <v-divider></v-divider>
       <v-container mb-4>
         <v-layout>
-          <v-flex xs3>
-            <v-select label="교구" v-model="areaCode.la_code" @change="onChangeAreaCode"
-                      :items="lAreaCodes" item-text="l_name" item-value="l_code"
-            ></v-select>
-          </v-flex>
-          <v-flex xs3>
-            <v-select label="지구" v-model="areaCode.ma_code"
-                      @change="onChangeAreaCode" no-data-text="지구 자료가 없습니다."
-                      :items="mAreaCodes" item-text="m_name" item-value="m_code" :disabled="areaCode.la_code === ''"
-            ></v-select>
-          </v-flex>
-          <v-flex xs3>
-            <v-select label="본당" v-model="areaCode.sa_code" :rules="[rules.required]"
+          <v-flex xs5>
+            <!--<v-select label="본당" v-model="areaCode.sa_code" :rules="[rules.required]"
                       @change="onChangeAreaCode" no-data-text="본당 자료가 없습니다."
                       :items="sAreaCodes" item-text="s_name" item-value="s_code" :disabled="areaCode.ma_code === ''"
-            ></v-select>
+            ></v-select>-->
+            <v-combobox label="본당" :value="name.sa"
+                        @input="onChangedCode($event)"
+                        :items="items" item-value="code" item-text="name"
+                        :search-input.sync="search" clearable single-line>
+            </v-combobox>
+          </v-flex>
+          <v-flex xs2>
+            <!--<v-select label="교구" v-model="areaCode.la_code" @change="onChangeAreaCode"
+                      :items="lAreaCodes" item-text="l_name" item-value="l_code"
+            ></v-select>-->
+            <v-text-field label="지구" :value="name.ma" disabled></v-text-field>
+          </v-flex>
+          <v-flex xs2>
+            <!--<v-select label="지구" v-model="areaCode.ma_code"
+                      @change="onChangeAreaCode" no-data-text="지구 자료가 없습니다."
+                      :items="mAreaCodes" item-text="m_name" item-value="m_code" :disabled="areaCode.la_code === ''"
+            ></v-select>-->
+            <v-text-field label="교구" :value="name.la" disabled></v-text-field>
           </v-flex>
           <v-flex xs3>
             <v-text-field label="봉사자 번호" :rules="[rules.vcode]" mask="##-####"
@@ -136,12 +143,10 @@
       </v-container>
 
       <v-layout justify-end mb-1>
-        <v-flex xs9>
-        <!--<v-btn color="indigo accent-2" outline class="mb-2" @click="reset">신규 봉사자</v-btn>-->
-        </v-flex>
-        <v-flex xs3 offset-xs2>
+        <v-flex xs4>
           <v-btn color="black accent-2" outline class="mb-2" @click="$router.back()">취소</v-btn>
-          <v-btn color="indigo accent-2" outline class="mb-2" @click="submit" :disabled="isDisabled">{{!isEditMode ? '추가' : '수정'}}</v-btn>
+          <v-btn color="indigo accent-2" outline class="mb-2" @click="submit" :disabled="isDisabled">저장</v-btn>
+          <v-btn color="indigo accent-2" outline class="mb-2" @click="reload" :disabled="!v_id">신규추가</v-btn>
         </v-flex>
       </v-layout>
     </v-form>
@@ -151,11 +156,12 @@
 <script>
 import { isEmpty, isUndefined, isEqual, cloneDeep } from 'lodash/lang'
 import { pick } from 'lodash/object'
+import { map, find, orderBy } from 'lodash/collection'
 import DatePicker from './control/DatePicker'
 import AppAlert from './control/AppAlert'
 import { VolunteerService } from '@/common/api.service'
 import { ACTIVITY_STATES, LEADER_STATES } from '../common/const.info'
-import CodeMixin from '@/common/code.mixin'
+// import CodeMixin from '@/common/code.mixin'
 import { mapActions, mapGetters } from 'vuex'
 import {
   CREATE_VOLUNTEER,
@@ -168,13 +174,15 @@ import {
 
 export default {
   name: 'VolunteerItem',
-  mixins: [ CodeMixin ],
+  // mixins: [ CodeMixin ],
   components: { AppAlert, DatePicker },
   props: { v_id: undefined },
   computed: {
     ...mapGetters([
       'changedCodes',
       'smallLeader',
+      'areaCodes',
+      'smallCodes',
       'authInfo'
     ]),
     form () { return this.$data.params },
@@ -184,15 +192,18 @@ export default {
     }
   },
   data: () => ({
+    items: [],
+    search: null,
     isEditMode: false,
     isDisabled: false,
     isLeader: false,
+    name: { la: '', ma: '', sa: '' },
     params: { // is equal to bible's column
       sex: 'F',
       area_code: '01-01-01',
       ls_date: null,
       l_work: null,
-      state: {cd: 'ACT', nm: '활동중'}
+      state: 'ACT'
     },
     rules: {
       required: value => !!value || '필수 항목입니다.',
@@ -224,12 +235,27 @@ export default {
         })
         return alert('종료일이 시작일보다 빠릅니다.')
       }
+    },
+    'params.state' (val) {
+      console.log(val)
     }
   },
-  created () {
+  async created () {
+    if (!this.areaCodes.length) await this.$store.dispatch('fetchAreaCodes')
+    this.setCodeInfo()
     this.isEditMode = !isUndefined(this.v_id)
     if (this.isEditMode) this.fetchData()
-    else this.changedCodes.vl_ac && this.assignCode(this.changedCodes.vl_ac)
+    else if (this.changedCodes.vl_ac) {
+      const found = find(this.smallCodes(null), a => {
+        return this.changedCodes.vl_ac === a.s_code
+      })
+      if (found) {
+        this.name.ma = found.m_name
+        this.name.la = found.l_name
+        this.name.sa = found.s_name
+      }
+    }
+    // else this.changedCodes.vl_ac && this.assignCode(this.changedCodes.vl_ac)
     // this.params.ca_id = this.authInfo.id
   },
   mounted () {
@@ -261,7 +287,6 @@ export default {
         item = res.data[0]
         console.warn('loaded by service...')
       }
-
       !isEmpty(item) && this.$nextTick(() => {
         Object.keys(item).forEach(k => {
           if (k.indexOf('_date') > 0) {
@@ -278,8 +303,15 @@ export default {
     initItem (item) {
       this.$parent.VOLT = pick(item, ['area_code', 'name', 'ca_name', 'ca_id'])
       if (item.l_work === 'Y') this.isLeader = true
-      this.assignCode(item.area_code)
-
+      // this.assignCode(item.area_code)
+      const found = find(this.smallCodes(null), a => {
+        return item.area_code === a.s_code
+      })
+      if (found) {
+        this.name.ma = found.m_name
+        this.name.la = found.l_name
+        this.search = this.name.sa = `${found.s_name} (${found.l_name} - ${found.m_name})`
+      }
       if (!this.$parent.isAccessible()) this.isDisabled = true
       this.params = item
     },
@@ -287,19 +319,45 @@ export default {
       console.log('picked date...', obj.type, obj.date)
       this.params[obj.type] = obj.date
     },
-    async onChangeAreaCode () {
-      if (this.v_id === undefined || !this.params.sa_name) return
-      if (!isEqual(this.volunteerInfo.sa_name, this.params.sa_name) && confirm('본당 정보를 변경하시겠습니까?')) {
+    /* async onChangeAreaCode () {
+      if (this.v_id === undefined || !this.name.sa) return
+      if (!isEqual(this.volunteerInfo.sa_name, this.name.sa) && confirm('본당 정보를 변경하시겠습니까?')) {
         const history = {
           v_id: this.volunteerInfo.id,
           out_code: this.volunteerInfo.area_code,
           out_name: `${this.volunteerInfo.la_name} 교구 / ${this.volunteerInfo.sa_name} 본당`,
           in_code: this.params.area_code,
-          in_name: `${this.params.la_name} 교구 / ${this.params.sa_name} 본당`
+          in_name: `${this.name.la} 교구 / ${this.name.sa} 본당`
         }
         await this[CREATE_VOLUNTEER_HISTORY](history)
         this.$showSnackBar('변경되었습니다.')
       }
+    }, */
+    async onChangedCode (info) {
+      this.name.la = info ? info.l_name : ''
+      this.name.ma = info ? info.m_name : ''
+      this.name.sa = info ? info.s_name : ''
+      this.params.area_code = info ? info.code : ''
+
+      if (this.v_id === undefined || !this.name.sa) return
+      if (!isEqual(this.volunteerInfo.sa_name, this.name.sa) && confirm('본당 정보를 변경하시겠습니까?')) {
+        const history = {
+          v_id: this.volunteerInfo.id,
+          out_code: this.volunteerInfo.area_code,
+          out_name: `${this.volunteerInfo.la_name} 교구 / ${this.volunteerInfo.sa_name} 본당`,
+          in_code: this.params.area_code,
+          in_name: `${this.name.la} 교구 / ${this.name.sa} 본당`
+        }
+        await this[CREATE_VOLUNTEER_HISTORY](history)
+        this.$showSnackBar('변경되었습니다.')
+      }
+    },
+    async setCodeInfo () {
+      const list = map(this.smallCodes(null), o => {
+        const msName = `${o.s_name} (${o.l_name} - ${o.m_name})`
+        return {code: o.s_code, name: msName, s_name: o.s_name, m_name: o.m_name, l_name: o.l_name}
+      })
+      this.items = orderBy(list, ['name'])
     },
     async onCompleteLeader (type) {
       if (!this.v_id) return alert('봉사자 정보를 먼저 추가해주세요.')
@@ -339,16 +397,21 @@ export default {
       }) */
       this.$router.replace({name: 'edit-volunteer', params: {id: 0}})
     },
+    reload () {
+      const path = location.pathname.split('/')
+      path.pop()
+      const href = location.origin + path.join('/')
+      location.replace(href)
+    },
     submit () {
       if (!this.$refs.form.validate()) {
         return alert('입력 데이터를 확인해주세요.')
       }
 
-      Object.keys(this.form).forEach(f => {
+      /* Object.keys(this.form).forEach(f => {
         let obj = this.form[f]
-        if (obj && f === 'state') this.form[f] = obj.cd
-        // console.log(obj)
-      })
+        if (obj && f === 'state') console.log('state', obj)
+      }) */
 
       // console.log(this.form)
       if (!this.isEditMode) {
@@ -369,30 +432,14 @@ export default {
         return alert('실패하였습니다.')
       }
 
-      // const targetUrl = `${location.origin}${location.pathname}/${vid}`
+      const targetUrl = `${location.origin}${location.pathname}/${vid}`
       this.$nextTick(() => {
-        // location.replace(targetUrl)
-        console.log('submit...', vid, this.form)
+        // console.log('submit...', vid, this.form)
         this.$parent.VID = vid
         this.$parent.VOLT = pick(this.form, ['area_code', 'name', 'ca_name', 'ca_id'])
+        history.replaceState(null, null, targetUrl)
       })
     }
-    /* onChangedCode (type, nv, ov) {
-      let target = ''
-      if (type === 's') {
-        target = nv ? nv.replace(/-/g, '') : this.areaCode.ma_code
-      } else if (type === 'm') {
-        target = nv ? nv.replace(/-/g, '') : this.areaCode.la_code
-      } else if (type === 'l') {
-        target = nv && nv.replace(/-/g, '')
-        ov && nv && (this.areaCode.ma_code = this.areaCode.sa_code = '')
-      }
-
-      if (ov && nv) {
-        let obj = this.$parent.VOLT
-        this.params.ca_id = `${this.authInfo.id}${target}${obj['ca_id'].substr(8)}`
-      }
-    } */
   }
 }
 </script>

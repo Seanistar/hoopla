@@ -5,19 +5,20 @@
         <v-container class="elevation-4 py-1 w-85">
           <v-layout row wrap pl-2>
             <v-flex xs12 sm3>
-              <v-select label="교구" v-model="areaCode.la_code" hide-details class="body-1"
+              <v-select label="교구" v-model="model.la_code" hide-details class="body-1"
                         :items="lAreaCodes" item-text="l_name" item-value="l_code"
               ></v-select>
             </v-flex>
             <v-flex xs12 sm3>
-              <v-select label="교구 > 지구" v-model="areaCode.ma_code" hide-details class="body-1" no-data-text="지구 자료가 없습니다."
-                        :items="mAreaCodes" item-text="m_name" item-value="m_code" :disabled="areaCode.la_code === ''"
+              <v-select label="교구 > 지구" v-model="model.ma_code" hide-details class="body-1" no-data-text="지구 자료가 없습니다."
+                        :items="mAreaCodes" item-text="m_name" item-value="m_code"
               ></v-select>
             </v-flex>
-            <v-flex xs12 sm3>
-              <v-select label="교구 > 지구 > 본당" v-model="areaCode.sa_code" hide-details class="body-1" no-data-text="본당 자료가 없습니다."
-                        :items="sAreaCodes" item-text="s_name" item-value="s_code" :disabled="areaCode.ma_code === ''"
-              ></v-select>
+            <v-flex xs12 sm6>
+              <v-combobox label="교구 > 지구 > 본당" v-model="model.sa_name" hide-details
+                          :items="model.items" item-value="code" item-text="name"
+                          :search-input.sync="model.search" @input="onBlur" clearable>
+              </v-combobox>
             </v-flex>
           </v-layout>
           <v-layout row wrap pl-2>
@@ -116,65 +117,99 @@
 
 <script>
 import DatePicker from '@/components/control/DatePicker'
-import CodeMixin from '@/common/code.mixin'
+// import CodeMixin from '@/common/code.mixin'
 import PeopleDialog from '@/components/control/FindPeopleDialog'
 import ChurchDialog from '@/components/control/FindChurchDialog'
 import { QUERY_VOLUNTEERS } from '@/store/actions.type'
 import { SET_QUERY_INFO } from '@/store/mutations.type'
 import { mapGetters } from 'vuex'
 import { range } from 'lodash/util'
-import { map, orderBy } from 'lodash/collection'
+import { uniqBy, concat } from 'lodash/array'
+import { filter, map, find, orderBy } from 'lodash/collection'
+import { startsWith } from 'lodash/string'
 
 export default {
   name: 'QueryList',
-  mixins: [ CodeMixin ],
+  // mixins: [ CodeMixin ],
   components: { DatePicker, PeopleDialog, ChurchDialog },
   computed: {
     ...mapGetters([
       'smallCodes',
+      'areaCodes',
       'isQuerying',
       'queryInfo',
       'queryCount',
       'queryVolunteers'
     ]),
+    lAreaCodes () {
+      let init = [{l_name: '선택없음', l_code: ''}]
+      return concat(init, uniqBy(this.areaCodes, 'l_code'))
+    },
+    mAreaCodes () {
+      let init = [{m_name: '선택없음', m_code: ''}]
+      let rest = filter(uniqBy(this.areaCodes, 'm_code'), (o) => startsWith(o.a_code, `${this.model.la_code}-`))
+      return concat(init, rest)
+    },
+    sAreaCodes () {
+      let init = [{s_name: '선택없음', s_code: ''}]
+      let rest = filter(uniqBy(this.areaCodes, 's_code'), (o) => startsWith(o.a_code, `${this.model.ma_code}`))
+      return concat(init, rest)
+    },
     formData () { return this.$data.params },
-    /* formData () {
-      return {
-        a_code: this.params.area_code,
-        v_name: this.params.v_name,
-        memo: this.params.memo,
-        au_date: this.params.au_date,
-        sa_code: this.small.model ? this.small.model.code : ''
-      }
-    }, */
     years () {
       const start = (new Date()).getFullYear()
       return ['선택없음'].concat(range(start, 1972, -1))
     }
   },
   watch: {
-    'small.model' (obj) {
-      /* if (val && val.length > 5) {
-        this.$nextTick(() => this.small.model.pop())
-      } */
-      this.params.sa_code = obj ? obj.code : ''
+    'model.la_code' (code) {
+      if (!code) {
+        this.params.a_code = this.model.sa_code ? this.model.sa_code : this.model.ma_code
+        return
+      }
+      this.params.a_code = code
+      this.model.sa_name = this.model.search = ''
+      console.log('la_code', code)
+    },
+    'model.ma_code' (code, old) {
+      if (!code) {
+        this.params.a_code = this.model.sa_code ? this.model.sa_code : this.model.la_code
+        return
+      }
+      this.params.a_code = code
+      this.model.sa_name = ''
+      if (old) {
+        const res = find(this.mAreaCodes, (o) => o.m_code === code)
+        res && (this.model.search = res.m_name)
+      }
+      console.log('ma_code', code)
+    },
+    'model.sa_code' (code) {
+      if (!code) { // 인위적인 초기화
+        this.params.a_code = this.model.ma_code ? this.model.ma_code : this.model.la_code
+        return
+      }
+      this.params.a_code = code
+      console.log('sa_code', code)
     },
     'params.au_s_date' (val) {
       if (val && val === '선택없음') this.params.au_s_date = ''
     }
   },
-  created () {
+  async created () {
     this.headers.map(h => {
       h.class = ['text-xs-center', 'body-2', 'pl-20x',
         h.value.indexOf('_cnt') > 0 ? 'w-5' : 'w-10']
     })
+    if (!this.areaCodes.length) await this.$store.dispatch('fetchAreaCodes')
     const list = map(this.smallCodes(null), o => {
-      return {code: o.s_code, name: o.s_name}
+      const path = `${o.s_name} - ${o.m_name} - ${o.l_name}`
+      return {code: o.s_code, name: path}
     })
-    this.small.items = orderBy(list, ['name'])
+    this.model.items = orderBy(list, ['name'])
   },
   mounted () {
-    this.reset()
+    // this.reset()
     const list = document.getElementsByClassName('v-input')
     this.$nextTick(() => {
       for (let d of list) {
@@ -186,9 +221,12 @@ export default {
     })
   },
   data: () => ({
-    small: {
+    model: {
       items: [],
-      model: '',
+      la_code: '',
+      ma_code: '',
+      sa_code: '',
+      sa_name: '',
       search: null
     },
     isQueryBox: true,
@@ -196,14 +234,15 @@ export default {
     selected: {},
     peopleFinder: false,
     churchFinder: false,
-    perPage: [50, 100, 200, {text: '$vuetify.dataIterator.rowsPerPageAll', value: -1}],
+    perPage: [25, 50, 100, {text: '$vuetify.dataIterator.rowsPerPageAll', value: -1}],
     pagination: { sortBy: 'id' },
     params: {
       au_s_date: null,
       au_e_date: null,
       v_name: '',
       s_name: '',
-      memo: ''
+      memo: '',
+      a_code: ''
     },
     headers: [
       { text: '순번', value: 'idx_cnt' },
@@ -220,10 +259,10 @@ export default {
   }),
   methods: {
     reset () {
-      this.resetCode()
+      // this.resetCode()
       this.params.au_s_date = this.params.au_e_date = null
       this.params.v_name = this.params.s_name = this.params.memo = ''
-      this.small.model = ''
+      this.model = { la_name: '', ma_name: '', sa_name: '', search: null }
     },
     submit () {
       // let isEmpty = true
@@ -260,8 +299,18 @@ export default {
       console.log('found church...', data)
       this.churchFinder = false
     },
-    onBlur () {
-      console.log('blur', this.small.model)
+    onBlur (info) {
+      if (!info || typeof info !== 'object') {
+        this.$nextTick(() => {
+          this.model.search = this.model.sa_name = ''
+        })
+        this.params.a_code = this.model.ma_code ? this.model.ma_code : this.model.la_code
+        return
+      }
+      console.log('blur', info)
+      this.model.la_code = info.code.slice(0, 2)
+      this.model.ma_code = info.code.slice(0, 5)
+      this.params.a_code = this.model.sa_code = info.code
     },
     onChangedCode (type, val) {
       if (type === 'm' && !val) this.params.area_code = this.areaCode.la_code

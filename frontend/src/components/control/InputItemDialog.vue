@@ -135,7 +135,7 @@
               <v-flex xs12>
                 <v-text-field label="관리자 ID" v-model="item.admin_id"></v-text-field>
               </v-flex>
-              <v-layout v-if="!item.id">
+              <v-layout>
                 <v-flex xs6>
                   <v-text-field label="관리자 비밀번호" v-model="item.password" type="password"></v-text-field>
                 </v-flex>
@@ -262,6 +262,8 @@ export default {
           this.$refs['e_date'].setDate(null)
           return alert('종료일이 시작일보다 빠릅니다!')
         }
+      } else if (this.refs === 'admin' && (!this.item.password || !this.item.pwd_check)) {
+        return this.$showSnackBar('비밀번호를 확인해주세요!')
       }
       this.$emit('close-input-item', this.item)
       this.reset()

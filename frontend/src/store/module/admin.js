@@ -64,7 +64,8 @@ const actions = {
       })
   },
   [UPDATE_ADMIN] (context, params) {
-    return AdminService.update(params)
+    const id = params['id']
+    return AdminService.update(id, params)
       .then(() => {
         context.commit(SET_ADMIN, params)
       })

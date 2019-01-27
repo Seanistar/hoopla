@@ -90,9 +90,15 @@ export default {
     },
     async createEduItem (item) {
       await this.$store.dispatch(CREATE_VOLUNTEER_EDU, item)
+      setTimeout(() => {
+        this.fetchData()
+      }, 300)
     },
     async updateEduItem (item) {
       await this.$store.dispatch(UPDATE_VOLUNTEER_EDU, item)
+      setTimeout(() => {
+        this.fetchData()
+      }, 300)
     },
     deleteEduItem (id) {
       this.$store.dispatch(DELETE_VOLUNTEER_EDU, id)
@@ -120,10 +126,6 @@ export default {
       console.log('input item...', data)
       if (isUndefined(this.selected.id)) this.createEduItem(data)
       else this.updateEduItem(data)
-
-      setTimeout(() => {
-        this.fetchData()
-      }, 300)
     }
   }
 }

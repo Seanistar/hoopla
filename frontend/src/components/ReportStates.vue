@@ -30,9 +30,9 @@
                     :disabled="r_id !== undefined"
                     :items="[{nm: '상반기', vl: 'A'}, {nm: '하반기', vl: 'B'}]"
                     item-text="nm" item-value="vl" v-model="states.ro.r_half"></v-select>-->
-            <v-subheader class="subheading font-weight-bold px-0 half">
+            <!--<v-subheader class="subheading font-weight-bold px-0 half">
               {{states.ro.r_half === 'A' ? '상반기' : '하반기'}} :
-            </v-subheader>
+            </v-subheader>-->
           </v-flex>
           <input v-model="states.ro.s_date" id="s_date" tag="rb" readonly
                  type="text" class="pa-1 input-box mw-25">&nbsp;~&nbsp;
@@ -264,7 +264,8 @@ export default {
       this.states.ro.s_name = sName
       this.states.ro.s_code = sCode
       this.arrangeDate(rYear, rHalf)
-      const rcd = `${sCode}-${this.states.ro.r_year}-${this.states.ro.r_half}`
+      // const rcd = `${sCode}-${this.states.ro.r_year}-${this.states.ro.r_half}`
+      const rcd = `${sCode}-${this.states.ro.r_year}`
       const one = find(this.reports, o => o.r_code === rcd)
       if (one) {
         alert('이미 보고된 리포트가 존재합니다! 해당 리포트로 이동합니다.')
@@ -286,7 +287,7 @@ export default {
     states: {
       rs: {dg: {}, dp: {}, ng: {}, np: {}, tt: {dg: 0, dp: 0, ng: 0, np: 0}},
       rt: {dg: {}, dp: {}, ng: {}, np: {}, tt: {dg: 0, dp: 0, ng: 0, np: 0}},
-      ro: {r_half: ''}
+      ro: {r_half: 'A'}
     },
     fetched: false,
     dialog: false,
@@ -326,14 +327,14 @@ export default {
     },
     onChangeRS (topic, index) {
       if (!this.isEnabled) return alert('수정 권한이 없습니다!')
-      if (!this.states.ro.r_half) return alert('보고 기간부터 확인해주세요!')
+      // if (!this.states.ro.r_half) return alert('보고 기간부터 확인해주세요!')
       const rsv = event.currentTarget.value
       this.states.rs[topic][this.rsCode(index)] = rsv === '' ? 0 : rsv
       this.states.rs.tt[topic] = this.sumData(this.states.rs[topic])
     },
     onChangeRT (topic, index) {
       if (!this.isEnabled) return alert('수정 권한이 없습니다!')
-      if (!this.states.ro.r_half) return alert('보고 기간부터 확인해주세요!')
+      // if (!this.states.ro.r_half) return alert('보고 기간부터 확인해주세요!')
       const rtv = event.currentTarget.value
       this.states.rt[topic][this.rtCode(index)] = rtv === '' ? 0 : rtv
       this.states.rt.tt[topic] = this.sumData(this.states.rt[topic])
@@ -344,8 +345,10 @@ export default {
       if (this.changed.rb) {
         data.rb = pick(this.states.ro, ['s_code', 'r_half', 'name', 'r_year', 's_date', 'e_date', 'numbers'])
         data.rb.s_date = `${data.rb.s_date}-01`
-        data.rb.e_date = `${data.rb.e_date}-${data.rb.r_half === 'A' ? '28' : '31'}`
-        data.rb.r_code = `${data.rb.s_code}-${data.rb.r_year}-${data.rb.r_half}`
+        data.rb.e_date = `${data.rb.e_date}-31`
+        // data.rb.e_date = `${data.rb.e_date}-${data.rb.r_half === 'A' ? '28' : '31'}`
+        // data.rb.r_code = `${data.rb.s_code}-${data.rb.r_year}-${data.rb.r_half}`
+        data.rb.r_code = `${data.rb.s_code}-${data.rb.r_year}`
         data.rb.lv_id = this.smallLeader.lv_id
       }
       if (this.changed.ro) data.ro = omit(this.states.ro, ['s_code', 's_date', 'e_date'])
@@ -407,7 +410,7 @@ export default {
       })
     },
     arrangeDate (rYear, rHalf) {
-      if (rHalf === 'A') {
+      /* if (rHalf === 'A') {
         this.states.ro.s_date = `${rYear - 1}-09`
         this.states.ro.e_date = `${rYear}-02`
         this.states.ro.r_year = rYear
@@ -417,54 +420,14 @@ export default {
         this.states.ro.e_date = `${rYear}-08`
         this.states.ro.r_year = rYear
         this.states.ro.r_half = 'B'
-      }
-      const lastDay = rHalf === 'A' ? '28' : '31'
+      } */
+      // const lastDay = rHalf === 'A' ? '28' : '31'
+      this.states.ro.s_date = `${rYear - 1}-09`
+      this.states.ro.e_date = `${rYear}-08`
+      this.states.ro.r_year = rYear
       this.$parent.S_DATE = `${this.states.ro.s_date}-01`
-      this.$parent.E_DATE = `${this.states.ro.e_date}-${lastDay}`
-    },
-    arrangeDate2 () { // 현재 날짜에 따른 보고 기간 자동 설정
-      const _d = new Date()
-      const thisYear = _d.getFullYear()
-      const thisMonth = _d.getMonth() + 1
-      if (thisMonth >= 1 && thisMonth <= 2) {
-        // 01 ~ 02 : 2018-A
-        this.states.ro.s_date = `${thisYear - 1}-09`
-        this.states.ro.e_date = `${thisYear}-02`
-        this.states.ro.r_year = thisYear
-        this.states.ro.r_half = 'A'
-      } else if (thisMonth >= 3 && thisMonth <= 8) {
-        // 03 ~ 08 : 2018-B
-        this.states.ro.s_date = `${thisYear}-03`
-        this.states.ro.e_date = `${thisYear}-08`
-        this.states.ro.r_year = thisYear
-        this.states.ro.r_half = 'B'
-      } else if (thisMonth >= 9) {
-        // 09 ~ 12 : 2019-A
-        this.states.ro.s_date = `${thisYear}-09`
-        this.states.ro.e_date = `${thisYear + 1}-02`
-        this.states.ro.r_year = thisYear + 1
-        this.states.ro.r_half = 'A'
-      }
-      const lastDay = this.states.ro.r_half === 'A' ? '28' : '31'
-      this.$parent.S_DATE = `${this.states.ro.s_date}-01`
-      this.$parent.E_DATE = `${this.states.ro.e_date}-${lastDay}`
+      this.$parent.E_DATE = `${this.states.ro.e_date}-31`
     }
-    /* onChangePhone (phone) {
-      let no = phone !== undefined ? phone : event.currentTarget.value
-      if (!no) return
-      no = no.replace(/-/g, '')
-      if (no.length > 11) no = no.slice(0, 11)
-
-      const pn1 = no.toString().slice(0, 3)
-      const pn2 = no.toString().slice(3, 7)
-      const pn3 = no.toString().slice(7)
-      this.states.ro.phone = `${pn1}-${pn2}-${pn3}`
-    },
-    onChangeDate () {
-      let value = event.currentTarget.value
-      if (!value || value.length < 8) return
-      this.states.ro[event.currentTarget.id] = value.slice(0, 7)
-    } */
   },
   filters: {
     subject (name) {

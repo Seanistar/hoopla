@@ -121,12 +121,12 @@ router.put('/register', (req, res) => {
 })
 
 router.post('/:id', (req, res) => {
-  const {admin_id, area_code, admin_name, ca_name} = req.body
+  const {admin_id, area_code, admin_name, ca_name, password} = req.body
   const sql = [`
     UPDATE admins 
-    SET admin_id=?, admin_name=?, ca_name=?, area_code=?
+    SET admin_id=?, admin_name=?, ca_name=?, area_code=?, password=?
     WHERE id=?`,
-    [admin_id, admin_name, ca_name, area_code, req.params.id]
+    [admin_id, admin_name, ca_name, area_code, encryptPassword(password), req.params.id]
   ]
   db.query(...sql, (err, rows) => {
     if (!err) {

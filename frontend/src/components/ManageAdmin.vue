@@ -31,7 +31,7 @@ import MenuButtons from './control/MenuButtons'
 import ItemDialog from './control/InputItemDialog'
 import { isEmpty } from 'lodash/lang'
 import { find } from 'lodash/collection'
-import { pick } from 'lodash/object'
+import { pick, omit } from 'lodash/object'
 import { mapGetters, mapActions } from 'vuex'
 import { FETCH_ADMINS, REGISTER_ADMIN, UPDATE_ADMIN, DELETE_ADMIN } from '../store/actions.type'
 
@@ -82,7 +82,7 @@ export default {
       if (isEmpty(this.selected)) return alert('관리자를 선택해주세요!')
       if (type === 'remove') confirm('선택한 관리자를 정말 삭제하시겠습니까?') && this.deleteItem(this.selected.id)
       else if (type === 'edit') { // update
-        this.$refs.admin.setItem(this.selected)
+        this.$refs.admin.setItem(omit(this.selected, ['password']))
         this.inputDlg = true
       }
     },
@@ -91,8 +91,9 @@ export default {
       if (data === undefined) return
 
       data.area_code = data.s_code
-      data = pick(data, ['area_code', 'admin_id', 'admin_name', 'ca_name', 'password'])
+      data = pick(data, ['area_code', 'admin_id', 'id', 'admin_name', 'ca_name', 'password'])
       console.log('input item...', data)
+      // if (!data.password) return this.$showSnackBar('비밀번호를 입력해주세요.')
       this.updateItem(data)
     },
     async updateItem (item) {
