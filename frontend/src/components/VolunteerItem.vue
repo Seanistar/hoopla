@@ -235,14 +235,12 @@ export default {
         })
         return alert('종료일이 시작일보다 빠릅니다.')
       }
-    },
-    'params.state' (val) {
-      console.log(val)
     }
   },
   async created () {
-    if (!this.areaCodes.length) await this.$store.dispatch('fetchAreaCodes')
+    !this.areaCodes.length && await this.$store.dispatch('fetchAreaCodes')
     this.setCodeInfo()
+
     this.isEditMode = !isUndefined(this.v_id)
     if (this.isEditMode) this.fetchData()
     else if (this.changedCodes.vl_ac) {
@@ -253,18 +251,11 @@ export default {
         this.name.ma = found.m_name
         this.name.la = found.l_name
         this.name.sa = found.s_name
+        this.params.area_code = found.s_code
       }
     }
     // else this.changedCodes.vl_ac && this.assignCode(this.changedCodes.vl_ac)
     // this.params.ca_id = this.authInfo.id
-  },
-  mounted () {
-    /* const ts = document.getElementsByTagName('INPUT')
-    for (let i = 0; i < ts.length; i++) {
-      ts[i].addEventListener('change', () => {
-        console.log('changed input...', ts[i].nodeValue)
-      })
-    } */
   },
   methods: {
     ...mapActions([
@@ -292,10 +283,6 @@ export default {
           if (k.indexOf('_date') > 0) {
             this.$refs[k] && this.$refs[k].setDate(item[k])
           }
-          /* if (k === 'ca_id') {
-            let cd = item['area_code']
-            item[k] = `${this.authInfo.id}${cd.replace(/-/g, '')}${item['ca_id']}`
-          } */
         })
         this.initItem(item)
       })
@@ -390,30 +377,29 @@ export default {
         })
       }
     },
-    reset () {
-      /* Object.keys(this.form).forEach(f => {
-        this.$refs[f] !== undefined && this.$refs[f].reset()
-        this.$data.params[f] = null
-      }) */
-      this.$router.replace({name: 'edit-volunteer', params: {id: 0}})
-    },
     reload () {
-      const path = location.pathname.split('/')
-      path.pop()
-      const href = location.origin + path.join('/')
-      location.replace(href)
+      this.isEditMode = this.isDisabled = this.isLeader = false
+
+      Object.keys(this.form).forEach(f => {
+        if (f.indexOf('_date') > 0) this.$refs[f] && this.$refs[f].setDate(null)
+        else if (f === 'sex') this.$data.params[f] = 'F'
+        else if (f !== 'area_code') this.$data.params[f] = null
+      })
+      this.$parent.VID = undefined
+      this.$parent.VOLT = pick(this.form, ['area_code', 'name', 'ca_name', 'ca_id'])
+
+      setTimeout(() => {
+        const path = location.pathname.split('/')
+        path.pop()
+        const href = location.origin + path.join('/')
+        history.replaceState(null, null, href)
+      }, 300)
     },
     submit () {
       if (!this.$refs.form.validate()) {
         return alert('입력 데이터를 확인해주세요.')
       }
 
-      /* Object.keys(this.form).forEach(f => {
-        let obj = this.form[f]
-        if (obj && f === 'state') console.log('state', obj)
-      }) */
-
-      // console.log(this.form)
       if (!this.isEditMode) {
         this.isDisabled = true
         this.createItem()

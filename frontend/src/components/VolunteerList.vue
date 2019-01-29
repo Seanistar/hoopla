@@ -115,8 +115,7 @@ export default {
       if (val && val.length > 5) {
         this.$nextTick(() => this.model.pop())
       }
-    },
-    pagination (val) { console.log(val) }
+    }
   },
   created () {
     this.headers.map(h => { h.class = ['text-xs-center', 'body-2', 'pl-39x'] })
@@ -124,7 +123,7 @@ export default {
   methods: {
     async fetchVolunteers (code) {
       let reqCode = code !== undefined ? code : (this.model ? this.model.code : '')
-      console.log('request code...', reqCode, this.model)
+      // console.log('request code...', reqCode, this.model)
       await this.$store.dispatch(FETCH_VOLUNTEERS, reqCode)
       this.fetched = true
 
@@ -147,8 +146,10 @@ export default {
       let code = this.changedCodes.vl_ac
       if (!code) code = this.authInfo.area_code
 
-      this.setCodeInfo(code)
-      this.fetchVolunteers(code)
+      setTimeout(() => {
+        this.setCodeInfo(code)
+        this.fetchVolunteers(code)
+      }, 600)
     },
     async setCodeInfo (code) {
       if (!this.areaCodes.length) await this.$store.dispatch('fetchAreaCodes')

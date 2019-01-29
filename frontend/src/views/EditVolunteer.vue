@@ -41,7 +41,7 @@ export default {
     },
     VID: {
       get () { return this.v_id },
-      set (id) { if (this.v_id === undefined) this.v_id = id }
+      set (id) { this.v_id = id }
     }
   },
   props: { id: undefined },

@@ -24,17 +24,14 @@ import {FETCH_EDU_CODES, FETCH_AREA_CODES} from '@/store/actions.type'
 export default {
   name: 'App',
   components: { AppSnackBar, AppConfirm, AppHeader, AppFooter },
-  created () {
-    this.fetchCodes()
+  async created () {
+    await this.$store.dispatch(FETCH_EDU_CODES)
+    await this.$store.dispatch(FETCH_AREA_CODES)
 
     Vue.prototype.$showSnackBar = this.showSnackBar
     Vue.prototype.$showConfirm = this.showConfirm
   },
   methods: {
-    async fetchCodes () {
-      await this.$store.dispatch(FETCH_EDU_CODES)
-      await this.$store.dispatch(FETCH_AREA_CODES)
-    },
     showSnackBar (msg) {
       this.$refs.bar.show(msg)
     },
