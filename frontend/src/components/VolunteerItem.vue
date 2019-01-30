@@ -142,8 +142,8 @@
         </v-layout>
       </v-container>
 
-      <v-layout justify-end mb-1>
-        <v-flex xs4>
+      <v-layout mb-1>
+        <v-flex xs12 text-xs-right>
           <v-btn color="black accent-2" outline class="mb-2" @click="$router.back()">취소</v-btn>
           <v-btn color="indigo accent-2" outline class="mb-2" @click="submit" :disabled="isDisabled">저장</v-btn>
           <v-btn color="indigo accent-2" outline class="mb-2" @click="reload" :disabled="!v_id">신규추가</v-btn>
