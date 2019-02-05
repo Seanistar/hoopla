@@ -39,8 +39,8 @@ export default {
           // this.currentStatus = STATUS_SUCCESS
           // this.callback(src) // await getImageData(file[0])
           const url = '/photos/' + res.data
-          // console.log(url)
-          self.callback(url)
+          console.log(url)
+          // self.callback(url)
         })
         .catch(err => {
           this.uploadError = err.response.data.message
