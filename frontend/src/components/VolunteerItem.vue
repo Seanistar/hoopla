@@ -419,8 +419,8 @@ export default {
     },
     setPhoto (url) {
       setTimeout(() => {
-        this.params.photo = url
-      }, 600)
+        this.$nextTick(() => { this.params.photo = url })
+      }, 800)
     }
   }
 }
