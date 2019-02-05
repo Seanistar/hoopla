@@ -40,7 +40,7 @@ export default {
           // this.callback(src) // await getImageData(file[0])
           const url = '/photos/' + res.data
           console.log(url)
-          // self.callback(url)
+          self.callback(url)
         })
         .catch(err => {
           this.uploadError = err.response.data.message

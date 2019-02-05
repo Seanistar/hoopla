@@ -420,7 +420,7 @@ export default {
     setPhoto (url) {
       setTimeout(() => {
         this.$nextTick(() => { this.params.photo = url })
-      }, 800)
+      }, 1500)
     }
   }
 }
