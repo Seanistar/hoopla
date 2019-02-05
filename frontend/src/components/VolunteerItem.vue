@@ -6,66 +6,66 @@
           <span class="mb-4">기본 정보</span></div>
       </v-layout>
       <v-divider></v-divider>
-      <v-container mb-4>
+      <v-container mb-2>
         <v-layout>
-          <v-flex xs5>
-            <!--<v-select label="본당" v-model="areaCode.sa_code" :rules="[rules.required]"
-                      @change="onChangeAreaCode" no-data-text="본당 자료가 없습니다."
-                      :items="sAreaCodes" item-text="s_name" item-value="s_code" :disabled="areaCode.ma_code === ''"
-            ></v-select>-->
-            <v-combobox label="본당" :value="name.sa"
-                        @input="onChangedCode($event)"
-                        :items="items" item-value="code" item-text="name"
-                        :search-input.sync="search" clearable single-line>
-            </v-combobox>
-          </v-flex>
-          <v-flex xs2>
-            <!--<v-select label="교구" v-model="areaCode.la_code" @change="onChangeAreaCode"
-                      :items="lAreaCodes" item-text="l_name" item-value="l_code"
-            ></v-select>-->
-            <v-text-field label="지구" :value="name.ma" disabled></v-text-field>
-          </v-flex>
-          <v-flex xs2>
-            <!--<v-select label="지구" v-model="areaCode.ma_code"
-                      @change="onChangeAreaCode" no-data-text="지구 자료가 없습니다."
-                      :items="mAreaCodes" item-text="m_name" item-value="m_code" :disabled="areaCode.la_code === ''"
-            ></v-select>-->
-            <v-text-field label="교구" :value="name.la" disabled></v-text-field>
-          </v-flex>
-          <v-flex xs3>
-            <v-text-field label="봉사자 번호" :rules="[rules.vcode]" mask="##-####"
-                          clearable v-model="params.ca_id"></v-text-field>
-          </v-flex>
-        </v-layout>
-        <v-layout>
-          <v-flex>
-            <v-text-field label="성명" v-model="params.name" :rules="[rules.name]"
-                          :clearable="true" hint="공백없이 실명으로 입력해 주세요."
-            ></v-text-field>
-          </v-flex>
-          <v-flex>
-            <v-text-field label="세례명" :rules="[rules.required]"
-                          clearable v-model="params.ca_name"
-            ></v-text-field>
-          </v-flex>
-          <v-flex>
-            <date-picker ref="br_date" title="생년월일"
-                         @close-date-picker="onPicked" refs="br_date"></date-picker>
-          </v-flex>
-          <v-flex>
-            <date-picker ref="ca_date" title="세례일"
-                         @close-date-picker="onPicked" refs="ca_date"></date-picker>
-          </v-flex>
-        </v-layout>
-        <v-layout>
-          <v-flex xs3>
-            <date-picker ref="au_date" title="선서일"
-                         @close-date-picker="onPicked" refs="au_date"></date-picker>
-          </v-flex>
-          <v-flex xs3>
-            <v-select label="활동 상태" v-model="params.state" :rules="[rules.required]"
-                      :items="a_states" item-text="nm" item-value="cd" ></v-select><!--prepend-icon="contacts"-->
-          </v-flex>
+        <v-flex xs2>
+          <image-uploader :cid="params.ca_id" :callback="setPhoto">
+            <span class="no-image" v-if="!params.photo">사진 없음</span>
+            <img :src="params.photo|url" v-else />
+          </image-uploader>
+        </v-flex>
+        <v-flex xs10 ml-3>
+          <v-layout>
+            <v-flex xs6>
+              <v-combobox label="본당" :value="name.sa"
+                          @input="onChangedCode($event)"
+                          :items="items" item-value="code" item-text="name"
+                          :search-input.sync="search" clearable single-line>
+              </v-combobox>
+            </v-flex>
+            <v-flex xs3 ml-3>
+              <v-text-field label="지구" :value="name.ma" disabled></v-text-field>
+            </v-flex>
+            <v-flex xs3 ml-3>
+              <v-text-field label="교구" :value="name.la" disabled></v-text-field>
+            </v-flex>
+          </v-layout>
+          <v-layout>
+            <v-flex xs4>
+              <v-text-field label="봉사자 번호" :rules="[rules.vcode]" mask="##-####"
+                            clearable v-model="params.ca_id"></v-text-field>
+            </v-flex>
+            <v-flex xs4 ml-3>
+              <date-picker ref="au_date" title="선서일"
+                           @close-date-picker="onPicked" refs="au_date"></date-picker>
+            </v-flex>
+            <v-flex xs4 ml-3>
+              <v-select label="활동 상태" v-model="params.state" :rules="[rules.required]"
+                        :items="a_states" item-text="nm" item-value="cd" ></v-select><!--prepend-icon="contacts"-->
+            </v-flex>
+          </v-layout>
+          <v-layout>
+            <v-flex xs3>
+              <v-text-field label="성명" v-model="params.name" :rules="[rules.name]"
+                            :clearable="true" hint="공백없이 실명으로 입력해 주세요."
+              ></v-text-field>
+            </v-flex>
+            <v-flex xs3 ml-3>
+              <v-text-field label="세례명" :rules="[rules.required]"
+                            clearable v-model="params.ca_name"
+              ></v-text-field>
+            </v-flex>
+            <v-flex xs3 ml-3>
+              <date-picker ref="br_date" title="생년월일"
+                           @close-date-picker="onPicked" refs="br_date"></date-picker>
+            </v-flex>
+            <v-flex xs3 ml-3>
+              <date-picker ref="ca_date" title="세례일"
+                           @close-date-picker="onPicked" refs="ca_date"></date-picker>
+            </v-flex>
+          </v-layout>
+
+        </v-flex>
         </v-layout>
       </v-container>
 
@@ -159,9 +159,9 @@ import { pick } from 'lodash/object'
 import { map, find, orderBy } from 'lodash/collection'
 import DatePicker from './control/DatePicker'
 import AppAlert from './control/AppAlert'
+import ImageUploader from './control/ImageUploader'
 import { VolunteerService } from '@/common/api.service'
 import { ACTIVITY_STATES, LEADER_STATES } from '../common/const.info'
-// import CodeMixin from '@/common/code.mixin'
 import { mapActions, mapGetters } from 'vuex'
 import {
   CREATE_VOLUNTEER,
@@ -174,8 +174,7 @@ import {
 
 export default {
   name: 'VolunteerItem',
-  // mixins: [ CodeMixin ],
-  components: { AppAlert, DatePicker },
+  components: { AppAlert, DatePicker, ImageUploader },
   props: { v_id: undefined },
   computed: {
     ...mapGetters([
@@ -203,7 +202,8 @@ export default {
       area_code: '01-01-01',
       ls_date: null,
       l_work: null,
-      state: 'ACT'
+      state: 'ACT',
+      photo: null
     },
     rules: {
       required: value => !!value || '필수 항목입니다.',
@@ -257,6 +257,11 @@ export default {
     // else this.changedCodes.vl_ac && this.assignCode(this.changedCodes.vl_ac)
     // this.params.ca_id = this.authInfo.id
   },
+  filters: {
+    url (val) {
+      return location.origin + val
+    }
+  },
   methods: {
     ...mapActions([
       FETCH_VOLUNTEER_ITEM,
@@ -306,20 +311,6 @@ export default {
       console.log('picked date...', obj.type, obj.date)
       this.params[obj.type] = obj.date
     },
-    /* async onChangeAreaCode () {
-      if (this.v_id === undefined || !this.name.sa) return
-      if (!isEqual(this.volunteerInfo.sa_name, this.name.sa) && confirm('본당 정보를 변경하시겠습니까?')) {
-        const history = {
-          v_id: this.volunteerInfo.id,
-          out_code: this.volunteerInfo.area_code,
-          out_name: `${this.volunteerInfo.la_name} 교구 / ${this.volunteerInfo.sa_name} 본당`,
-          in_code: this.params.area_code,
-          in_name: `${this.name.la} 교구 / ${this.name.sa} 본당`
-        }
-        await this[CREATE_VOLUNTEER_HISTORY](history)
-        this.$showSnackBar('변경되었습니다.')
-      }
-    }, */
     async onChangedCode (info) {
       this.name.la = info ? info.l_name : ''
       this.name.ma = info ? info.m_name : ''
@@ -425,6 +416,9 @@ export default {
         this.$parent.VOLT = pick(this.form, ['area_code', 'name', 'ca_name', 'ca_id'])
         history.replaceState(null, null, targetUrl)
       })
+    },
+    setPhoto (url) {
+      this.params.photo = url
     }
   }
 }

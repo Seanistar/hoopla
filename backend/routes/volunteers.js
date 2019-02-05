@@ -14,7 +14,7 @@ router.get('', (req, res) => {
     LEFT JOIN leaders l ON v.id = l.v_id AND l.work = 'Y'
     LEFT JOIN area_code a ON v.area_code = a.a_code `
   if (req.query.code) select += `WHERE v.area_code = ?`
-  else select += `LIMIT 100`
+  else select += `LIMIT 1000`
   const sql = [select, req.query.code ? [req.query.code] : []]
   console.log(sql)
   db.query(...sql, (err, rows) => {
@@ -48,11 +48,11 @@ router.get('/page/:id', (req, res) => {
 
 router.put('/', (req, res) => {
   console.log(req.body)
-  const {name, ca_name, br_date, ca_date, state, area_code, sex, ca_id, email, phone, address, job, degree, au_date, memo} = req.body
+  const {name, ca_name, br_date, ca_date, state, area_code, sex, ca_id, email, photo, phone, address, job, degree, au_date, memo} = req.body
   const sql = [`
-    INSERT INTO volunteers (name, ca_name, br_date, ca_date, state, area_code, sex, ca_id, email, phone, address, job, degree, au_date, memo) 
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-    [name, ca_name, br_date, ca_date, state, area_code, sex, ca_id, email, phone, address, job, degree, au_date, memo]
+    INSERT INTO volunteers (name, ca_name, br_date, ca_date, state, area_code, sex, ca_id, email, photo, phone, address, job, degree, au_date, memo) 
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    [name, ca_name, br_date, ca_date, state, area_code, sex, ca_id, email, photo, phone, address, job, degree, au_date, memo]
   ]
   db.query(...sql, (err, rows) => {
     if (!err) {
@@ -68,13 +68,13 @@ router.put('/', (req, res) => {
 
 router.post('/page/:id', (req, res) => {
   const id = req.params.id
-  const {au_date, ca_id, name, ca_name, state, area_code, sex, email, phone, address, job, degree, ca_date, br_date, memo} = req.body
+  const {au_date, ca_id, name, ca_name, state, area_code, sex, email, photo, phone, address, job, degree, ca_date, br_date, memo} = req.body
   const sql = [`
     UPDATE volunteers 
     SET au_date=?, ca_id=?, name=?, ca_name=?, state=?, area_code=?, sex=?,
-    email=?, phone=?, address=?, job=?, degree=?, ca_date=?, br_date=?, memo=?
+    email=?, photo=?, phone=?, address=?, job=?, degree=?, ca_date=?, br_date=?, memo=?
     WHERE id=?`,
-    [au_date, ca_id, name, ca_name, state, area_code, sex, email, phone, address, job, degree, ca_date, br_date, memo, id]
+    [au_date, ca_id, name, ca_name, state, area_code, sex, email, photo, phone, address, job, degree, ca_date, br_date, memo, id]
   ]
   db.query(...sql, (err, rows) => {
     if (!err) {

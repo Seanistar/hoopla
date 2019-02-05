@@ -77,6 +77,15 @@ export const AdminService = {
   }
 }
 
+export const UtilityService = {
+  getImage (imageID) {
+    return ApiService.get(`photos/upload/${imageID}`)
+  },
+  uploadImage (formData) {
+    return ApiService.update('photos/upload', formData)
+  }
+}
+
 export const StatService = {
   get_yearly () {
     return ApiService.query('stats/yearly')
