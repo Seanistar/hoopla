@@ -15,9 +15,11 @@ const storage = multer.diskStorage({
     h = h < 10 ? '0' + h : h.toString()
     let u = d.getMinutes()
     u = u < 10 ? '0' + u : u.toString()
+    let s = d.getSeconds()
+    s = s < 10 ? '0' + s : s.toString()
     let ext = (file.mimetype.indexOf('png') > 0) ? 'png' : 'jpg'
 
-    const fName = d.getFullYear() + m + a + h + u + '.' + ext
+    const fName = d.getFullYear() + m + a + h + u + s + '.' + ext
     cb(null, req.body.cid + '_' + fName)
   }
 })
