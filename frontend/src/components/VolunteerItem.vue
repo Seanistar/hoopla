@@ -10,8 +10,11 @@
         <v-layout>
         <v-flex xs2>
           <image-uploader :cid="params.ca_id" :callback="setPhoto">
-            <span class="no-image" v-if="!params.photo">사진 없음</span>
-            <img :src="params.photo|url" v-else />
+            <circle-spin v-if="isLoading" class="mt-5"></circle-spin>
+            <template v-else>
+              <span class="no-image" v-if="!params.photo">사진 없음</span>
+              <img :src="params.photo|url" v-else/>
+            </template>
           </image-uploader>
         </v-flex>
         <v-flex xs10 ml-3>
@@ -160,6 +163,7 @@ import { map, find, orderBy } from 'lodash/collection'
 import DatePicker from './control/DatePicker'
 import AppAlert from './control/AppAlert'
 import ImageUploader from './control/ImageUploader'
+import CircleSpin from 'vue-loading-spinner/src/components/Circle'
 import { VolunteerService } from '@/common/api.service'
 import { ACTIVITY_STATES, LEADER_STATES } from '../common/const.info'
 import { mapActions, mapGetters } from 'vuex'
@@ -174,7 +178,7 @@ import {
 
 export default {
   name: 'VolunteerItem',
-  components: { AppAlert, DatePicker, ImageUploader },
+  components: { AppAlert, DatePicker, ImageUploader, CircleSpin },
   props: { v_id: undefined },
   computed: {
     ...mapGetters([
@@ -196,6 +200,7 @@ export default {
     isEditMode: false,
     isDisabled: false,
     isLeader: false,
+    isLoading: false,
     name: { la: '', ma: '', sa: '' },
     params: { // is equal to bible's column
       sex: 'F',
@@ -418,8 +423,12 @@ export default {
       })
     },
     setPhoto (url) {
+      this.isLoading = true
       setTimeout(() => {
-        this.$nextTick(() => { this.params.photo = url })
+        this.$nextTick(() => {
+          this.params.photo = url
+          this.isLoading = false
+        })
       }, 1500)
     }
   }

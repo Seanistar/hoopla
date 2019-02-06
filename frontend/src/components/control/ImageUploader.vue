@@ -24,10 +24,6 @@ export default {
       if (!file.length) return
       if (!this.cid) return this.$showSnackBar('봉사자 번호가 필요합니다.')
 
-      /* setTimeout(async () => {
-        this.v_image = await this.getImageData(file[0])
-      }, 100) */
-
       const formData = new FormData()
       formData.append('cid', this.cid)
       formData.append('photoUploader', file[0])
@@ -35,9 +31,6 @@ export default {
       const self = this
       return UtilityService.uploadImage(formData)
         .then(res => {
-          // this.uploadedFiles = [].concat(res.data)
-          // this.currentStatus = STATUS_SUCCESS
-          // this.callback(src) // await getImageData(file[0])
           const url = '/photos/' + res.data
           console.log(url)
           self.callback(url)
@@ -45,7 +38,6 @@ export default {
         .catch(err => {
           this.uploadError = err.response.data.message
           console.warn(this.uploadError)
-          // this.currentStatus = STATUS_FAILED
         })
     },
     getImageData (file) {
