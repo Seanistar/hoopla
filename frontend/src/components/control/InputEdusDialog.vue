@@ -153,7 +153,7 @@ export default {
     },
     years () {
       const start = (new Date()).getFullYear()
-      return ['선택없음'].concat(range(start, 2010, -1))
+      return ['선택없음'].concat(range(start, 2006, -1))
     }
   },
   watch: {
