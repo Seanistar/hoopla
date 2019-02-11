@@ -88,7 +88,7 @@ import ItemDialog from './control/InputItemDialog'
 import { uniqBy, last } from 'lodash/array'
 import { filter, find } from 'lodash/collection'
 import { startsWith } from 'lodash/string'
-import { UPDATE_AREA_CODE, DELETE_AREA_CODE } from '../store/actions.type'
+import { UPDATE_AREA_CODE, DELETE_AREA_CODE, FETCH_AREA_CODES } from '../store/actions.type'
 
 export default {
   name: 'AreaCode',
@@ -100,7 +100,8 @@ export default {
     l_codes: null,
     m_codes: null,
     s_codes: null,
-    inputDlg: false
+    inputDlg: false,
+    isChanged: false
   }),
   created () {
     this.areaCode.la_code = '01'
@@ -111,6 +112,9 @@ export default {
         console.log(mutation.payload)
       }
     }) */
+  },
+  async beforeDestroy () {
+    this.isChanged && await this.$store.dispatch(FETCH_AREA_CODES)
   },
   computed: {
     getCode () {
@@ -194,6 +198,7 @@ export default {
     },
     deleteItem (code) {
       this.$store.dispatch(DELETE_AREA_CODE, code)
+      this.isChanged = true
     },
     async saveItem (item) {
       let data = {
@@ -213,6 +218,7 @@ export default {
       }
 
       await this.$store.dispatch(UPDATE_AREA_CODE, data)
+      this.isChanged = true
       this.$forceUpdate()
     },
     _code_name (code) {
