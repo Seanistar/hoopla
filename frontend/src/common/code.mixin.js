@@ -1,5 +1,5 @@
 import { uniqBy, concat } from 'lodash/array'
-import { filter, find } from 'lodash/collection'
+import { filter } from 'lodash/collection'
 import { startsWith } from 'lodash/string'
 // import { isUndefined } from 'lodash/lang'
 import { mapGetters } from 'vuex'
@@ -40,17 +40,17 @@ const CodeMixin = {
   watch: {
     'areaCode.la_code' (nv, ov) {
       this.params.area_code = nv
-      this.params.la_name = this.getCodeName(nv)
+      this.params.la_name = this._code_name(nv)
       this.onChangedCode('l', nv, ov)
     },
     'areaCode.ma_code' (nv, ov) {
       this.params.area_code = nv
-      this.params.ma_name = this.getCodeName(nv)
+      this.params.ma_name = this._code_name(nv)
       this.onChangedCode('m', nv, ov)
     },
     'areaCode.sa_code' (nv, ov) {
       this.params.area_code = nv
-      this.params.sa_name = this.getCodeName(nv)
+      this.params.sa_name = this._code_name(nv)
       this.onChangedCode('s', nv, ov)
     }
   },
@@ -66,8 +66,8 @@ const CodeMixin = {
     },
     onChangedCode (type, val) {
       // if it needs to use this function. should do overriding on target component
-    },
-    getCodeName (code) {
+    }
+    /* getCodeName (code) {
       if (!code) return ''
       let res = null
       if (code.length > 5) {
@@ -81,7 +81,7 @@ const CodeMixin = {
         if (res && res.l_name) return res.l_name
       }
       return ''
-    }
+    } */
   }
 }
 

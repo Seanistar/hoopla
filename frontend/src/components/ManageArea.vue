@@ -86,7 +86,7 @@ import CodeMixin from '@/common/code.mixin'
 import MenuButtons from './control/MenuButtons'
 import ItemDialog from './control/InputItemDialog'
 import { uniqBy, last } from 'lodash/array'
-import { filter } from 'lodash/collection'
+import { filter, find } from 'lodash/collection'
 import { startsWith } from 'lodash/string'
 import { UPDATE_AREA_CODE, DELETE_AREA_CODE } from '../store/actions.type'
 
@@ -120,13 +120,13 @@ export default {
         return this.areaCode.ma_code
       } else return this.areaCode.la_code
     },
-    getName () {
+    /* getName () {
       if (this.selected === 'S') {
-        return this.getCodeName(this.areaCode.sa_code)
+        return this._code_name(this.areaCode.sa_code)
       } else if (this.selected === 'M') {
-        return this.getCodeName(this.areaCode.ma_code)
-      } else return this.getCodeName(this.areaCode.la_code)
-    },
+        return this._code_name(this.areaCode.ma_code)
+      } else return this._code_name(this.areaCode.la_code)
+    }, */
     getLastCode () {
       const code = this._last()
       if (!code) return alert('구역 코드 확인이 필요합니다. 최고 관리자에게 문의해주세요.')
@@ -151,15 +151,15 @@ export default {
           this.selected = 'M'
           return alert('지구 코드 설정이 필요합니다.')
         }
-        let lName = this.getCodeName(this.areaCode.la_code)
-        let mName = this.getCodeName(this.areaCode.ma_code)
+        let lName = this._code_name(this.areaCode.la_code)
+        let mName = this._code_name(this.areaCode.ma_code)
         this.codeName = `${(lName ? ` (${lName}) ` : '')}교구 > ${(mName ? ` (${mName}) ` : '')}지구 > 본당 추가`
       } else if (val === 'M') {
         if (!this.areaCode.la_code) {
           this.selected = 'L'
           return alert('교구 코드 설정이 필요합니다.')
         }
-        let name = this.getCodeName(this.areaCode.la_code)
+        let name = this._code_name(this.areaCode.la_code)
         this.codeName = `${(name ? ` (${name}) ` : '')}교구 > 지구 추가`
       } else if (val === 'L') {
         this.codeName = '교구 추가'
@@ -177,7 +177,7 @@ export default {
       if (!this.getCode) return alert('구역을 선택해주세요!')
       if (type === 'remove') confirm('선택한 항목을 삭제하시겠습니까?') && this.deleteItem(this.getCode)
       else { // update
-        this.$refs.codes.setItem({code: this.getCode, name: this.getName})
+        this.$refs.codes.setItem({code: this.getCode, name: this._code_name(this.getCode)})
         this.inputDlg = true
       }
     },
@@ -198,13 +198,13 @@ export default {
     async saveItem (item) {
       let data = {
         lc: this.areaCode.la_code,
-        ln: this.getCodeName(this.areaCode.la_code)
+        ln: this._code_name(this.areaCode.la_code)
       }
       if (this.selected === 'S') {
         data.ac = data.sc = item.code
         data.sn = item.name
         data.mc = this.areaCode.ma_code
-        data.mn = this.getCodeName(this.areaCode.ma_code)
+        data.mn = this._code_name(this.areaCode.ma_code)
       } else if (this.selected === 'M') {
         data.ac = data.mc = item.code
         data.mn = item.name
@@ -214,6 +214,21 @@ export default {
 
       await this.$store.dispatch(UPDATE_AREA_CODE, data)
       this.$forceUpdate()
+    },
+    _code_name (code) {
+      if (!code) return ''
+      let res = null
+      if (code.length > 5) {
+        res = find(this._s_codes(), (o) => o.s_code === code)
+        if (res && res.s_name) return res.s_name
+      } else if (code.length > 2) {
+        res = find(this._m_codes(), (o) => o.m_code === code)
+        if (res && res.m_name) return res.m_name
+      } else {
+        res = find(this._l_codes(), (o) => o.l_code === code)
+        if (res && res.l_name) return res.l_name
+      }
+      return ''
     },
     _l_codes () {
       if (!this.areaCodes.length) return
