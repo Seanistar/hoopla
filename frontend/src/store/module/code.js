@@ -119,9 +119,10 @@ const mutations = {
   [SET_AREA_CODE] (state, obj) {
     const pos = state.areaCodes.findIndex((o) => o.a_code === obj.a_code)
     if (pos > -1) {
-      state.areaCodes.splice(pos, 1)
+      state.areaCodes[pos] = obj
+    } else {
+      state.areaCodes.push(obj)
     }
-    state.areaCodes.push(obj)
   },
   [REMOVE_AREA_CODE] (state, code) {
     const pos = state.areaCodes.findIndex((o) => o.a_code === code)
@@ -132,9 +133,10 @@ const mutations = {
   [SET_EDUS_CODE] (state, obj) {
     const pos = state.eduCodes.findIndex((o) => o.code === obj.code)
     if (pos > -1) {
-      state.eduCodes.splice(pos, 1)
+      state.eduCodes[pos] = obj
+    } else {
+      state.eduCodes.push(obj)
     }
-    state.eduCodes.push(obj)
   }
 }
 

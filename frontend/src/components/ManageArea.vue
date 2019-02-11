@@ -17,7 +17,7 @@
               <span class="full-width">교구 코드</span>
             </v-subheader>
             <v-radio-group v-model="areaCode.la_code" mandatory class="pl-2">
-              <template v-for="(item, index) in lAreaCodes" v-if="item.l_code !== ''">
+              <template v-for="(item, index) in _l_codes()" v-if="item.l_code !== ''">
                 <v-list-tile :key="item.l_code + index" ripple>
                   <v-list-tile-action>
                     <v-radio :value="item.l_code"></v-radio>
@@ -38,7 +38,7 @@
               <span class="full-width">지구 코드</span>
             </v-subheader>
             <v-radio-group v-model="areaCode.ma_code" class="pl-2" v-if="areaCode.la_code !== ''">
-              <template v-for="(item, index) in mAreaCodes" v-if="item.m_code !== ''">
+              <template v-for="(item, index) in _m_codes()" v-if="item.m_code !== ''">
                 <v-list-tile :key="item.m_code + index" ripple>
                   <v-list-tile-action>
                     <v-radio :value="item.m_code"></v-radio>
@@ -59,7 +59,7 @@
               <span class="full-width">본당 코드</span>
             </v-subheader>
             <v-radio-group v-model="areaCode.sa_code" class="pl-2" v-if="areaCode.ma_code !== ''">
-              <template v-for="(item, index) in sAreaCodes" v-if="item.s_code !== ''">
+              <template v-for="(item, index) in _s_codes()" v-if="item.s_code !== ''">
                 <v-list-tile :key="item.s_code + index" ripple>
                   <v-list-tile-action>
                     <v-radio :value="item.s_code"></v-radio>
@@ -85,7 +85,9 @@
 import CodeMixin from '@/common/code.mixin'
 import MenuButtons from './control/MenuButtons'
 import ItemDialog from './control/InputItemDialog'
-import { last } from 'lodash/array'
+import { uniqBy, last } from 'lodash/array'
+import { filter } from 'lodash/collection'
+import { startsWith } from 'lodash/string'
 import { UPDATE_AREA_CODE, DELETE_AREA_CODE } from '../store/actions.type'
 
 export default {
@@ -95,11 +97,20 @@ export default {
   data: () => ({
     selected: '',
     codeName: '',
+    l_codes: null,
+    m_codes: null,
+    s_codes: null,
     inputDlg: false
   }),
   created () {
     this.areaCode.la_code = '01'
     this.selected = 'M'
+
+    /* this.$store.subscribe((mutation) => {
+      if (mutation.type === 'setAreaCode') {
+        console.log(mutation.payload)
+      }
+    }) */
   },
   computed: {
     getCode () {
@@ -150,7 +161,10 @@ export default {
         }
         let name = this.getCodeName(this.areaCode.la_code)
         this.codeName = `${(name ? ` (${name}) ` : '')}교구 > 지구 추가`
-      } else if (val === 'L') this.codeName = '교구 추가'
+      } else if (val === 'L') {
+        this.codeName = '교구 추가'
+        this.areaCode.ma_code = ''
+      }
     }
   },
   methods: {
@@ -171,13 +185,17 @@ export default {
       this.inputDlg = false
       if (data === undefined) return
 
-      console.log('input item...', data)
+      // console.log('input item...', data)
       this.saveItem(data)
+    },
+    onChangedCode (type, val) {
+      if (val) this.selected = type.toUpperCase()
+      this.$forceUpdate()
     },
     deleteItem (code) {
       this.$store.dispatch(DELETE_AREA_CODE, code)
     },
-    saveItem (item) {
+    async saveItem (item) {
       let data = {
         lc: this.areaCode.la_code,
         ln: this.getCodeName(this.areaCode.la_code)
@@ -194,7 +212,22 @@ export default {
         data.ac = this.areaCode.la_code
       }
 
-      this.$store.dispatch(UPDATE_AREA_CODE, data)
+      await this.$store.dispatch(UPDATE_AREA_CODE, data)
+      this.$forceUpdate()
+    },
+    _l_codes () {
+      if (!this.areaCodes.length) return
+      return uniqBy(this.areaCodes, 'l_code')
+    },
+    _m_codes () {
+      if (!this.areaCodes.length) return
+      const res = filter(uniqBy(this.areaCodes, 'm_code'), (o) => startsWith(o.a_code, `${this.areaCode.la_code}-`) && o.m_code)
+      return res
+    },
+    _s_codes () {
+      if (!this.areaCodes.length) return
+      const res = filter(uniqBy(this.areaCodes, 's_code'), (o) => startsWith(o.a_code, `${this.areaCode.ma_code}`) && o.s_code)
+      return res
     },
     _last () {
       let code = null
