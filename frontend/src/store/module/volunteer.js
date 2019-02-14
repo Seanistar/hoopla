@@ -1,7 +1,7 @@
 import { VolunteerService } from '@/common/api.service'
 import {
   FETCH_VOLUNTEERS, CREATE_VOLUNTEER, UPDATE_VOLUNTEER, DELETE_VOLUNTEER, FETCH_VOLUNTEER_ITEM,
-  QUERY_VOLUNTEERS, QUERY_VOLUNTEER_ITEM,
+  QUERY_VOLUNTEERS, QUERY_VOLUNTEER_ITEM, GET_TOTAL_COUNT,
   FIND_VOLUNTEERS,
   FETCH_VOLUNTEER_EDUS, CREATE_VOLUNTEER_EDU, UPDATE_VOLUNTEER_EDU, DELETE_VOLUNTEER_EDU,
   FETCH_VOLUNTEER_ACTS, CREATE_VOLUNTEER_ACT, UPDATE_VOLUNTEER_ACT, DELETE_VOLUNTEER_ACT,
@@ -9,7 +9,7 @@ import {
   FETCH_VOLUNTEER_HISTORY, CREATE_VOLUNTEER_HISTORY
 } from '../actions.type'
 import {
-  FETCH_START, SET_CHANGED_CODE,
+  FETCH_START, SET_CHANGED_CODE, SET_TOTAL_COUNT,
   FETCH_VOLUNTEERS_END, ADD_VOLUNTEER, SET_VOLUNTEER, REMOVE_VOLUNTEER,
   START_QUERYING, QUERY_VOLUNTEERS_END, SET_QUERY_INFO, SET_QUERIED_VOLUNTEER_ITEM,
   START_FINDING, FIND_VOLUNTEERS_END, RESET_FIND_VOLUNTEERS,
@@ -40,13 +40,15 @@ const state = {
   queryResult: [],
   queriedVoltItems: [],
   foundCount: 0,
-  foundResult: []
+  foundResult: [],
+  totalCount: 0
 }
 
 const getters = {
   volunteerInfo: (state) => (id) => {
     return state.volunteers.find((o) => o.id === id)
   },
+  totalCount: state => state.totalCount,
   volunteers: state => state.volunteers,
   volunteerEdus: state => state.volunteerEdus,
   volunteerActs: state => state.volunteerActs,
@@ -80,6 +82,15 @@ const actions = {
     return VolunteerService.get(id)
       .then(({ data }) => {
         context.commit(SET_VOLUNTEER, data[0])
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
+  [GET_TOTAL_COUNT] (context) {
+    return VolunteerService.total()
+      .then(({ data }) => {
+        context.commit(SET_TOTAL_COUNT, data.TOT)
       })
       .catch((error) => {
         throw new Error(error)
@@ -279,6 +290,9 @@ const mutations = {
   },
   [START_QUERYING] (state) {
     state.isQuerying = true
+  },
+  [SET_TOTAL_COUNT] (state, count) {
+    state.totalCount = count
   },
   [FETCH_VOLUNTEERS_END] (state, volunteers) {
     state.volunteers = volunteers

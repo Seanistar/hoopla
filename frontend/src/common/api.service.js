@@ -22,7 +22,7 @@ const ApiService = {
   },
   get (resource, plug) {
     return Vue.axios
-      .get(`${resource}/${plug}`)
+      .get(plug ? `${resource}/${plug}` : resource)
       .catch((error) => {
         throw new Error(`ApiService get ${error}`)
       })
@@ -101,6 +101,9 @@ export const VolunteerService = {
   },
   get (id) {
     return ApiService.get('volts/page', id)
+  },
+  total () {
+    return ApiService.get('volts/total')
   },
   create (params) {
     return ApiService.create('volts', params)

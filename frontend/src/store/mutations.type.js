@@ -6,6 +6,7 @@ export const SET_VOLUNTEER = 'setVolunteer'
 export const ADD_VOLUNTEER = 'addVolunteer'
 export const REMOVE_VOLUNTEER = 'removeVolunteer'
 export const FETCH_VOLUNTEERS_END = 'fetchVolunteers'
+export const SET_TOTAL_COUNT = 'setTotalCount'
 
 // volunteer education
 export const FETCH_VOLUNTEER_EDUS_END = 'fetchVolunteerEdus'

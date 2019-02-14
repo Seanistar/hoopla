@@ -11,6 +11,7 @@ export const FETCH_VOLUNTEER_ITEM = 'fetchVolunteerItem'
 export const DELETE_VOLUNTEER = 'deleteVolunteer'
 export const CREATE_VOLUNTEER = 'createVolunteer'
 export const UPDATE_VOLUNTEER = 'updateVolunteer'
+export const GET_TOTAL_COUNT = 'getVolunteerCount'
 
 // volunteer's mandatory education
 export const FETCH_VOLUNTEER_ACTS = 'fetchVolunteerActs'

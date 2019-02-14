@@ -6,7 +6,7 @@ const _promise = require('bluebird')
 /****************************************************************
  * volunteer information
  */
-router.get('', (req, res) => {
+router.get('/', (req, res) => {
   let select = `
     SELECT v.*, IF(ISNULL(l.v_id), 'N', 'Y')is_leader,
     a.l_name la_name, a.m_name ma_name, a.s_name sa_name 
@@ -14,12 +14,23 @@ router.get('', (req, res) => {
     LEFT JOIN leaders l ON v.id = l.v_id AND l.work = 'Y'
     LEFT JOIN area_code a ON v.area_code = a.a_code `
   if (req.query.code) select += `WHERE v.area_code = ?`
-  else select += `LIMIT 1000`
+  else select += `WHERE state = 'ACT' ORDER BY v.au_date LIMIT 100`
   const sql = [select, req.query.code ? [req.query.code] : []]
   console.log(sql)
   db.query(...sql, (err, rows) => {
     if (!err) {
       res.status(200).send(rows)
+    } else {
+      console.warn('query v error : ' + err)
+      res.status(500).send('Internal Server Error')
+    }
+  })
+})
+
+router.get('/total', (req, res) => {
+  db.query('SELECT COUNT(id) TOT FROM volunteers', (err, rows) => {
+    if (!err) {
+      res.status(200).send(rows[0])
     } else {
       console.warn('query v error : ' + err)
       res.status(500).send('Internal Server Error')
