@@ -23,14 +23,14 @@ router.get('/', (req, res) => {
 
 router.get('/volts', (req, res) => {
   let {a_code, e_date} = req.query
-  e_date = `${e_date} 23:59:59`
+  // e_date = `${e_date} 23:59:59`
   const sql = [`
     SELECT id, name, ca_name, ca_id, au_date, state, phone, br_date 
     FROM volunteers
-    WHERE area_code=? AND registered <= DATE_FORMAT(?, '%Y-%m-%d %H:%i:%s')`,
+    WHERE area_code=? AND au_date <= ?`,
     [a_code, e_date]
-  ]
-  console.log('report volts...' + sql)
+  ] // WHERE area_code=? AND registered <= DATE_FORMAT(?, '%Y-%m-%d %H:%i:%s')`
+  console.log('report volts...', sql)
   db.query(...sql, (err, rows) => {
     if (!err) {
       console.log('volts query has done')

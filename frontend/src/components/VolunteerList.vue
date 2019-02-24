@@ -1,47 +1,40 @@
 <template>
-  <v-container class="elevation-5 pt-2">
+  <v-container class="elevation-5 pt-3">
     <v-layout row align-baseline pb-0>
-      <v-flex xs9>
+      <v-flex xs10>
         <v-layout row align-baseline>
-          <!--<v-flex xs2>
-            <v-subheader class="body-2 pr-0"><span>소속본당 : </span></v-subheader>
-          </v-flex>-->
           <v-flex xs4>
             <v-combobox class="body-2" v-model="model"
                         @input="fetchVolunteers()" label="소속 본당"
                         :items="items" item-value="code" item-text="name"
-                        :search-input.sync="search" clearable single-line>
-              <template slot="no-data"><!--:disabled="authInfo.level === 'L3'"-->
-                <v-list-tile>
-                  <v-list-tile-content>
-                    <v-list-tile-title>
-                      "<strong>{{ search }}</strong>" 본당이 없습니다. 관리자에게 문의해주세요.
-                    </v-list-tile-title>
-                  </v-list-tile-content>
-                </v-list-tile>
-              </template>
+                        :search-input.sync="search" clearable>
             </v-combobox>
           </v-flex>
-          <v-flex xs6 ml-4 subheading>
-            <span>전체 봉사자 수 : <b>{{totalCount|units}}</b> 명</span>
-            <span v-if="search"> / 본당 봉사자 수 : <b>{{volunteersCount|units}}</b> 명</span>
+          <v-flex xs4>
+            <v-text-field class="body-2 ml-3" v-model="voltName"
+                        @keyup.enter="fetchVolunteers()" label="봉사자 이름" clearable>
+            </v-text-field>
+          </v-flex>
+          <v-flex xs4 ml-3 body-1>
+            <span>봉사자 수 - 전체: <b>{{totalCount|units}}</b> 명</span>
+            <span v-if="fetched && (search || voltName)"> / 현재 검색: <b>{{volunteersCount|units}}</b> 명</span>
           </v-flex>
         </v-layout>
       </v-flex>
-      <v-flex xs3>
+      <v-flex xs2>
         <v-layout justify-end>
           <v-btn color="indigo accent-2" outline dark class="mb-3" @click="newVolunteer">신규 봉사자</v-btn>
         </v-layout>
       </v-flex>
     </v-layout>
 
-    <v-data-table :headers="headers" :items="volunteers" class="elevation-5" hide-actions
-                  item-key="id" :loading="isVolunteersLoading && !fetched">
-      <!--:pagination.sync="pagination" :rows-per-page-items="perPage" rows-per-page-text="페이지 당 보기 개수"-->
-      <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+    <v-layout align-center justify-center class="progress-circular" v-if="isVolunteersLoading && !fetched">
+      <v-progress-circular indeterminate color="#00b0f5"></v-progress-circular>
+    </v-layout>
+
+    <v-data-table :headers="headers" :items="volunteers" class="elevation-5" hide-actions>
       <template slot="items" slot-scope="props">
         <tr @dblclick="editItem(props.item)">
-          <!--<td class="text-xs-center"><span>{{(pagination.page - 1) * pagination.rowsPerPage + (props.index + 1)}}</span></td>-->
           <td class="text-xs-center"><span>{{(props.index + 1)}}</span></td>
           <td class="text-xs-center">
             <span>{{ props.item.name }}</span>
@@ -52,8 +45,6 @@
           </td>
           <td class="text-xs-center">{{ props.item.ca_name }}</td>
           <td class="text-xs-center">{{ activityState[props.item.state] }}</td>
-          <!--<td class="text-xs-center">{{ props.item.la_name }}</td>
-          <td class="text-xs-center">{{ props.item.ma_name }}</td>-->
           <td class="text-xs-center">{{ props.item.sa_name }}</td>
           <td class="text-xs-center">{{ props.item.au_date }}</td>
           <td class="text-xs-center">{{ props.item.br_date }}</td>
@@ -63,9 +54,6 @@
           </td>
         </tr>
       </template>
-      <!--<template slot="pageText" slot-scope="{pageStart, pageStop, itemsLength}">
-        전체 {{itemsLength}}개 중 {{ pageStart }} ~ {{ pageStop }}
-      </template>-->
       <template slot="no-data" v-if="fetched">
         <v-alert :value="true" color="warning" icon="warning">
           표시할 봉사자 정보가 없습니다.
@@ -87,9 +75,8 @@ export default {
     items: [],
     model: null,
     search: null,
+    voltName: null,
     fetched: false,
-    // perPage: [25, 50, 100, {text: '$vuetify.dataIterator.rowsPerPageAll', value: -1}],
-    // pagination: { sortBy: 'id' },
     headers: [
       { text: '번호', value: 'id', sortable: false },
       { text: '성명', value: 'name' },
@@ -101,6 +88,11 @@ export default {
       { text: '편집', value: 'edit', sortable: false }
     ]
   }),
+  watch: {
+    voltName (nv, ov) {
+      (ov && !nv) && this.fetchVolunteers()
+    }
+  },
   computed: {
     ...mapGetters([
       'smallCodes',
@@ -116,24 +108,22 @@ export default {
       return { ACT: '활동중', STP: '중단', BRK: '쉼', DTH: '사망' }
     }
   },
-  watch: {
-    model (val) {
-      if (val && val.length > 5) {
-        this.$nextTick(() => this.model.pop())
-      }
-    }
-  },
   created () {
     this.headers.map(h => { h.class = ['text-xs-center', 'body-2', 'pl-39x'] })
   },
   methods: {
     async fetchVolunteers (code) {
+      this.fetched = false
       let reqCode = code !== undefined ? code : (this.model ? this.model.code : '')
-      // console.log('request code...', reqCode, this.model)
+      const params = {code: reqCode, name: this.voltName}
+      console.log('fetch volt...', params)
       await this.$store.dispatch(GET_TOTAL_COUNT)
-      await this.$store.dispatch(FETCH_VOLUNTEERS, reqCode)
+      await this.$store.dispatch(FETCH_VOLUNTEERS, {params})
       this.fetched = true
       reqCode && this.$store.commit(SET_CHANGED_CODE, {type: 'vl_ac', code: reqCode})
+    },
+    onChange (name) {
+      console.log('changed', name)
     },
     newVolunteer () {
       // if (!this.model || !this.model.code) return alert('본당을 선택하세요!')
@@ -184,5 +174,11 @@ export default {
   .badge-pos {
     top: -15px;
     right: -15px
+  }
+  .progress-circular {
+    margin: auto 0;
+    height: 400px;
+    width: 80vw;
+    position: absolute;
   }
 </style>

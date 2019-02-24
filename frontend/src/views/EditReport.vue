@@ -18,12 +18,13 @@
 import ReportStates from '@/components/ReportStates'
 import ReportVolunteers from '@/components/ReportVolunteers'
 import ReportActs from '@/components/ReportActs'
+import ReportDirect from '@/components/ReportActsDirect'
 import FloatButton from '@/components/control/FloatButton'
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'EditReport',
-  components: { ReportStates, ReportVolunteers, ReportActs, FloatButton },
+  components: { ReportStates, ReportVolunteers, ReportDirect, ReportActs, FloatButton },
   props: { id: undefined, rObj: Object },
   computed: {
     ...mapGetters([
@@ -32,7 +33,7 @@ export default {
       'authInfo'
     ]),
     targetComponents () {
-      return ['ReportStates', 'ReportVolunteers', 'ReportActs']
+      return ['ReportStates', 'ReportVolunteers', 'ReportDirect', 'ReportActs']
     },
     RID: {
       get () { return this.r_id },
@@ -62,7 +63,7 @@ export default {
     e_date: undefined,
     s_date: undefined,
     tabIdx: 0,
-    titles: ['현황 내역', '봉사자 명단', '그룹 봉사 내역']
+    titles: ['현황 내역', '봉사자 명단', '그룹 봉사 (전체입력)', '그룹 봉사 (개별입력)']
   }),
   created () {
     this.r_id = this.id

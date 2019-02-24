@@ -17,6 +17,7 @@
           <td class="text-xs-center w-15">{{ props.item.s_date }}</td>
           <td class="text-xs-center w-15">{{ props.item.e_date }}</td>
           <td class="text-xs-center w-20">{{ props.item.gv_name }}</td>
+          <!--<td class="text-xs-center w-10">{{ props.item.numbers }}</td>-->
           <td class="text-xs-center w-20">{{ props.item.memo }}</td>
         </tr>
       </template>
@@ -71,6 +72,7 @@ export default {
       { text: '교육 시작일', value: 's_date' },
       { text: '교육 종료일', value: 'e_date' },
       { text: '봉사자', value: 'v_name' },
+      // { text: '인원 수', value: 'numbers' },
       { text: '참고 사항', value: 'memo', sortable: false }
     ]
   }),
@@ -106,6 +108,7 @@ export default {
     },
     onClickMenu (type) {
       if (type === 'add') {
+        this.selected = {}
         this.$refs.edus.setItem(Object.assign({v_id: this.v_id}, this.$parent.VOLT))
         this.inputDlg = true
         return

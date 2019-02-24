@@ -7,17 +7,30 @@ const _promise = require('bluebird')
  * volunteer information
  */
 router.get('/', (req, res) => {
-  let select = `
+  let _sql = `
     SELECT v.*, IF(ISNULL(l.v_id), 'N', 'Y')is_leader,
     a.l_name la_name, a.m_name ma_name, a.s_name sa_name 
     FROM volunteers v
     LEFT JOIN leaders l ON v.id = l.v_id AND l.work = 'Y'
-    LEFT JOIN area_code a ON v.area_code = a.a_code `
-  if (req.query.code) select += `WHERE v.area_code = ?`
-  else select += `WHERE state = 'ACT' ORDER BY v.au_date LIMIT 100`
-  const sql = [select, req.query.code ? [req.query.code] : []]
-  console.log(sql)
-  db.query(...sql, (err, rows) => {
+    LEFT JOIN area_code a ON v.area_code = a.a_code`
+  /*let select = `
+    SELECT v.*, IF(ISNULL(l.v_id), 'N', 'Y')is_leader,
+      (SELECT COUNT(DISTINCT id) FROM edus e WHERE v_id=v.id AND edu_code BETWEEN 120 AND 130 AND numbers=0) e_count,
+      a.l_name la_name, a.m_name ma_name, a.s_name sa_name 
+    FROM volunteers v
+    LEFT JOIN leaders l ON v.id = l.v_id AND l.work = 'Y'
+    LEFT JOIN area_code a ON v.area_code = a.a_code
+    HAVING e_count > 0`*/
+  const {code, name} = req.query
+  if (code || name) {
+    _sql += ' WHERE '
+    if (code && name) _sql += `v.area_code = '${code}' AND v.name LIKE (\'%${name}%\')`
+    else if(code) _sql += `v.area_code = '${code}'`
+    else _sql += `v.name LIKE (\'%${name}%\')`
+  }
+  _sql += ' ORDER BY v.au_date DESC LIMIT 100'
+  console.log(_sql, req.query)
+  db.query(_sql, (err, rows) => {
     if (!err) {
       res.status(200).send(rows)
     } else {
@@ -32,7 +45,7 @@ router.get('/total', (req, res) => {
     if (!err) {
       res.status(200).send(rows[0])
     } else {
-      console.warn('query v error : ' + err)
+      console.warn('query total error : ' + err)
       res.status(500).send('Internal Server Error')
     }
   })
@@ -57,9 +70,13 @@ router.get('/page/:id', (req, res) => {
   })
 })
 
-router.put('/', (req, res) => {
-  console.log(req.body)
+router.put('/', async (req, res) => {
+  //console.log(req.body)
   const {name, ca_name, br_date, ca_date, state, area_code, sex, ca_id, email, photo, phone, address, job, degree, au_date, memo} = req.body
+  const count = await isExistCAID(ca_id)
+  if (count > 0) {
+    return res.status(200).send({newID: -1})
+  }
   const sql = [`
     INSERT INTO volunteers (name, ca_name, br_date, ca_date, state, area_code, sex, ca_id, email, photo, phone, address, job, degree, au_date, memo) 
     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
@@ -77,9 +94,30 @@ router.put('/', (req, res) => {
   })
 })
 
+const isExistCAID = (id) => {
+  return new _promise(function(resolve) {
+    const sql = [`
+      SELECT COUNT(id)CNT FROM volunteers
+      WHERE ca_id = ?`, [id]]
+    return db.query(...sql, (err, rows) => {
+      if (!err) {
+        console.log(`is Exist ID`, rows[0].CNT)
+        resolve(rows[0].CNT)
+      } else {
+        console.warn(`exist query error : ` + err)
+        resolve(false)
+      }
+    })
+  })
+}
+
 router.post('/page/:id', (req, res) => {
   const id = req.params.id
   const {au_date, ca_id, name, ca_name, state, area_code, sex, email, photo, phone, address, job, degree, ca_date, br_date, memo} = req.body
+  /*const count = await isExistCAID(ca_id)
+  if (count > 0) {
+    return res.status(200).send({success: false})
+  }*/
   const sql = [`
     UPDATE volunteers 
     SET au_date=?, ca_id=?, name=?, ca_name=?, state=?, area_code=?, sex=?,
@@ -159,7 +197,7 @@ router.get('/edu/:id', (req, res) => {
 })
 
 router.put('/edu', async (req, res) => {
-  const {v_id, edu_code, s_date, e_date, gv_id, area_code, gv_name, months, r_year, memo} = req.body
+  const {v_id, edu_code, s_date, e_date, gv_id, area_code, gv_name, months, r_year, memo, ready} = req.body
   if (edu_code === 53) { // 월교육 다중 생성
     const mns = months && months.split(',')
     let ms = []
@@ -171,9 +209,9 @@ router.put('/edu', async (req, res) => {
     res.status(200).send({newID: JSON.stringify(ms)})
   } else {
     const sql = [`
-    INSERT INTO edus (v_id, edu_code, s_date, e_date, area_code, gv_id, gv_name, memo) 
-    VALUES (?,?,?,?,?,?,?,?)`,
-      [v_id, edu_code, s_date, e_date, area_code, gv_id, gv_name, memo]
+    INSERT INTO edus (v_id, edu_code, s_date, e_date, area_code, gv_id, gv_name, memo, ready) 
+    VALUES (?,?,?,?,?,?,?,?,?)`,
+      [v_id, edu_code, s_date, e_date, area_code, gv_id, gv_name, memo, ready ? 'Y' : 'N']
     ]
     db.query(...sql, (err, rows) => {
       if (!err) {
@@ -217,12 +255,12 @@ const insertEduItem = (v_id, e_code, month, r_year, gv_id, area_code, gv_name, m
 
 router.post('/edu/:id', (req, res) => {
   const id = req.params.id
-  const {v_id, edu_code, s_date, e_date, area_code, gv_name, memo} = req.body
+  const {v_id, edu_code, s_date, e_date, area_code, gv_name, memo, ready} = req.body
   const sql = [`
     UPDATE edus 
-    SET v_id=?, edu_code=?, s_date=?, e_date=?, area_code=?, memo=?, gv_name=?
+    SET v_id=?, edu_code=?, s_date=?, e_date=?, area_code=?, memo=?, gv_name=?, ready=?
     WHERE id=?`,
-    [v_id, edu_code, s_date, e_date, area_code, memo, gv_name, id]
+    [v_id, edu_code, s_date, e_date, area_code, memo, gv_name, ready ? 'Y' : 'N', id]
   ]
   db.query(...sql, (err, rows) => {
     if (!err) {
@@ -271,12 +309,23 @@ router.get('/act/:id', (req, res) => {
 })
 
 router.put('/act', (req, res) => {
-  const {v_id, act_code, s_date, e_date, area_code, numbers, content} = req.body
-  const sql = [`
-    INSERT INTO acts (v_id, act_code, s_date, e_date, area_code, numbers, content) 
-    VALUES (?,?,?,?,?,?,?)`,
-    [v_id, act_code, s_date, e_date, area_code, numbers, content]
-  ]
+  let sql = null
+  const {v_id, act_code, s_date, e_date, area_code, numbers, content, s_code} = req.body
+  console.log(area_code, s_code)
+  if(s_code && area_code !== s_code) { // in case do act at other church
+    sql = [`
+      INSERT INTO acts (v_id, act_code, s_date, e_date, area_code, origin_code, numbers, content) 
+      VALUES (?,?,?,?,?,?,?,?)`,
+        [v_id, act_code, s_date, e_date, s_code, area_code, numbers, content]
+      ]
+  } else {
+    sql = [`
+      INSERT INTO acts (v_id, act_code, s_date, e_date, area_code, numbers, content) 
+      VALUES (?,?,?,?,?,?,?)`,
+        [v_id, act_code, s_date, e_date, area_code, numbers, content]
+      ]
+  }
+
   db.query(...sql, (err, rows) => {
     if (!err) {
       console.log('act has been inserted')
@@ -290,13 +339,25 @@ router.put('/act', (req, res) => {
 
 router.post('/act/:id', (req, res) => {
   const id = req.params.id
-  const {act_code, s_date, e_date, area_code, numbers, content} = req.body
-  const sql = [`
-    UPDATE acts 
-    SET act_code=?, s_date=?, e_date=?, area_code=?, numbers=?, content=?
-    WHERE id=?`,
-    [act_code, s_date, e_date, area_code, numbers, content, id]
-  ]
+  const {act_code, s_date, e_date, area_code, s_code, numbers, content} = req.body
+  console.log(area_code, s_code)
+  let sql = null
+  if (s_code && area_code !== s_code) {
+    sql = [`
+      UPDATE acts 
+      SET act_code=?, s_date=?, e_date=?, area_code=?, origin_code=?, numbers=?, content=?
+      WHERE id=?`,
+        [act_code, s_date, e_date, s_code, area_code, numbers, content, id]
+      ]
+  } else {
+    sql = [`
+      UPDATE acts 
+      SET act_code=?, s_date=?, e_date=?, area_code=?, numbers=?, content=?
+      WHERE id=?`,
+        [act_code, s_date, e_date, area_code, numbers, content, id]
+      ]
+  }
+
   db.query(...sql, (err, rows) => {
     if (!err) {
       res.status(200).send({success: true})

@@ -6,7 +6,7 @@
           <!--<v-flex xs2>
             <v-subheader class="body-2 pr-0">소속본당 : </v-subheader>
           </v-flex>-->
-          <v-flex xs3>
+          <v-flex xs5>
             <v-combobox label="소속본당" class="body-2" @input="fetchReports()"
                         v-model="model" :items="items" item-value="code" item-text="name"
                         :search-input.sync="search" clearable single-line> <!--:disabled="authInfo.level === 'L3'"-->
@@ -40,7 +40,8 @@
       </v-flex>
     </v-layout>
 
-    <v-data-table :headers="headers" :items="reports" hide-actions :pagination.sync="pagination"
+    <v-data-table :headers="headers" :items="reports"
+                  :pagination.sync="pagination" :rows-per-page-items="perPage"
                   class="elevation-5" :loading="fetched && isReportsLoading">
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
@@ -105,6 +106,7 @@ export default {
     selected: {},
     rYear: '',
     rHalf: '',
+    perPage: [50, 100, {'text': '$vuetify.dataIterator.rowsPerPageAll', 'value': -1}],
     pagination: {descending: true},
     headers: [
       { text: '보고연도', value: 'r_code' },
@@ -120,10 +122,10 @@ export default {
   created () {
     this.headers.map(h => { h.class = ['text-xs-center', 'body-1'] })
   },
-  mounted () {
-    const label = document.getElementsByClassName('v-label')
-    console.log(label)
-  },
+  // mounted () {
+  //   const label = document.getElementsByClassName('v-label')
+  //   console.log(label)
+  // },
   methods: {
     async fetchReports (code) {
       let reqCode = code !== undefined ? code : (this.model ? this.model.code : '')
@@ -158,7 +160,10 @@ export default {
     },
     async setCodeInfo (code) {
       if (!this.areaCodes.length) await this.$store.dispatch('fetchAreaCodes')
-      const list = map(this.smallCodes(this.authInfo), o => { return {code: o.s_code, name: o.s_name} })
+      const list = map(this.smallCodes(this.authInfo), o => {
+        const path = `${o.s_name} (${o.l_name}-${o.m_name})`
+        return {code: o.s_code, name: path}
+      })
       this.items = orderBy(list, ['name'])
 
       const res = find(list, o => o.code === code)

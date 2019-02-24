@@ -27,7 +27,8 @@
                           :items="eduCodes" item-text="name" item-value="code"
                 ></v-select>
               </v-flex>
-             <v-flex xs6 v-if="isMonthEdu">
+
+              <v-flex xs6 v-if="isMonthEdu">
                 <v-layout row>
                   <v-flex xs4>
                     <v-checkbox label="횟수" hide-details v-model="isECount"></v-checkbox>
@@ -41,7 +42,14 @@
                 </v-layout>
               </v-flex>
               <v-flex xs6 v-else-if="isNoteCheck">
-                <v-checkbox label="날짜 미상" hide-details v-model="isECount"></v-checkbox>
+                <v-layout row>
+                  <v-flex xs6>
+                    <v-checkbox label="날짜 미상" hide-details v-model="isECount"></v-checkbox>
+                  </v-flex>
+                  <v-flex xs6>
+                    <v-checkbox label="준비중" v-model="item.ready" hide-details></v-checkbox>
+                  </v-flex>
+                </v-layout>
               </v-flex>
               <v-flex xs12 v-if="isMonthEdu">
                 <template v-if="isECount">
@@ -151,6 +159,9 @@ export default {
     isNoteCheck () {
       return this.item.edu_code >= 70 && this.item.edu_code <= 80
     },
+    isGroupStudy () {
+      return this.item.edu_code >= 120 && this.item.edu_code <= 130
+    },
     years () {
       const start = (new Date()).getFullYear()
       return ['선택없음'].concat(range(start, 2006, -1))
@@ -181,6 +192,7 @@ export default {
   created () {
     this.item.s_date = this.item.e_date = this.item.r_year = ''
     this.item.edu_code = this.item.edu_name = null
+    this.item.ready = false
   },
   methods: {
     closeDialog () {
@@ -205,12 +217,16 @@ export default {
     },
     reset () {
       this.isECount = false
-      this.item = { v_id: 0 }; this.selected = []
+      this.item = { v_id: 0, ready: false }; this.selected = []
       const sdr = this.$refs['s_date']; sdr && sdr.setDate(null)
       const edr = this.$refs['e_date']; edr && edr.setDate(null)
     },
     setItem (data) {
       if (data !== undefined) this.item = cloneDeep(data)
+      if (this.isNoteCheck) {
+        this.item.ready = this.item.ready === 'Y'
+        this.$nextTick(() => (this.isECount = !this.item.s_date))
+      }
       const sdr = this.$refs['s_date']; sdr && sdr.setDate(data.s_date)
       const edr = this.$refs['e_date']; edr && edr.setDate(data.e_date)
     },

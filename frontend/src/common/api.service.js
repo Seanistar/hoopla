@@ -87,17 +87,23 @@ export const UtilityService = {
 }
 
 export const StatService = {
-  get_yearly () {
-    return ApiService.query('stats/yearly')
+  get_yearly (params) {
+    return ApiService.query('stats/yearly', params)
   },
-  get_church () {
-    return ApiService.query('stats/church')
+  get_church (params) {
+    return ApiService.query('stats/church', params)
+  },
+  get_area () {
+    return ApiService.query('stats/area')
+  },
+  get_volt () {
+    return ApiService.query('stats/volts')
   }
 }
 
 export const VolunteerService = {
-  fetch (code) {
-    return ApiService.query('volts', {params: {code}})
+  fetch (params) {
+    return ApiService.query('volts', params)
   },
   get (id) {
     return ApiService.get('volts/page', id)

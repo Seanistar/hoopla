@@ -105,7 +105,9 @@ export default {
     },
     onClickMenu (type) {
       if (type === 'add') {
-        this.$refs.acts.setItem(Object.assign({id: this.v_id}, this.$parent.VOLT))
+        this.selected = {}
+        const obj = Object.assign({id: this.v_id}, this.$parent.VOLT, {s_code: this.volunteerInfo.area_code, s_name: this.volunteerInfo.sa_name})
+        this.$refs.acts.setItem(obj)
         this.inputDlg = true
         return
       }
@@ -123,7 +125,7 @@ export default {
       if (data === undefined) return
 
       if (isUndefined(data.v_id)) data.v_id = data.id
-      console.log('input item...', data)
+      console.log('input item...', data, data.area_code, data.s_code)
       this.updateActItem(data)
     }
   }

@@ -99,9 +99,10 @@ const actions = {
   [CREATE_VOLUNTEER] (context, volunteer) {
     return VolunteerService.create(volunteer)
       .then(({ data }) => {
+        if (data.newID < 0) return -1
         volunteer.id = data.newID
         context.commit(ADD_VOLUNTEER, volunteer)
-        return Promise.resolve(data.newID)
+        return data.newID
       })
       .catch((error) => {
         throw new Error(error)
@@ -110,7 +111,9 @@ const actions = {
   [UPDATE_VOLUNTEER] (context, params) {
     return VolunteerService.update(params)
       .then(({ data }) => {
+        // if (!data.success) return false
         context.commit(SET_VOLUNTEER, params)
+        // return true
       })
       .catch((error) => {
         throw new Error(error)

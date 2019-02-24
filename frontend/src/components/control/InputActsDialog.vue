@@ -37,11 +37,10 @@
                           hide-details v-model="item.act_code"></v-select>
               </v-flex>
               <v-flex xs6>
-                <v-text-field label="인원 수" v-model="item.numbers" hide-details></v-text-field>
+                <v-text-field label="인원 수" v-model="item.numbers" suffix="명" hide-details></v-text-field>
               </v-flex>
               <v-flex xs12>
                 <v-text-field label="봉사한 구역 (본당)" clearable hide-details
-                              :disabled="item.s_name !== undefined"
                               @focus="churchFinder = true" v-model="item.s_name"></v-text-field>
               </v-flex>
               <v-flex xs12 sm6>

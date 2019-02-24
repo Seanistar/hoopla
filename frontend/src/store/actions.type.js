@@ -68,6 +68,8 @@ export const FETCH_SMALL_LEADER = 'fetchSmallLeader'
 // statistics
 export const FETCH_STAT_YEARLY = 'fetchStatYearly'
 export const FETCH_STAT_CHURCH = 'fetchStatChurch'
+export const FETCH_STAT_AREA = 'fetchStatArea'
+export const FETCH_STAT_VOLT = 'fetchStatVolt'
 
 // will be obsoleted
 export const DELETE_AUTHOR = 'deleteAuthor'

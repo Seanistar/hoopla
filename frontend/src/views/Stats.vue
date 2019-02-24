@@ -16,19 +16,21 @@
 <script>
 import StatYearly from '@/components/StatYearly'
 import StatChurch from '@/components/StatChurch'
+import StatArea from '@/components/StatArea'
+import StatVolt from '@/components/StatVolts'
 import FloatButton from '@/components/control/FloatButton'
 
 export default {
   name: 'Stats',
-  components: { StatYearly, StatChurch, FloatButton },
+  components: { StatYearly, StatChurch, StatArea, StatVolt, FloatButton },
   computed: {
     targetComponents () {
-      return ['StatYearly', 'StatChurch']
+      return ['StatArea', 'StatYearly', 'StatChurch', 'StatVolt']
     }
   },
   data: () => ({
     tabIdx: 0,
-    titles: ['연도별 봉사현황', '본당별 봉사현황']
+    titles: ['교구별 현황', '연도별 현황', '본당별 현황', '전체 봉사자 현황']
   })
 }
 </script>

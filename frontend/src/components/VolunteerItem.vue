@@ -36,7 +36,7 @@
           <v-layout>
             <v-flex xs4>
               <v-text-field label="봉사자 번호" :rules="[rules.vcode]" mask="##-####"
-                            clearable v-model="params.ca_id"></v-text-field>
+                            :readonly="isEditMode" clearable v-model="params.ca_id"></v-text-field>
             </v-flex>
             <v-flex xs4 ml-3>
               <date-picker ref="au_date" title="선서일"
@@ -240,6 +240,9 @@ export default {
         })
         return alert('종료일이 시작일보다 빠릅니다.')
       }
+    },
+    'params.ca_id' (nid, oid) {
+      !oid && nid.length === 6 && console.log('ca id...', nid)
     }
   },
   async created () {
@@ -397,7 +400,6 @@ export default {
       }
 
       if (!this.isEditMode) {
-        this.isDisabled = true
         this.createItem()
       } else {
         this[UPDATE_VOLUNTEER](this.form)
@@ -408,12 +410,14 @@ export default {
       let vid = null
       try {
         vid = await this[CREATE_VOLUNTEER](this.form)
-        this.$showSnackBar('추가되었습니다.')
+        console.log(vid)
+        if (vid < 0) return this.$showSnackBar('봉사자 번호가 중복되었습니다. 다시 확인해주세요.')
+        else this.$showSnackBar('추가되었습니다.')
       } catch (e) {
-        console.warn(e)
         return alert('실패하였습니다.')
       }
 
+      // this.isDisabled = true
       const targetUrl = `${location.origin}${location.pathname}/${vid}`
       this.$nextTick(() => {
         // console.log('submit...', vid, this.form)

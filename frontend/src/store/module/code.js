@@ -25,6 +25,9 @@ const getters = {
   ebsCodes (state) {
     return filter(state.eduCodes, o => o.type === 'E')
   },
+  essCodes (state) {
+    return filter(state.eduCodes, o => o.code === 51 || o.code === 53 || o.code === 54)
+  },
   trnCodes (state) {
     return filter(state.eduCodes, o => o.type === 'T')
   },
@@ -50,6 +53,9 @@ const getters = {
     }
     const large = info.area_code.substring(0, 2)
     return filter(state.areaCodes, (ac) => ac.l_code === large && ac.s_code !== null)
+  },
+  largeCodes (state) {
+    return filter(state.areaCodes, (ac) => ac.a_code.length === 2)
   }
 }
 

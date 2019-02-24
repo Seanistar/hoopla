@@ -89,7 +89,7 @@
           <tr @click="selected = props.item" @dblclick="onClickResult(props.item)"
               :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
             <td class="text-xs-center w-4">{{ props.index + 1 }}</td>
-            <td class="text-xs-center w-10">{{ props.item.ca_id }}</td>
+            <td class="text-xs-center w-10">{{ props.item.ca_id|dash }}</td>
             <td class="text-xs-center w-10">{{ props.item.name }}</td>
             <td class="text-xs-center w-15">{{ props.item.ca_name }}</td>
             <td class="text-xs-center w-10">{{ props.item.au_date|monthstamp }}</td>
@@ -318,6 +318,13 @@ export default {
 
       this.params.a_code = this.params.area_code
       // console.log(type, val, this.params.a_code)
+    }
+  },
+  filters: {
+    dash (code) {
+      const a = code.substring(0, 2)
+      const b = code.substring(2)
+      return `${a}-${b}`
     }
   }
 }
