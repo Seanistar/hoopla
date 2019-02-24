@@ -10,7 +10,7 @@
         <v-layout>
         <v-flex xs2>
           <image-uploader :cid="params.ca_id" :callback="setPhoto">
-            <circle-spin v-if="isLoading" class="mt-5"></circle-spin>
+            <v-progress-circular v-if="isLoading" class="mt-5"></v-progress-circular>
             <template v-else>
               <span class="no-image" v-if="!params.photo">사진 없음</span>
               <img :src="params.photo|url" v-else/>
@@ -163,7 +163,6 @@ import { map, find, orderBy } from 'lodash/collection'
 import DatePicker from './control/DatePicker'
 import AppAlert from './control/AppAlert'
 import ImageUploader from './control/ImageUploader'
-import CircleSpin from 'vue-loading-spinner/src/components/Circle'
 import { VolunteerService } from '@/common/api.service'
 import { ACTIVITY_STATES, LEADER_STATES } from '../common/const.info'
 import { mapActions, mapGetters } from 'vuex'
@@ -178,7 +177,7 @@ import {
 
 export default {
   name: 'VolunteerItem',
-  components: { AppAlert, DatePicker, ImageUploader, CircleSpin },
+  components: { AppAlert, DatePicker, ImageUploader },
   props: { v_id: undefined },
   computed: {
     ...mapGetters([
