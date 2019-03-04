@@ -97,6 +97,9 @@ export default {
         await this.$store.dispatch(UPDATE_VOLUNTEER_ACT, item)
         this.$showSnackBar('수정되었습니다.')
       }
+      setTimeout(() => {
+        this.fetchData()
+      }, 300)
     },
     deleteActItem (id) {
       this.$store.dispatch(DELETE_VOLUNTEER_ACT, id)

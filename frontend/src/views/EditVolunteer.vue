@@ -1,13 +1,14 @@
 <template>
   <v-container pt-0>
-    <v-tabs left align-with-title fixed-tabs class="elevation-4">
+    <v-tabs left align-with-title fixed-tabs class="elevation-4" v-model="tabIdx">
       <v-tab v-for="(item, idx) in title" :key="idx"
              @click="tabIdx = idx" :disabled="v_id === undefined && idx !== 0">
         <strong>{{ item }}</strong>
       </v-tab>
     </v-tabs>
     <v-layout pt-1>
-      <component :is="targetComponents[tabIdx]" :v_id.sync="v_id"/>
+      <component :is="targetComponents[tabIdx]" :v_id.sync="v_id">
+      </component>
     </v-layout>
     <float-button/>
   </v-container>
@@ -20,7 +21,7 @@ import VolunteerActs from '@/components/VolunteerActs'
 import VolunteerLeader from '@/components/VolunteerLeader'
 import VolunteerHistory from '@/components/VolunteerHistory'
 import FloatButton from '@/components/control/FloatButton'
-
+/* eslint-disable */
 export default {
   name: 'EditVolunteer',
   components: {
@@ -44,6 +45,20 @@ export default {
       set (id) { this.v_id = id }
     }
   },
+  watch: {
+    tabIdx: {
+      immediate: true,
+      handler (idx) {
+        let path = ''
+        if (location.pathname.indexOf('/m-') > 0) {
+          path = location.pathname.slice(0, -1) + idx
+        } else {
+          path = `${location.pathname}/m-${idx}`
+        }
+        window.history.replaceState({}, null, path)
+      }
+    }
+  },
   props: { id: undefined },
   data: () => ({
     tabIdx: 0,
@@ -63,6 +78,15 @@ export default {
       // console.log(this.VOLT.area_code.substr(0, 2), auth.area_code.substr(0, 2))
       return this.VOLT.area_code.substr(0, 2) === auth.area_code.substr(0, 2) */
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      const {id, menu} = to.params
+      if (menu) {
+        const [m, idx] = menu.split('-')
+        idx && (vm.tabIdx = parseInt(idx))
+      }
+    })
   }
 }
 </script>

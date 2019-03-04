@@ -89,12 +89,12 @@
               </v-flex>
               <template v-else-if="!isNoteCheck || !isECount">
                 <v-flex xs6>
-                  <date-picker ref="s_date" title="교육 시작일" :disabled="isMonthEdu"
-                               @close-date-picker="onPicked" refs="s_date"></date-picker>
+                  <!--<date-picker ref="s_date" title="교육 시작일" :disabled="isMonthEdu" @close-date-picker="onPicked" refs="s_date"></date-picker>-->
+                  <v-text-field label="교육 시작일" hide-details mask="####-##-##" v-model="item.s_date"></v-text-field>
                 </v-flex>
                 <v-flex xs6>
-                  <date-picker ref="e_date" title="교육 종료일" :disabled="isMonthEdu"
-                               @close-date-picker="onPicked" refs="e_date"></date-picker>
+                  <!--<date-picker ref="e_date" title="교육 종료일" :disabled="isMonthEdu" @close-date-picker="onPicked" refs="e_date"></date-picker>-->
+                  <v-text-field label="교육 종료일" hide-details mask="####-##-##" v-model="item.e_date"></v-text-field>
                 </v-flex>
               </template>
               <v-flex xs8>
@@ -173,14 +173,14 @@ export default {
       const res = this.eduCodes.find(e => e.code === code)
       if (res) this.item.edu_name = res.name
       this.isECount = false
-    },
-    'item.e_date' (date) {
+    }
+    /* 'item.e_date' (date) {
       if (!this.item.s_date || !date) return
       if (date < this.item.s_date) {
         alert('종료일이 시작일보다 빠릅니다.')
         this.$refs['e_date'].setDate(null)
       }
-    }
+    } */
   },
   data: () => ({
     finder: false,
@@ -196,7 +196,7 @@ export default {
   },
   methods: {
     closeDialog () {
-      if (this.isNoteCheck && this.isECount) {
+      if (this.isNoteCheck && (this.isECount || this.item.ready)) {
         this.$emit('close-input-item', this.item)
         this.reset()
         return
@@ -205,15 +205,22 @@ export default {
         if (!this.item.r_year || this.item.r_year === '선택없음') return alert('시작 연도를 확인해주세요!')
       } else {
         if (!this.item.e_date || !this.item.s_date) return alert('기간을 확인해주세요!')
-        if (this.item.e_date < this.item.s_date) {
+        this.item.s_date = this.makeDate(this.item.s_date, true)
+        this.item.e_date = this.makeDate(this.item.e_date, false)
+        /* if (this.item.e_date < this.item.s_date) {
           this.$refs['e_date'].setDate(null)
           return alert('종료일이 시작일보다 빠릅니다!')
-        }
+        } */
       }
       if (this.isECount) this.selected = range(3, 3 + parseInt(this.selected[0]))
       this.item.months = this.selected.join(',')
       this.$emit('close-input-item', this.item)
       this.reset()
+    },
+    makeDate (date, isStart) {
+      if (date.length <= 4) return date + (isStart ? '0101' : '1231')
+      else if (date.length <= 6) return date + (isStart ? '01' : '28')
+      return date
     },
     reset () {
       this.isECount = false

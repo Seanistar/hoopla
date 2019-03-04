@@ -30,8 +30,9 @@
               <v-text-field flat solo hide-details mask="####-##-##" v-model="at.s_date"></v-text-field></td>
             <td style="width: 10%">
               <v-text-field flat solo hide-details mask="####-##-##" v-model="at.e_date"></v-text-field></td>
-            <td style="width: 20%"><v-text-field flat solo hide-details v-model="at.content"></v-text-field></td>
+            <td style="width: 16%"><v-text-field flat solo hide-details v-model="at.content"></v-text-field></td>
             <td style="width: 4%"><v-icon @click="deleteAct(n, at.id)">delete</v-icon></td>
+            <td style="width: 4%"><v-icon @click="moveToQuery(n, at.id)">forward</v-icon></td>
           </tr>
         </tbody>
         <tbody v-else>
@@ -43,7 +44,7 @@
       <v-progress-circular indeterminate color="#00b0f5"></v-progress-circular>
     </v-layout>
     <v-layout>
-      <v-flex xs6 text-xs-left><v-btn large outline @click="addRows">열 추가</v-btn></v-flex>
+      <v-flex xs6 text-xs-left><v-btn large outline @click="addRows">행 추가</v-btn></v-flex>
       <v-flex xs6 text-xs-right><v-btn large outline color="primary" @click="doneList"><b>저장</b></v-btn></v-flex>
     </v-layout>
   </v-container>
@@ -105,7 +106,8 @@ export default {
       { text: '시작일', value: 's_date' },
       { text: '종료일', value: 'e_date' },
       { text: '내용', value: 'content' },
-      { text: '삭제', value: 'content' }
+      { text: '삭제', value: '' },
+      { text: '이동', value: '' }
     ]
   }),
   created () {

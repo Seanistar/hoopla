@@ -25,8 +25,9 @@
         <tr class="text-xs-center"><td colspan="6">교육 내역이 없습니다.</td></tr>
       </template>
     </v-data-table>
-    <v-layout row justify-end>
-      <v-flex xs12 sm2 offset-sm4>
+    <v-layout row mt-3>
+      <v-flex xs6 text-xs-left><v-btn outline color="primary" @click="moveToQuery">조회 화면 이동</v-btn></v-flex>
+      <v-flex xs6 sm2 offset-sm4  >
         <menu-buttons class="pt-0" refs="edus" :disabled="isDisable" @click-menu="onClickMenu"/>
       </v-flex>
     </v-layout>
@@ -129,6 +130,9 @@ export default {
       console.log('input item...', data)
       if (isUndefined(this.selected.id)) this.createEduItem(data)
       else this.updateEduItem(data)
+    },
+    moveToQuery () {
+      this.$router.push({name: 'view-query', params: {id: this.v_id, menu: 'm-0'}})
     }
   }
 }

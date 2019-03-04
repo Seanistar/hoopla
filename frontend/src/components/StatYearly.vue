@@ -7,9 +7,9 @@
         </v-select>
       </v-flex>
       <v-flex xs3 ml-3 pl-2>
-        <v-select label="본당선택" class="text-xs-center body-1" clearable
+        <v-combobox label="본당선택" class="text-xs-center body-1" clearable
                   :items="churchList" item-value="code" item-text="name"
-                  v-model="church"></v-select>
+                  v-model="church"></v-combobox>
       </v-flex>
     </v-layout>
     <v-data-table :items="items" :pagination.sync="pagination" class="elevation-1"
@@ -97,7 +97,7 @@ export default {
   },
   methods: {
     async fetchData () {
-      const params = { church: this.church, area: this.area }
+      const params = { church: this.church && this.church.code, area: this.area }
       await this.$store.dispatch(FETCH_STAT_YEARLY, {params})
       this.$nextTick(() => { this._mapData() })
     },

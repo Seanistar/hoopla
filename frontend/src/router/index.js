@@ -23,7 +23,7 @@ export default new Router({
       component: () => import('@/views/NewVolunteer')
     },
     {
-      path: '/volunteers/edit/:id?',
+      path: '/volunteers/edit/:id?/:menu?',
       name: 'edit-volunteer',
       props: true,
       component: () => import('@/views/EditVolunteer')
@@ -44,7 +44,7 @@ export default new Router({
       component: () => import('@/views/Queries')
     },
     {
-      path: '/queries/view/:id?',
+      path: '/queries/view/:id?/:menu?',
       name: 'view-query',
       props: true,
       component: () => import('@/views/ViewQuery')

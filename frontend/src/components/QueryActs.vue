@@ -1,7 +1,8 @@
 <template>
   <v-container pt-2>
-    <inline-text-box :au_year="queryInfo.good.au_date|yearstamp"
-                     :v_name="`${queryInfo.good.name} ${queryInfo.good.ca_name}`"/>
+    <!--<inline-text-box :au_year="queryInfo.good.au_date|yearstamp"
+                     :v_name="`${queryInfo.good.name} ${queryInfo.good.ca_name} (${queryInfo.good.sa_name} 본당)`"/>-->
+    <slot name="voltInfo"></slot>
     <v-data-table :items="items" hide-actions
                   class="elevation-1"
     >
@@ -31,13 +32,13 @@
 </template>
 
 <script>
-import InlineTextBox from './control/InlineTextBox'
+// import InlineTextBox from './control/InlineTextBox'
 import QueryMixin from '../common/query.mixin'
 
 export default {
   name: 'QueryActs',
   mixins: [ QueryMixin ],
-  components: { InlineTextBox },
+  // components: { InlineTextBox },
   created () { this.e_type = 'A' }
 }
 </script>

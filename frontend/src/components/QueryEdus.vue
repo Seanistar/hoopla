@@ -1,7 +1,8 @@
 <template>
   <v-container pt-2>
-    <inline-text-box :au_year="queryInfo.good.au_date|yearstamp"
-                     :v_name="`${queryInfo.good.name} ${queryInfo.good.ca_name}`"/>
+    <!--<inline-text-box :au_year="queryInfo.good.au_date|yearstamp"
+                     :v_name="`${queryInfo.good.name} ${queryInfo.good.ca_name} (${queryInfo.good.sa_name} 본당)`"/>-->
+    <slot name="voltInfo"></slot>
     <v-data-table hide-actions class="elevation-1" :items="items">
       <template slot="headers" slot-scope="props">
         <tr>
@@ -25,22 +26,26 @@
         <tr class="text-xs-center"><td colspan="16">현황 내역이 없습니다.</td></tr>
       </template>
     </v-data-table>
+    <slot name="moveTo"></slot>
   </v-container>
 </template>
 
 <script>
-import InlineTextBox from './control/InlineTextBox'
+// import InlineTextBox from './control/InlineTextBox'
 import QueryMixin from '../common/query.mixin'
 import { reduce } from 'lodash/collection'
 
 export default {
   name: 'QueryEdus',
   mixins: [ QueryMixin ],
-  components: { InlineTextBox },
+  // components: { InlineTextBox },
   created () { this.e_type = 'E' },
   methods: {
     twoLine (name) {
       return name.replace('-', '<br>')
+    },
+    moveToVolunteer () {
+      this.$router.push({name: 'edit-volunteer', params: {id: this.v_id, menu: 'm-1'}})
     }
   },
   filters: {

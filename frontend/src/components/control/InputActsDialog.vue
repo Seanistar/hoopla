@@ -44,12 +44,12 @@
                               @focus="churchFinder = true" v-model="item.s_name"></v-text-field>
               </v-flex>
               <v-flex xs12 sm6>
-                <date-picker ref="s_date" title="봉사 시작일"
-                             @close-date-picker="onPicked" refs="s_date"></date-picker>
+                <!--<date-picker ref="s_date" title="봉사 시작일" @close-date-picker="onPicked" refs="s_date"></date-picker>-->
+                <v-text-field label="봉사 시작일" hide-details mask="####-##-##" v-model="item.s_date"></v-text-field>
               </v-flex>
               <v-flex xs12 sm6>
-                <date-picker ref="e_date" title="봉사 종료일"
-                             @close-date-picker="onPicked" refs="e_date"></date-picker>
+                <!--<date-picker ref="e_date" title="봉사 종료일" @close-date-picker="onPicked" refs="e_date"></date-picker>-->
+                <v-text-field label="봉사 종료일" hide-details mask="####-##-##" v-model="item.e_date"></v-text-field>
               </v-flex>
               <v-flex xs12>
                 <v-text-field v-model="item.content" hide-details label="봉사활동 내용"></v-text-field>
@@ -101,7 +101,7 @@ export default {
       }
     }
   },
-  watch: {
+  /* watch: {
     'item.e_date' (date) {
       if (!this.item.s_date || !date) return
       if (date < this.item.s_date) {
@@ -109,7 +109,7 @@ export default {
         this.$refs['e_date'].setDate(null)
       }
     }
-  },
+  }, */
   data: () => ({
     finder: false,
     churchFinder: false,
@@ -124,12 +124,19 @@ export default {
     closeDialog () {
       // if (!this.item.id) return alert('코드 확인이 되지 않았습니다!')
       if (!this.item.e_date || !this.item.s_date) return alert('기간을 확인해주세요!')
-      if (this.item.e_date < this.item.s_date) {
+      this.item.s_date = this.makeDate(this.item.s_date, true)
+      this.item.e_date = this.makeDate(this.item.e_date, false)
+      /* if (this.item.e_date < this.item.s_date) {
         this.$refs['e_date'].setDate(null)
         return alert('종료일이 시작일보다 빠릅니다!')
-      }
+      } */
       this.$emit('close-input-item', this.item)
       this.reset()
+    },
+    makeDate (date, isStart) {
+      if (date.length <= 4) return date + (isStart ? '0101' : '1231')
+      else if (date.length <= 6) return date + (isStart ? '01' : '28')
+      return date
     },
     reset () {
       this.item = { id: 0 }
