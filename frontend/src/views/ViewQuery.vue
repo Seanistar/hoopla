@@ -14,7 +14,10 @@
         </template>
         <div slot="moveTo">
           <v-layout mt-3>
-            <v-flex xs6 text-xs-left><v-btn outline color="primary" @click="moveToVolunteer">관리 화면 이동</v-btn></v-flex>
+            <router-link :to="{name: 'edit-volunteer', params: {id: id, menu: tabIdx === 4 ? 'm-2' : 'm-1'}}"
+                         class="txt-deco-none">
+              <v-flex xs6 text-xs-left><v-btn outline color="primary">관리 화면 이동</v-btn></v-flex>
+            </router-link>
           </v-layout>
         </div>
       </component>
@@ -53,11 +56,6 @@ export default {
         }
         window.history.replaceState({}, null, path)
       }
-    }
-  },
-  methods: {
-    moveToVolunteer () {
-      this.$router.push({name: 'edit-volunteer', params: {id: this.id, menu: 'm-1'}})
     }
   },
   data: () => ({

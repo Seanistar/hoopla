@@ -66,14 +66,16 @@ router.get('/area', (req, res) => {
 })
 
 router.get('/volts', (req, res) => {
-  const _sql = `
-	SELECT MAX(area_code)a_code, a.s_name, COUNT(id)counter, YEAR(au_date)au_year 
-	FROM volunteers v
-	LEFT JOIN area_code a ON v.area_code = a.a_code
-	GROUP BY area_code, au_year`
+  const {area} = req.query
+  let _sql = `
+    SELECT MAX(area_code)a_code, a.s_name, COUNT(id)counter, YEAR(au_date)au_year 
+    FROM volunteers v
+    LEFT JOIN area_code a ON v.area_code = a.a_code`
+  if (area) _sql += ` WHERE a.l_code = '${area}'`
+	_sql += ` GROUP BY area_code, au_year`
   db.query(_sql, (err, rows) => {
     if (!err) {
-      console.log('stat volts has done')
+      console.log('stat volts has done', _sql)
       res.status(200).send(rows)
     } else {
       console.warn('stat volts error : ' + err)

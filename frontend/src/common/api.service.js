@@ -96,8 +96,8 @@ export const StatService = {
   get_area () {
     return ApiService.query('stats/area')
   },
-  get_volt () {
-    return ApiService.query('stats/volts')
+  get_volt (params) {
+    return ApiService.query('stats/volts', params)
   }
 }
 

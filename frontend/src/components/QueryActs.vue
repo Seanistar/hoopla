@@ -28,6 +28,7 @@
         <tr class="text-xs-center"><td colspan="10">현황 내역이 없습니다.</td></tr>
       </template>
     </v-data-table>
+    <slot name="moveTo"></slot>
   </v-container>
 </template>
 

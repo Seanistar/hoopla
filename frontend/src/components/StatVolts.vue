@@ -70,6 +70,7 @@ export default {
     },
     area (nv, ov) {
       if (!ov && !nv) return
+      this.setArea()
       this.fetchData()
     },
     'areaCodes' (val) {
@@ -104,9 +105,10 @@ export default {
       this.$nextTick(() => {
         this.areaList = map(this.largeCodes, o => { return {code: o.l_code, name: o.l_name} })
       })
-      const list = map(this.smallCodes(), o => {
-        return {code: o.s_code, name: o.s_name}
+      let list = map(this.smallCodes(), o => {
+        return { code: o.s_code, name: o.s_name, area: o.l_code }
       })
+      if (this.area) list = list.filter((a) => a.area === this.area)
       this.churchList = orderBy(list, ['name'])
     }
   },

@@ -22,11 +22,21 @@
                               :disabled="item.id !== 0 || (item.id === 0 && item.name !== undefined)"
                               hide-details></v-text-field>
               </v-flex>
-              <v-flex :class="isMonthEdu || isNoteCheck ? 'xs6' : 'xs12'">
+              <v-flex xs6>
+                <v-select label="교육 대분류" v-model="eduType" hide-details
+                          :items="large_edus" item-text="name" item-value="value"
+                ></v-select>
+              </v-flex>
+              <v-flex xs6>
+                <v-select label="교육 항목" v-model="item.edu_code" hide-details
+                          :items="smallEdus()" item-text="name" item-value="code"
+                ></v-select>
+              </v-flex>
+              <!--<v-flex :class="isMonthEdu || isNoteCheck ? 'xs6' : 'xs12'">
                 <v-select label="교육 항목" v-model="item.edu_code" hide-details
                           :items="eduCodes" item-text="name" item-value="code"
                 ></v-select>
-              </v-flex>
+              </v-flex>-->
 
               <v-flex xs6 v-if="isMonthEdu">
                 <v-layout row>
@@ -42,12 +52,12 @@
                 </v-layout>
               </v-flex>
               <v-flex xs6 v-else-if="isNoteCheck">
-                <v-layout row>
+                <v-layout row wrap>
                   <v-flex xs6>
                     <v-checkbox label="날짜 미상" hide-details v-model="isECount"></v-checkbox>
                   </v-flex>
                   <v-flex xs6>
-                    <v-checkbox label="준비중" v-model="item.ready" hide-details></v-checkbox>
+                    <v-checkbox label="준비중" hide-details v-model="item.ready" ></v-checkbox>
                   </v-flex>
                 </v-layout>
               </v-flex>
@@ -87,7 +97,7 @@
                   </v-layout>
                 </template>
               </v-flex>
-              <template v-else-if="!isNoteCheck || !isECount">
+              <v-layout row wrap v-else-if="!isNoteCheck || !isECount">
                 <v-flex xs6>
                   <!--<date-picker ref="s_date" title="교육 시작일" :disabled="isMonthEdu" @close-date-picker="onPicked" refs="s_date"></date-picker>-->
                   <v-text-field label="교육 시작일" hide-details mask="####-##-##" v-model="item.s_date"></v-text-field>
@@ -96,7 +106,7 @@
                   <!--<date-picker ref="e_date" title="교육 종료일" :disabled="isMonthEdu" @close-date-picker="onPicked" refs="e_date"></date-picker>-->
                   <v-text-field label="교육 종료일" hide-details mask="####-##-##" v-model="item.e_date"></v-text-field>
                 </v-flex>
-              </template>
+              </v-layout>
               <v-flex xs8>
                 <v-text-field label="봉사자 이름" v-model="item.gv_name"
                               @focus="finder = false" clearable hide-details></v-text-field>
@@ -132,6 +142,7 @@ import { ACTIVITY_STATES } from '../../common/const.info'
 import { mapGetters } from 'vuex'
 import { cloneDeep } from 'lodash/lang'
 import { range } from 'lodash/util'
+import { filter } from 'lodash/collection'
 
 export default {
   name: 'EdusDialog',
@@ -165,6 +176,15 @@ export default {
     years () {
       const start = (new Date()).getFullYear()
       return ['선택없음'].concat(range(start, 2006, -1))
+    },
+    large_edus () {
+      return [
+        {name: '기본 교육', value: 'E'},
+        {name: '노트 검사', value: 'N'},
+        {name: '성서 연수', value: 'T'},
+        {name: '그룹 공부', value: 'G'},
+        {name: '마두명', value: 'M'}
+      ]
     }
   },
   watch: {
@@ -173,6 +193,10 @@ export default {
       const res = this.eduCodes.find(e => e.code === code)
       if (res) this.item.edu_name = res.name
       this.isECount = false
+    },
+    eduType (val) {
+      this.isECount = false
+      // this.item.edu_code = null
     }
     /* 'item.e_date' (date) {
       if (!this.item.s_date || !date) return
@@ -187,6 +211,7 @@ export default {
     states: ACTIVITY_STATES,
     selected: [],
     isECount: false,
+    eduType: null,
     item: { id: 0 }
   }),
   created () {
@@ -221,6 +246,10 @@ export default {
       if (date.length <= 4) return date + (isStart ? '0101' : '1231')
       else if (date.length <= 6) return date + (isStart ? '01' : '28')
       return date
+    },
+    smallEdus () {
+      if (!this.eduType) return
+      return filter(this.eduCodes, e => e.type === this.eduType)
     },
     reset () {
       this.isECount = false

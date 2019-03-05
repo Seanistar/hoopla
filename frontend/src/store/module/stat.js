@@ -59,9 +59,9 @@ const actions = {
         throw new Error(error)
       })
   },
-  [FETCH_STAT_VOLT] (context) {
+  [FETCH_STAT_VOLT] (context, params) {
     context.commit(FETCH_START)
-    return StatService.get_volt()
+    return StatService.get_volt(params)
       .then(({ data }) => {
         context.commit(FETCH_STAT_VOLT_END, data)
       })
