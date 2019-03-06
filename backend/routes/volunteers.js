@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
     a.l_name la_name, a.m_name ma_name, a.s_name sa_name 
     FROM volunteers v
     LEFT JOIN leaders l ON v.id = l.v_id AND l.work = 'Y'
-    LEFT JOIN area_code a ON v.area_code = a.a_code`
+    INNER JOIN area_code a ON v.area_code = a.a_code`
   /*let select = `
     SELECT v.*, IF(ISNULL(l.v_id), 'N', 'Y')is_leader,
       (SELECT COUNT(DISTINCT id) FROM edus e WHERE v_id=v.id AND edu_code BETWEEN 120 AND 130 AND numbers=0) e_count,
@@ -29,7 +29,7 @@ router.get('/', (req, res) => {
     else _sql += `v.name LIKE (\'%${name}%\')`
   }
   _sql += ' ORDER BY v.au_date DESC LIMIT 100'
-  console.log(_sql, req.query)
+  //console.log(_sql, req.query)
   db.query(_sql, (err, rows) => {
     if (!err) {
       res.status(200).send(rows)
@@ -57,7 +57,7 @@ router.get('/page/:id', (req, res) => {
     ac.l_name la_name, ac.m_name ma_name, ac.s_name sa_name 
     FROM volunteers vl
     LEFT JOIN leaders ld ON vl.id = ld.v_id AND ld.work = 'Y'
-    LEFT JOIN area_code ac ON vl.area_code = ac.a_code`
+    INNER JOIN area_code ac ON vl.area_code = ac.a_code`
   if (req.params.id !== undefined) select += ' WHERE vl.id=?'
   const sql = [select, req.params.id]
   db.query(...sql, (err, rows) => {
