@@ -29,7 +29,7 @@
                   class="elevation-5">
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <tr> <!--@click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">-->
+        <tr @click="moveToQuery(props.item.id)"> <!--@click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">-->
           <td class="text-xs-center">{{ props.item.id }}</td>
           <td class="text-xs-center">{{ props.item.name }}</td>
           <td class="text-xs-center">{{ props.item.ca_name }}</td>
@@ -104,6 +104,9 @@ export default {
         if (o.state === 'ACT') this.volts.av += 1
         else if (o.state === 'BRK') this.volts.bv += 1
       })
+    },
+    moveToQuery (id) {
+      this.$router.push({name: 'edit-volunteer', params: {id: id, menu: 'm-0'}})
     }
     /* onClickMenu (type) {
       if (type === 'add') {
@@ -150,5 +153,8 @@ export default {
   }
   .w-27 {
     width: 27.5%;
+  }
+  tr td {
+    cursor: pointer
   }
 </style>

@@ -57,11 +57,12 @@ router.get('/page/:id', (req, res) => {
     ac.l_name la_name, ac.m_name ma_name, ac.s_name sa_name 
     FROM volunteers vl
     LEFT JOIN leaders ld ON vl.id = ld.v_id AND ld.work = 'Y'
-    INNER JOIN area_code ac ON vl.area_code = ac.a_code`
+    LEFT JOIN area_code ac ON vl.area_code = ac.a_code`
   if (req.params.id !== undefined) select += ' WHERE vl.id=?'
   const sql = [select, req.params.id]
   db.query(...sql, (err, rows) => {
     if (!err) {
+      // console.log('volunteer query', sql)
       res.status(200).send(rows)
     } else {
       console.warn('query vl error : ' + err)
@@ -451,7 +452,7 @@ router.get('/queried', (req, res) => {
     WHERE c.type = ? AND a.v_id = ?
     GROUP BY YEAR(a.e_date), a.act_code`
   let sql = [e_type === 'A' ? a_sql : e_sql, [e_type, v_id]]
-  console.log('queried... ', sql)
+  // console.log('queried... ', sql)
   db.query(...sql, (err, rows) => {
     if (!err) {
       res.status(200).send(rows)

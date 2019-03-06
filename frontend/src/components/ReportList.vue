@@ -155,8 +155,10 @@ export default {
       let code = this.changedCodes.rl_ac
       if (!code) code = this.authInfo.area_code
 
-      this.setCodeInfo(code)
-      this.fetchReports(code)
+      setTimeout(() => {
+        this.setCodeInfo(code)
+        this.fetchReports(code)
+      }, 600)
     },
     async setCodeInfo (code) {
       if (!this.areaCodes.length) await this.$store.dispatch('fetchAreaCodes')

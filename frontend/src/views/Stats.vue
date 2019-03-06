@@ -1,7 +1,6 @@
 <template>
   <v-container pt-0>
-    <v-tabs align-with-title fixed-tabs class="elevation-4"
-    >
+    <v-tabs align-with-title fixed-tabs class="elevation-4">
       <v-tab v-for="(text, idx) in titles" :key="idx" @click="tabIdx = idx">
         <strong>{{ text }}</strong>
       </v-tab>
@@ -9,7 +8,7 @@
     <v-layout mt-4 pt-0 class="elevation-3">
       <component :is="targetComponents[tabIdx]" />
     </v-layout>
-    <float-button/>
+    <!--<float-button path="stats"/>-->
   </v-container>
 </template>
 

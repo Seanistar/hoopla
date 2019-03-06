@@ -15,14 +15,15 @@
         <div slot="moveTo">
           <v-layout mt-3>
             <router-link :to="{name: 'edit-volunteer', params: {id: id, menu: tabIdx === 4 ? 'm-2' : 'm-1'}}"
-                         class="txt-deco-none">
+                         class="txt-deco-none" replace>
               <v-flex xs6 text-xs-left><v-btn outline color="primary">관리 화면 이동</v-btn></v-flex>
             </router-link>
+            <v-flex xs11 text-xs-right><v-btn outline @click="$router.back()" color="primary">이전 화면 이동</v-btn></v-flex>
           </v-layout>
         </div>
       </component>
     </v-layout>
-    <float-button/>
+    <float-button path="queries"/>
   </v-container>
 </template>
 

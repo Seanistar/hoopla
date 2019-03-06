@@ -32,11 +32,11 @@
               <v-text-field flat solo hide-details mask="####-##-##" v-model="at.e_date"></v-text-field></td>
             <td style="width: 16%"><v-text-field flat solo hide-details v-model="at.content"></v-text-field></td>
             <td style="width: 4%"><v-icon @click="deleteAct(n, at.id)">delete</v-icon></td>
-            <td style="width: 4%"><v-icon @click="moveToQuery(n, at.id)">forward</v-icon></td>
+            <td style="width: 4%"><v-icon @click="moveToQuery(at.v_id)">forward</v-icon></td>
           </tr>
         </tbody>
         <tbody v-else>
-          <tr><td colspan="9" class="text-xs-center py-3">봉사 내역이 없습니다.</td></tr>
+          <tr><td colspan="10" class="text-xs-center py-3">봉사 내역이 없습니다.</td></tr>
         </tbody>
       </table>
     </v-layout>
@@ -172,6 +172,9 @@ export default {
     onChangeName (obj) {
       const res = find(this.voltList, v => v.id === obj.v_id)
       obj.ca_name = res ? res.ca_name : ''
+    },
+    moveToQuery (id) {
+      this.$router.push({name: 'view-query', params: {id: id, menu: 'm-0'}})
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <v-tooltip bottom>
-    <v-btn class="v-btn--floating back-float" @click="$router.back()"
+    <v-btn class="v-btn--floating back-float" @click="moveToList"
            outline slot="activator" color="cyan">
       <v-icon>arrow_back</v-icon>
     </v-btn>
@@ -11,8 +11,11 @@
 <script>
 export default {
   name: 'FloatButton',
-  props: {
-    refs: ''
+  props: ['path'],
+  methods: {
+    moveToList () {
+      this.$router.replace({name: this.path})
+    }
   }
 }
 </script>

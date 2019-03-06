@@ -81,7 +81,7 @@ const actions = {
   [FETCH_VOLUNTEER_ITEM] (context, id) {
     return VolunteerService.get(id)
       .then(({ data }) => {
-        context.commit(SET_VOLUNTEER, data[0])
+        data.length && context.commit(SET_VOLUNTEER, data[0])
       })
       .catch((error) => {
         throw new Error(error)

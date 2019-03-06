@@ -8,7 +8,7 @@
       <volunteer-edus v-else-if="tabIdx === 1" :v_id="v_id"/>
       <volunteer-acts v-else-if="tabIdx === 2" :v_id="v_id"/>
     </v-layout>
-    <float-button/>
+    <float-button path="volunteers"/>
   </v-container>
 </template>
 

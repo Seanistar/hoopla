@@ -27,7 +27,7 @@
     </v-data-table>
     <v-layout row mt-3>
       <v-flex xs6 text-xs-left>
-        <router-link :to="{name: 'view-query', params: {id: v_id, menu: 'm-4'}}" class="txt-deco-none">
+        <router-link :to="{name: 'view-query', params: {id: v_id, menu: 'm-4'}}" class="txt-deco-none" replace>
           <v-btn outline color="primary">조회 화면 이동</v-btn>
         </router-link>
       </v-flex>

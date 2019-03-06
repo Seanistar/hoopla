@@ -10,7 +10,7 @@
       <component :is="targetComponents[tabIdx]" :v_id.sync="v_id">
       </component>
     </v-layout>
-    <float-button/>
+    <float-button path="volunteers"/>
   </v-container>
 </template>
 
