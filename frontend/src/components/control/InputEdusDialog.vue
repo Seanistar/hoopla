@@ -23,7 +23,7 @@
                               hide-details></v-text-field>
               </v-flex>
               <v-flex xs6>
-                <v-select label="교육 대분류" v-model="eduType" hide-details
+                <v-select label="교육 대분류" v-model="item.e_type" hide-details
                           :items="large_edus" item-text="name" item-value="value"
                 ></v-select>
               </v-flex>
@@ -193,10 +193,6 @@ export default {
       const res = this.eduCodes.find(e => e.code === code)
       if (res) this.item.edu_name = res.name
       this.isECount = false
-    },
-    eduType (val) {
-      this.isECount = false
-      // this.item.edu_code = null
     }
     /* 'item.e_date' (date) {
       if (!this.item.s_date || !date) return
@@ -211,7 +207,6 @@ export default {
     states: ACTIVITY_STATES,
     selected: [],
     isECount: false,
-    eduType: null,
     item: { id: 0 }
   }),
   created () {
@@ -248,14 +243,14 @@ export default {
       return date
     },
     smallEdus () {
-      if (!this.eduType) return
-      return filter(this.eduCodes, e => e.type === this.eduType)
+      if (!this.item.e_type) return
+      return filter(this.eduCodes, e => e.type === this.item.e_type)
     },
     reset () {
       this.isECount = false
       this.item = { v_id: 0, ready: false }; this.selected = []
-      const sdr = this.$refs['s_date']; sdr && sdr.setDate(null)
-      const edr = this.$refs['e_date']; edr && edr.setDate(null)
+      // const sdr = this.$refs['s_date']; sdr && sdr.setDate(null)
+      // const edr = this.$refs['e_date']; edr && edr.setDate(null)
     },
     setItem (data) {
       if (data !== undefined) this.item = cloneDeep(data)
@@ -263,8 +258,8 @@ export default {
         this.item.ready = this.item.ready === 'Y'
         this.$nextTick(() => (this.isECount = !this.item.s_date))
       }
-      const sdr = this.$refs['s_date']; sdr && sdr.setDate(data.s_date)
-      const edr = this.$refs['e_date']; edr && edr.setDate(data.e_date)
+      // const sdr = this.$refs['s_date']; sdr && sdr.setDate(data.s_date)
+      // const edr = this.$refs['e_date']; edr && edr.setDate(data.e_date)
     },
     onPicked (obj) {
       console.log('picked date...', obj.type, obj.date)

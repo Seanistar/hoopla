@@ -140,13 +140,13 @@ export default {
     },
     reset () {
       this.item = { id: 0 }
-      const sdr = this.$refs['s_date']; sdr && sdr.setDate(null)
-      const edr = this.$refs['e_date']; edr && edr.setDate(null)
+      // const sdr = this.$refs['s_date']; sdr && sdr.setDate(null)
+      // const edr = this.$refs['e_date']; edr && edr.setDate(null)
     },
     setItem (data) {
       if (data !== undefined) this.item = cloneDeep(data)
-      const sdr = this.$refs['s_date']; sdr && sdr.setDate(data.s_date)
-      const edr = this.$refs['e_date']; edr && edr.setDate(data.e_date)
+      // const sdr = this.$refs['s_date']; sdr && sdr.setDate(data.s_date)
+      // const edr = this.$refs['e_date']; edr && edr.setDate(data.e_date)
     },
     onPicked (obj) {
       console.log('picked date...', obj.type, obj.date)

@@ -180,7 +180,7 @@ const deleteAllItems = (target, id) => {
  */
 router.get('/edu/:id', (req, res) => {
   const select = `
-    SELECT e.*, c.name edu_name, IF(ISNULL(e.gv_name), CONCAT(v.name, ' ', v.ca_name), e.gv_name) gv_name
+    SELECT e.*, c.name edu_name, c.type e_type, IF(ISNULL(e.gv_name), CONCAT(v.name, ' ', v.ca_name), e.gv_name) gv_name
     FROM edus e
     LEFT JOIN volunteers v ON v.id = e.gv_id
     LEFT JOIN edu_code c ON e.edu_code=c.code
