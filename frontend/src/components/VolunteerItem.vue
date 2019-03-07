@@ -36,7 +36,7 @@
           <v-layout>
             <v-flex xs4>
               <v-text-field label="봉사자 번호" :rules="[rules.vcode]" mask="##-####"
-                            :readonly="isEditMode" clearable v-model="params.ca_id"></v-text-field>
+                            clearable v-model="params.ca_id"></v-text-field>
             </v-flex>
             <v-flex xs4 ml-3>
               <date-picker ref="au_date" title="선서일"
