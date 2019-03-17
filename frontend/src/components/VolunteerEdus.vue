@@ -1,8 +1,14 @@
 <template>
-  <v-container pt-4 pb-3 mt-2 elevation-3>
-    <v-layout pb-2 pl-2>
-      <v-flex xs12>
+  <v-container pt-2 pb-3 mt-2 elevation-3>
+    <v-layout pb-2 pl-2 align-center>
+      <v-flex xs2>
         <div>전체 교육 : {{volunteerEdus.length}} 건</div>
+      </v-flex>
+      <v-flex xs4>
+        <slot name="voltInfo"></slot>
+      </v-flex>
+      <v-flex xs6 text-xs-right>
+        <menu-buttons class="pt-0" :disabled="isDisable" @click-menu="onClickMenu" refs="acts"/>
       </v-flex>
     </v-layout>
     <v-data-table :headers="headers" :items="volunteerEdus"

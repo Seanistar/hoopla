@@ -1,12 +1,12 @@
 <template>
   <v-layout row pb-0>
-    <v-flex xs6>
-      <v-subheader class="body-2">
+    <v-flex xs6 v-if="au_year">
+      <v-subheader class="body-2" >
         <span class="mr-3">선서연도 :</span>
         <span>{{au_year}} 년</span>
       </v-subheader>
     </v-flex>
-    <v-flex xs6>
+    <v-flex xs6 v-if="v_name">
       <v-layout justify-end>
         <v-subheader class="body-2">
           <span class="mr-3">봉사자 :</span>
@@ -20,10 +20,7 @@
 <script>
 export default {
   name: 'InlineTextBox',
-  props: {
-    au_year: { default: '2014' },
-    v_name: { default: '김성휘 사도요한' }
-  },
+  props: [ 'au_year', 'v_name' ],
   data: () => ({
   })
 }

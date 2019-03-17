@@ -1,14 +1,12 @@
 <template>
   <v-container pt-2 pb-2>
     <v-layout row wrap align-center mb-1>
-      <v-flex xs3>
+      <v-flex xs6>
         <v-subheader class="subheading font-weight-bold pr-0">{{small.nm}} 본당 ({{reportYear}})
         </v-subheader>
       </v-flex>
-      <v-flex xs9>
-        <v-subheader class="body-2 justify-end"><span class="mr-2">대표 봉사자 :</span>
-          <input :value="smallLeader.lv_name" class="pa-1 input-box">
-        </v-subheader>
+      <v-flex xs6 justify-end>
+        <menu-buttons :disabled="!isEnabled" @click-menu="onClickMenu" refs="acts" />
       </v-flex>
     </v-layout>
     <v-data-table :headers="headers" :items="items" hide-actions item-key="idx"
@@ -54,8 +52,13 @@
         <div class="text-xs-center">봉사 내역이 없습니다.</div>
       </template>
     </v-data-table>
-    <v-layout justify-end pt-2 pb-0>
-      <v-flex xs12>
+    <v-layout pt-2 pb-0>
+      <v-flex xs6 justify-start>
+        <v-subheader class="body-2"><span class="mr-2">대표 봉사자 :</span>
+          <input :value="smallLeader.lv_name" class="pa-1 input-box">
+        </v-subheader>
+      </v-flex>
+      <v-flex xs6 justify-end>
         <menu-buttons :disabled="!isEnabled" @click-menu="onClickMenu" refs="acts" />
       </v-flex>
     </v-layout>
@@ -186,7 +189,7 @@ export default {
       if (data === undefined) return
 
       if (data.v_id === undefined) data.v_id = data.id
-      const item = pick(data, ['id', 'v_id', 'act_code', 'act_name', 'name', 'ca_name', 'area_code', 's_date', 'e_date', 'content', 'numbers'])
+      const item = pick(data, ['id', 'v_id', 'act_code', 'act_name', 'name', 'ca_name', 'area_code', 's_code', 's_date', 'e_date', 'content', 'numbers'])
       console.log('input item...', item)
       this.updateActItem(item)
     },

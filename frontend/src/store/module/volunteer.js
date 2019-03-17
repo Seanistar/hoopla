@@ -308,17 +308,17 @@ const mutations = {
   [SET_VOLUNTEER] (state, data) {
     const pos = state.volunteers.findIndex((o) => o.id === data.id)
     if (pos > -1) {
-      console.log('set position : ', pos, data)
+      // console.log('set position : ', pos, data)
       Object.assign(state.volunteers[pos], data)
     } else {
-      console.log('no pos and add position : ', pos)
+      // console.log('no pos and add position : ', pos)
       state.volunteers.push(data)
     }
   },
   [REMOVE_VOLUNTEER] (state, id) {
     const pos = state.volunteers.findIndex((o) => o.id === id)
     if (pos > -1) {
-      console.log('remove position : ', pos)
+      // console.log('remove position : ', pos)
       state.volunteers.splice(pos, 1)
     }
   },
@@ -337,17 +337,17 @@ const mutations = {
   [SET_VOLUNTEER_EDU] (state, data) {
     const pos = state.volunteerEdus.findIndex((o) => o.id === data.id)
     if (pos > -1) {
-      console.log('set position : ', pos)
+      // console.log('set position : ', pos)
       Object.assign(state.volunteerEdus[pos], data)
     } else {
-      console.log('no pos and add position : ', pos)
+      // console.log('no pos and add position : ', pos)
       state.volunteerEdus.push(data)
     }
   },
   [REMOVE_VOLUNTEER_EDU] (state, id) {
     const pos = state.volunteerEdus.findIndex((o) => o.id === id)
     if (pos > -1) {
-      console.log('remove position : ', pos)
+      // console.log('remove position : ', pos)
       state.volunteerEdus.splice(pos, 1)
     }
   },
@@ -365,17 +365,17 @@ const mutations = {
   [SET_VOLUNTEER_ACT] (state, data) {
     const pos = state.volunteerActs.findIndex((o) => o.id === data.id)
     if (pos > -1) {
-      console.log('set position : ', pos)
+      // console.log('set position : ', pos)
       Object.assign(state.volunteerActs[pos], data)
     } else {
-      console.log('no pos and add position : ', pos)
+      // console.log('no pos and add position : ', pos)
       state.volunteerActs.push(data)
     }
   },
   [REMOVE_VOLUNTEER_ACT] (state, id) {
     const pos = state.volunteerActs.findIndex((o) => o.id === id)
     if (pos > -1) {
-      console.log('remove position : ', pos)
+      // console.log('remove position : ', pos)
       state.volunteerActs.splice(pos, 1)
     }
   },
@@ -394,7 +394,7 @@ const mutations = {
     state.queryInfo.good = data.good
   },
   [FIND_VOLUNTEERS_END] (state, results) {
-    console.log(results)
+    // console.log(results)
     state.foundResult = results
     state.foundCount = results.length
     state.isFinding = false

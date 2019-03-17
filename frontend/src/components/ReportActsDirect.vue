@@ -19,18 +19,19 @@
         <tbody v-if="actItems.length">
           <tr v-for="(at, n) in actItems" :key="n">
             <td style="width: 3%">{{n+1}}</td>
-            <td style="width: 10%"><v-select :items="voltList" item-text="name" item-value="id"
+            <td style="width: 10%" v-if="at.origin_code"><v-text-field flat solo hide-details disabled :value="at.name"></v-text-field></td>
+            <td style="width: 10%" v-else><v-select :items="voltList" item-text="name" item-value="id"
                           v-model="at.v_id" @change="onChangeName(at)" flat solo box hide-details></v-select></td>
-            <td style="width: 10%"><v-text-field flat solo hide-details v-model="at.ca_name"></v-text-field></td>
+            <td style="width: 15%"><v-text-field flat solo hide-details v-model="at.ca_name"></v-text-field></td>
             <td style="width: 15%"><v-select :items="codeList" item-text="name" item-value="code"
                           v-model="at.act_code" flat solo box hide-details></v-select></td>
-            <td style="width: 10%"><v-text-field flat solo hide-details suffix="명" style="margin: 0 25%"
+            <td style="width: 11%"><v-text-field flat solo hide-details style="margin: 0 25%"
                               v-model="at.numbers"></v-text-field></td>
             <td style="width: 10%">
-              <v-text-field flat solo hide-details mask="####-##-##" v-model="at.s_date"></v-text-field></td>
+              <v-text-field flat solo hide-details mask="####-##-##" v-model="at.s_date" @blur="at.s_date = makeToDate($event, true)"></v-text-field></td>
             <td style="width: 10%">
-              <v-text-field flat solo hide-details mask="####-##-##" v-model="at.e_date"></v-text-field></td>
-            <td style="width: 16%"><v-text-field flat solo hide-details v-model="at.content"></v-text-field></td>
+              <v-text-field flat solo hide-details mask="####-##-##" v-model="at.e_date" @blur="at.e_date = makeToDate($event, false)"></v-text-field></td>
+            <td style="width: 10%"><v-text-field flat solo hide-details v-model="at.content"></v-text-field></td>
             <td style="width: 4%"><v-icon @click="deleteAct(n, at.id)">delete</v-icon></td>
             <td style="width: 4%"><v-icon @click="moveToQuery(at.v_id)">forward</v-icon></td>
           </tr>
@@ -102,7 +103,7 @@ export default {
       { text: '이름', value: 'name' },
       { text: '세례명', value: 'ca_name' },
       { text: '그룹명', value: 'act_name' },
-      { text: '인원수', value: 'groups' },
+      { text: '인원수(명)', value: 'groups' },
       { text: '시작일', value: 's_date' },
       { text: '종료일', value: 'e_date' },
       { text: '내용', value: 'content' },
@@ -175,6 +176,13 @@ export default {
     },
     moveToQuery (id) {
       this.$router.push({name: 'view-query', params: {id: id, menu: 'm-0'}})
+    },
+    makeToDate (event, isStart) {
+      let date = event.target.value
+      date = date.replace(/-/g, '')
+      if (date.length <= 4) return date + (isStart ? '0101' : '1231')
+      else if (date.length <= 6) return date + (isStart ? '01' : '28')
+      return date
     }
   }
 }

@@ -75,7 +75,7 @@ export default {
       if (id) {
         await vm.$store.dispatch('fetchVolunteerItem', id)
         vm.voltInfo = vm.$store.getters.volunteerInfo(parseInt(id))
-        console.log(vm.voltInfo)
+        // console.log(vm.voltInfo)
       }
     })
   }

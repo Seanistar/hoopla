@@ -73,7 +73,7 @@ import { mapGetters } from 'vuex'
 import { map, find, orderBy } from 'lodash/collection'
 import { range } from 'lodash/util'
 import { FETCH_REPORTS, DELETE_REPORT, FETCH_SMALL_LEADER } from '@/store/actions.type'
-import { SET_CHANGED_CODE } from '@/store/mutations.type'
+// import { SET_CHANGED_CODE } from '@/store/mutations.type'
 
 export default {
   name: 'ReportList',
@@ -89,13 +89,20 @@ export default {
       'reportCount'
     ]),
     years () {
-      const start = (new Date()).getFullYear() + 1
+      const start = (new Date()).getFullYear()
       return ['선택없음'].concat(range(start, 2010, -1))
     }
   },
   watch: {
     model (obj) {
       obj && console.log(obj.code, obj.name)
+    },
+    rYear (val) {
+      if (val && typeof val === 'string') {
+        this.rYear = ''
+        return
+      }
+      this.fetchReports()
     }
   },
   data: () => ({
@@ -122,18 +129,17 @@ export default {
   created () {
     this.headers.map(h => { h.class = ['text-xs-center', 'body-1'] })
   },
-  // mounted () {
-  //   const label = document.getElementsByClassName('v-label')
-  //   console.log(label)
-  // },
   methods: {
     async fetchReports (code) {
       let reqCode = code !== undefined ? code : (this.model ? this.model.code : '')
-      await this.$store.dispatch(FETCH_REPORTS, reqCode)
+      const params = {}
+      if (reqCode) params['code'] = reqCode
+      if (this.rYear) params['year'] = this.rYear
+      await this.$store.dispatch(FETCH_REPORTS, params)
       this.fetched = true
 
       // reqCode && this.$store.dispatch(FETCH_SMALL_LEADER, reqCode)
-      reqCode && this.$store.commit(SET_CHANGED_CODE, {type: 'rl_ac', code: reqCode})
+      // reqCode && this.$store.commit(SET_CHANGED_CODE, {type: 'rl_ac', code: reqCode})
     },
     async newReport () {
       if (!this.model || !this.model.code || !this.rYear) return alert('보고서 조건을 선택하세요!')

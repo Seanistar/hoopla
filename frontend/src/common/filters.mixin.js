@@ -9,15 +9,15 @@ const FiltersMixin = {
       return val[key]
     },
     counter (val, obj) {
-      if (!val[obj.code]) return '-'
+      if (!val[obj.code]) return ''
       return val[obj.code][0].counter
     },
     uv_counter (val, obj) {
-      if (!val[obj.code]) return '-'
+      if (!val[obj.code]) return ''
       return val[obj.code][0].uv_count
     },
     gp_counter (val, obj) {
-      if (!val[obj.code]) return '-'
+      if (!val[obj.code]) return ''
       return val[obj.code][0].gp_count
     },
     subject (name) {

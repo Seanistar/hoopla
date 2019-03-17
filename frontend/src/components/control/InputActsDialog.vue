@@ -12,12 +12,12 @@
               <template>
                 <v-flex xs6>
                   <v-text-field label="봉사자 이름" v-model="item.name" @focus="finder = true"
-                                :disabled="item.id !== 0 || (item.id === 0 && item.name !== undefined)"
-                                hide-details></v-text-field>
+                                :disabled="refs === 'volunteer'"
+                                hide-details></v-text-field><!--:disabled="item.id !== 0 || (item.id === 0 && item.name !== undefined)"-->
                 </v-flex>
                 <v-flex xs6>
                   <v-text-field label="세례명" v-model="item.ca_name"
-                                :disabled="item.id !== 0 || (item.id === 0 && item.ca_name !== undefined)"
+                                :disabled="refs === 'volunteer'"
                                 hide-details></v-text-field>
                 </v-flex>
               </template>
@@ -154,9 +154,10 @@ export default {
     },
     onFound (data) {
       if (data === undefined) { this.finder = false; return }
-      if (this.item.s_code && this.item.s_code !== data.area_code) {
+      if (!data.area_code) return this.$showSnackBar('구역 정보를 확인해주세요!')
+      /* if (this.item.s_code && this.item.s_code !== data.area_code) {
         return alert('구역 정보가 일치하지 않습니다. 다시 선택해주세요!')
-      }
+      } */
 
       this.finder = false
       Object.assign(this.item, pick(data, ['id', 'name', 'ca_name', 'state', 'area_code']))

@@ -93,8 +93,8 @@ export const StatService = {
   get_church (params) {
     return ApiService.query('stats/church', params)
   },
-  get_area () {
-    return ApiService.query('stats/area')
+  get_area (params) {
+    return ApiService.query('stats/area', params)
   },
   get_volt (params) {
     return ApiService.query('stats/volts', params)
@@ -171,8 +171,8 @@ export const VolunteerService = {
 }
 
 export const ReportService = {
-  query (code) {
-    return ApiService.query('reports', {params: {code}})
+  query (data) {
+    return ApiService.query('reports', {params: data})
   },
   query_acts (data) {
     return ApiService.query('reports/acts', {params: data})

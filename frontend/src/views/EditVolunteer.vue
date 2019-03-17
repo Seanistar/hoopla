@@ -8,6 +8,11 @@
     </v-tabs>
     <v-layout pt-1>
       <component :is="targetComponents[tabIdx]" :v_id.sync="v_id">
+        <span slot="voltInfo" class="mr-3">봉사자 :
+          <span>{{voltInfo.name}} {{voltInfo.ca_name}} ({{voltInfo.sa_name}} 본당)</span>
+          <!--<inline-text-box :v_name="`${voltInfo.name} ${voltInfo.ca_name} (${voltInfo.sa_name} 본당)`"
+                           v-if="voltInfo && Object.keys(voltInfo).length"/>-->
+        </span>
       </component>
     </v-layout>
     <float-button path="volunteers"/>
@@ -21,6 +26,8 @@ import VolunteerActs from '@/components/VolunteerActs'
 import VolunteerLeader from '@/components/VolunteerLeader'
 import VolunteerHistory from '@/components/VolunteerHistory'
 import FloatButton from '@/components/control/FloatButton'
+import InlineTextBox from '@/components/control/InlineTextBox'
+
 /* eslint-disable */
 export default {
   name: 'EditVolunteer',
@@ -30,7 +37,8 @@ export default {
     VolunteerActs,
     VolunteerLeader,
     VolunteerHistory,
-    FloatButton
+    FloatButton,
+    InlineTextBox
   },
   computed: {
     targetComponents () {
@@ -57,12 +65,18 @@ export default {
         }
         window.history.replaceState({}, null, path)
       }
+    },
+    v_id (id) {
+      this.$store.dispatch('fetchVolunteerItem', id).then(() => {
+        this.voltInfo = this.$store.getters.volunteerInfo(parseInt(id))
+      })
     }
   },
   props: { id: undefined },
   data: () => ({
     tabIdx: 0,
     v_id: undefined,
+    voltInfo: {},
     voltCore: { ca_id: null, name: '', ca_name: '', area_code: null },
     title: ['봉사자 정보', '교육 현황', '봉사 현황', '대표 이력', '전출입 이력']
   }),
@@ -80,11 +94,16 @@ export default {
     }
   },
   beforeRouteEnter (to, from, next) {
-    next(vm => {
+    next(async vm => {
       const {id, menu} = to.params
       if (menu) {
         const [m, idx] = menu.split('-')
         idx && (vm.tabIdx = parseInt(idx))
+      }
+      if (id) {
+        await vm.$store.dispatch('fetchVolunteerItem', id)
+        vm.voltInfo = vm.$store.getters.volunteerInfo(parseInt(id))
+        console.log(vm.voltInfo)
       }
     })
   }

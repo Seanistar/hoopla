@@ -66,7 +66,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { FETCH_VOLUNTEERS, DELETE_VOLUNTEER, FETCH_SMALL_LEADER, GET_TOTAL_COUNT } from '@/store/actions.type'
-import { SET_CHANGED_CODE } from '@/store/mutations.type'
+// import { SET_CHANGED_CODE } from '@/store/mutations.type'
 import { map, find, orderBy } from 'lodash/collection'
 
 export default {
@@ -120,7 +120,7 @@ export default {
       await this.$store.dispatch(GET_TOTAL_COUNT)
       await this.$store.dispatch(FETCH_VOLUNTEERS, {params})
       this.fetched = true
-      reqCode && this.$store.commit(SET_CHANGED_CODE, {type: 'vl_ac', code: reqCode})
+      // reqCode && this.$store.commit(SET_CHANGED_CODE, {type: 'vl_ac', code: reqCode})
     },
     onChange (name) {
       console.log('changed', name)

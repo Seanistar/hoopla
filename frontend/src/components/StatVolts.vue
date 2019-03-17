@@ -23,7 +23,7 @@
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
         <tr>
-          <td>{{Object.keys(props.item)[0]}}</td>
+          <td class="text-xs-center">{{Object.keys(props.item)[0]}}</td>
           <td v-for="(at, idx) in churchList" class="text-xs-center" :key="idx">{{props.item|yearBy|counter(at)|units}}</td>
         </tr>
       </template>
@@ -38,6 +38,7 @@
 import { mapGetters } from 'vuex'
 import { FETCH_STAT_VOLT } from '@/store/actions.type'
 import { groupBy, orderBy, map } from 'lodash/collection'
+import { sumBy } from 'lodash/math'
 import FiltersMixin from '../common/filters.mixin'
 
 export default {
@@ -99,17 +100,27 @@ export default {
         this.items.push(obj)
       })
       this.items.reverse()
+
+      const ye = groupBy(qv, 'a_code')
+      let rs = {}
+      Object.keys(ye).forEach(f => {
+        rs[f] = [{counter: sumBy(ye[f], 'counter')}]
+      })
+      this.items = [{'합계': rs}].concat(this.items)
       this.fetched = true
     },
     setArea () {
-      this.$nextTick(() => {
-        this.areaList = map(this.largeCodes, o => { return {code: o.l_code, name: o.l_name} })
-      })
-      let list = map(this.smallCodes(), o => {
-        return { code: o.s_code, name: o.s_name, area: o.l_code }
-      })
-      if (this.area) list = list.filter((a) => a.area === this.area)
-      this.churchList = orderBy(list, ['name'])
+      this.areaList = map(this.largeCodes, o => { return {code: o.l_code, name: o.l_name} })
+
+      if (this.area) {
+        let list = map(this.smallCodes(), o => {
+          return { code: o.s_code, name: o.s_name, area: o.l_code }
+        })
+        if (this.area) list = list.filter((a) => a.area === this.area)
+        this.churchList = orderBy(list, ['name'])
+      } else {
+        this.churchList = this.areaList
+      }
     }
   },
   filters: {
@@ -131,6 +142,9 @@ export default {
     min-width: 20px !important;
     padding: 3px !important;
     text-align: center;
+  }
+  tbody tr:first-child {
+    background-color: orange;
   }
   .head-title {
     white-space: normal;

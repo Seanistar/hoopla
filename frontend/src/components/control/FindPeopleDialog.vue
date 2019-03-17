@@ -3,7 +3,7 @@
     <v-dialog v-model="dialog" scrollable persistent max-width="800px">
       <v-card>
         <v-card-title class="pl-4 pb-2 pt-4">
-          <v-text-field label="봉사자 이름 입력" v-model="name" id="person"
+          <v-text-field label="봉사자 이름 입력" v-model="name" id="person" autofocus
                         clearable hint="정확한 실명을 입력하고 엔터키를 누르세요." @keyup.enter="findOne"></v-text-field>
           <v-btn slot="activator" color="primary" outline dark @click.stop="findOne">봉사자 찾기</v-btn>
         </v-card-title>

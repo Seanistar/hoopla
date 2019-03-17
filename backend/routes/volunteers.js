@@ -57,7 +57,7 @@ router.get('/page/:id', (req, res) => {
     ac.l_name la_name, ac.m_name ma_name, ac.s_name sa_name 
     FROM volunteers vl
     LEFT JOIN leaders ld ON vl.id = ld.v_id AND ld.work = 'Y'
-    LEFT JOIN area_code ac ON vl.area_code = ac.a_code`
+    INNER JOIN area_code ac ON vl.area_code = ac.a_code`
   if (req.params.id !== undefined) select += ' WHERE vl.id=?'
   const sql = [select, req.params.id]
   db.query(...sql, (err, rows) => {

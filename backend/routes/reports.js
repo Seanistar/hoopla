@@ -4,15 +4,25 @@ const db = require('../common/db.mysql')
 const _promise = require('bluebird')
 
 router.get('/', (req, res) => {
-  const code = req.query.code
+  const {code, year} = req.query
   let select = `SELECT * FROM reports `
-  if (code) select += `WHERE s_code=?`
-  else select += `LIMIT 100`
-  const sql = [select, code ? [code, code] : []]
-  console.log(sql, code)
+  let cond = []
+  if (code || year) {
+    select += ' WHERE'
+    if (code) {
+      select += ' s_code=?'
+      cond.push(code)
+    }
+    if (year) {
+      if (code) select += ' AND'
+      select += ' r_year=?'
+      cond.push(year)
+    }
+  } else select += `LIMIT 100`
+  const sql = [select, cond]
   db.query(...sql, (err, rows) => {
     if (!err) {
-      console.log('reports query has done')
+      console.log('reports query has done', sql)
       res.status(200).send(rows)
     } else {
       console.warn('reports query error : ' + err)

@@ -42,9 +42,9 @@ const getters = {
 }
 
 const actions = {
-  [FETCH_REPORTS] (context, code) {
+  [FETCH_REPORTS] (context, data) {
     context.commit(FETCH_START)
-    return ReportService.query(code)
+    return ReportService.query(data)
       .then(({ data }) => {
         context.commit(FETCH_REPORTS_END, data)
       })

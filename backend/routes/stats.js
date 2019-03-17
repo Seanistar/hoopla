@@ -3,8 +3,8 @@ const router = express.Router()
 const db = require('../common/db.mysql')
 
 router.get('/yearly', (req, res) => {
-  let _sql = 'SELECT e_code, SUM(counter)gp_count, SUM(members)uv_count, e_year FROM stat_yearly'
-  const {church, area} = req.query
+  const {church, area, type} = req.query
+  let _sql = `SELECT e_code, SUM(counter)gp_count, SUM(members)uv_count, e_year FROM stat_yearly_${type}`
   if (church || area) {
     _sql += ' WHERE '
     if (area && church) {
@@ -28,8 +28,8 @@ router.get('/yearly', (req, res) => {
 })
 
 router.get('/church', (req, res) => {
-  let _sql = 'SELECT a_code, e_code, SUM(counter)gp_count, SUM(members)uv_count FROM stat_church'
-  const {year, area} = req.query
+  const {year, area, type} = req.query
+  let _sql = `SELECT a_code, e_code, SUM(counter)gp_count, SUM(members)uv_count FROM stat_church_${type}`
   if (year || area) {
     _sql += ' WHERE '
     if (year && area) {
@@ -53,10 +53,11 @@ router.get('/church', (req, res) => {
 })
 
 router.get('/area', (req, res) => {
-  const _sql = 'SELECT * FROM stat_area'
+  const {type} = req.query
+  const _sql = `SELECT * FROM stat_area_${type}`
   db.query(_sql, (err, rows) => {
     if (!err) {
-      console.log('stat area has done')
+      console.log('stat area has done', _sql)
       res.status(200).send(rows)
     } else {
       console.warn('stat area error : ' + err)
@@ -67,12 +68,20 @@ router.get('/area', (req, res) => {
 
 router.get('/volts', (req, res) => {
   const {area} = req.query
-  let _sql = `
-    SELECT MAX(area_code)a_code, a.s_name, COUNT(id)counter, YEAR(au_date)au_year 
+  let _sql = ''
+  if (area) {
+    _sql = `SELECT MAX(area_code)a_code, a.s_name a_name, COUNT(id)counter, YEAR(au_date)au_year 
     FROM volunteers v
-    LEFT JOIN area_code a ON v.area_code = a.a_code`
-  if (area) _sql += ` WHERE a.l_code = '${area}'`
-	_sql += ` GROUP BY area_code, au_year`
+    INNER JOIN area_code a ON v.area_code = a.a_code`
+    if (area) _sql += ` WHERE a.l_code = '${area}'`
+    _sql += ` GROUP BY area_code, au_year`
+  } else {
+    _sql = `SELECT MAX(a.l_code)a_code, MAX(a.l_name)a_name, COUNT(id)counter, YEAR(au_date)au_year
+    FROM volunteers v
+    INNER JOIN area_code a ON v.area_code = a.a_code
+    GROUP BY a.l_code, au_year`
+  }
+
   db.query(_sql, (err, rows) => {
     if (!err) {
       console.log('stat volts has done', _sql)

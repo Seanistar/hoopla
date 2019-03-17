@@ -1,8 +1,11 @@
 <template>
   <v-container pt-4 pb-3 mt-2 elevation-3>
     <v-layout pb-2 pl-2>
-      <v-flex xs6>
+      <v-flex xs2>
         <div>전체 이력 : {{volunteerHistory.length}} 건</div>
+      </v-flex>
+      <v-flex xs4>
+        <slot name="voltInfo"></slot>
       </v-flex>
       <v-flex xs6>
         <div class="text-xs-right caption grey--text">※ 봉사자 기본 정보에서 본당 정보 변경 시 자동 갱신됩니다.</div>

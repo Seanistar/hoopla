@@ -49,9 +49,9 @@ const actions = {
         throw new Error(error)
       })
   },
-  [FETCH_STAT_AREA] (context) {
+  [FETCH_STAT_AREA] (context, params) {
     context.commit(FETCH_START)
-    return StatService.get_area()
+    return StatService.get_area(params)
       .then(({ data }) => {
         context.commit(FETCH_STAT_AREA_END, data)
       })
