@@ -1,6 +1,6 @@
 <template>
-  <v-container pt-2 mt-3>
-    <v-flex xs3>
+  <v-container pt-2 mt-1>
+    <v-flex xs6 mb-2>
       <v-radio-group v-model="type" row height="20" hide-details>
         <v-radio label="교육 현황" value="edus"></v-radio>
         <v-radio label="봉사 현황" value="acts"></v-radio>

@@ -1,5 +1,5 @@
 <template>
-  <v-container pt-2 mt-3>
+  <v-container pt-2 mt-1>
     <v-layout row align-baseline>
       <v-flex xs3>
         <v-select label="교구선택" class="body-2" clearable
@@ -11,7 +11,7 @@
                   :items="churchList" item-value="code" item-text="name"
                   v-model="church"></v-combobox>
       </v-flex>
-      <v-flex xs3>
+      <v-flex xs3 ml-3>
         <v-radio-group v-model="type" row height="30">
           <v-radio label="교육 현황" value="edus"></v-radio>
           <v-radio label="봉사 현황" value="acts"></v-radio>

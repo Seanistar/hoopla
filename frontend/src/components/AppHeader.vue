@@ -67,10 +67,9 @@ export default {
       this.tabIdx = pos
     },
     selectMenu (index) {
-      (index === 0) && setTimeout(() => {
-        window.print()
-      }, 200);
-      (index === 1) && this.$showSnackBar('도움말 준비중입니다!')
+      if (index === 0) setTimeout(() => window.print(), 200)
+      else if (index === 1) this.$showSnackBar('도움말 준비중입니다!')
+      // else if (index === 2) window.open('https://www.google.com/intl/ko_ALL/chrome/')
     }
   },
   mounted () {

@@ -27,6 +27,7 @@ import VolunteerLeader from '@/components/VolunteerLeader'
 import VolunteerHistory from '@/components/VolunteerHistory'
 import FloatButton from '@/components/control/FloatButton'
 import InlineTextBox from '@/components/control/InlineTextBox'
+// import { SET_CHANGED_CODE } from '@/store/mutations.type'
 
 /* eslint-disable */
 export default {
@@ -69,6 +70,7 @@ export default {
     v_id (id) {
       this.$store.dispatch('fetchVolunteerItem', id).then(() => {
         this.voltInfo = this.$store.getters.volunteerInfo(parseInt(id))
+        // this.$store.commit(SET_CHANGED_CODE, this.voltInfo.area_code)
       })
     }
   },

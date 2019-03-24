@@ -250,9 +250,9 @@ export default {
 
     this.isEditMode = !isUndefined(this.v_id)
     if (this.isEditMode) this.fetchData()
-    else if (this.changedCodes.vl_ac) {
+    else if (this.changedChurchCode) {
       const found = find(this.smallCodes(null), a => {
-        return this.changedCodes.vl_ac === a.s_code
+        return this.changedChurchCode === a.s_code
       })
       if (found) {
         this.name.ma = found.m_name

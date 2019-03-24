@@ -73,7 +73,7 @@ import { mapGetters } from 'vuex'
 import { map, find, orderBy } from 'lodash/collection'
 import { range } from 'lodash/util'
 import { FETCH_REPORTS, DELETE_REPORT, FETCH_SMALL_LEADER } from '@/store/actions.type'
-// import { SET_CHANGED_CODE } from '@/store/mutations.type'
+import { SET_CHANGED_CODE } from '@/store/mutations.type'
 
 export default {
   name: 'ReportList',
@@ -84,7 +84,7 @@ export default {
       'areaCodes',
       'reportCode',
       'isReportsLoading',
-      'changedCodes',
+      'changedChurchCode',
       'reports',
       'reportCount'
     ]),
@@ -139,7 +139,7 @@ export default {
       this.fetched = true
 
       // reqCode && this.$store.dispatch(FETCH_SMALL_LEADER, reqCode)
-      // reqCode && this.$store.commit(SET_CHANGED_CODE, {type: 'rl_ac', code: reqCode})
+      reqCode && this.$store.commit(SET_CHANGED_CODE, reqCode)
     },
     async newReport () {
       if (!this.model || !this.model.code || !this.rYear) return alert('보고서 조건을 선택하세요!')
@@ -158,7 +158,7 @@ export default {
       this.$store.dispatch(DELETE_REPORT, id) && this.$showSnackBar('삭제되었습니다!')
     },
     setLastChangedCode () {
-      let code = this.changedCodes.rl_ac
+      let code = this.changedChurchCode
       if (!code) code = this.authInfo.area_code
 
       setTimeout(() => {

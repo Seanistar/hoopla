@@ -1,5 +1,5 @@
 <template>
-  <v-container pt-2 mt-3>
+  <v-container pt-2 mt-1>
     <v-layout row align-baseline>
       <v-flex xs3>
         <v-select label="교구선택" class="body-2" clearable

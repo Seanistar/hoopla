@@ -27,10 +27,7 @@ const state = {
   volunteerActs: [],
   volunteerHistory: [],
   volunteerLeader: [],
-  changedCodes: {
-    vl_ac: null, // volunteer list
-    rl_ac: null // report list
-  },
+  changedChurchCode: null,
   isLoading: false,
   isFinding: false,
   isQuerying: false,
@@ -64,7 +61,7 @@ const getters = {
   queriedVoltItems: state => state.queriedVoltItems,
   foundVolunteers: state => state.foundResult,
   foundCount: state => state.foundCount,
-  changedCodes: state => state.changedCodes
+  changedChurchCode: state => state.changedChurchCode
 }
 
 const actions = {
@@ -434,8 +431,8 @@ const mutations = {
   [ADD_VOLUNTEER_HISTORY] (state, hst) {
     state.volunteerHistory.push(hst)
   },
-  [SET_CHANGED_CODE] (state, param) {
-    state.changedCodes[param.type] = param.code
+  [SET_CHANGED_CODE] (state, code) {
+    state.changedChurchCode = code
   }
 }
 

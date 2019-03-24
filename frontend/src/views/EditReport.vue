@@ -28,7 +28,7 @@ export default {
   computed: {
     ...mapGetters([
       'smallCodes',
-      'changedCodes',
+      'changedChurchCode',
       'authInfo'
     ]),
     targetComponents () {
@@ -73,7 +73,7 @@ export default {
     },
     getSmall () { // 신규 생성에서 접근할 때
       if (this.S_CODE && this.S_NAME) return { s_code: this.S_CODE, s_name: this.S_NAME }
-      let sc = this.changedCodes.rl_ac
+      let sc = this.changedChurchCode
       if (!sc) sc = this.authInfo.area_code
       return this.smallCodes(this.authInfo).find(o => o.s_code === sc)
     },
