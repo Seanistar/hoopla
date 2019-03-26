@@ -70,6 +70,7 @@ export const FETCH_STAT_YEARLY = 'fetchStatYearly'
 export const FETCH_STAT_CHURCH = 'fetchStatChurch'
 export const FETCH_STAT_AREA = 'fetchStatArea'
 export const FETCH_STAT_VOLT = 'fetchStatVolt'
+export const FETCH_STAT_ACTS = 'fetchStatActs'
 
 // will be obsoleted
 export const DELETE_AUTHOR = 'deleteAuthor'

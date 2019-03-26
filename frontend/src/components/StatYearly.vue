@@ -54,16 +54,16 @@
       <template slot="items" slot-scope="props">
         <tr v-if="type === 'edus'">
           <td class="text-xs-center w-10">{{props.item|yearKey}}</td>
-          <td class="text-xs-center" v-for="at in ebsCodes" :key="at.code">{{props.item|yearBy|uv_counter(at)|units}}</td>
-          <td class="text-xs-center" v-for="at in grpCodes" :key="at.code">{{props.item|yearBy|uv_counter(at)|units}}</td>
-          <td class="text-xs-center" v-for="at in trnCodes" :key="at.code">{{props.item|yearBy|uv_counter(at)|units}}</td>
-          <td class="text-xs-center" v-for="at in stdCodes" :key="at.code">{{props.item|yearBy|uv_counter(at)|units}}</td>
+          <td class="text-xs-center" v-for="at in ebsCodes" :key="at.code">{{props.item|keyBy|uv_counter(at)|units}}</td>
+          <td class="text-xs-center" v-for="at in grpCodes" :key="at.code">{{props.item|keyBy|uv_counter(at)|units}}</td>
+          <td class="text-xs-center" v-for="at in trnCodes" :key="at.code">{{props.item|keyBy|uv_counter(at)|units}}</td>
+          <td class="text-xs-center" v-for="at in stdCodes" :key="at.code">{{props.item|keyBy|uv_counter(at)|units}}</td>
         </tr>
         <tr v-else>
           <td class="text-xs-center w-10">{{props.item|yearKey}}</td>
           <template v-for="(at, i) in actCodes">
-            <td class="text-xs-center" :key="ebsCodes.length + i">{{props.item|yearBy|gp_counter(at)}}</td>
-            <td class="text-xs-center" :key="(ebsCodes.length + 100) + i">{{props.item|yearBy|uv_counter(at)|units}}</td>
+            <td class="text-xs-center" :key="ebsCodes.length + i">{{props.item|keyBy|gp_counter(at)}}</td>
+            <td class="text-xs-center" :key="(ebsCodes.length + 100) + i">{{props.item|keyBy|uv_counter(at)|units}}</td>
           </template>
         </tr>
       </template>

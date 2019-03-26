@@ -4,7 +4,7 @@ const FiltersMixin = {
       const key = Object.keys(val)[0]
       return key === 'null' ? '날짜미상' : key
     },
-    yearBy (val) {
+    keyBy (val) {
       const key = Object.keys(val)[0]
       return val[key]
     },
@@ -33,6 +33,19 @@ const FiltersMixin = {
     ch_counter (val, obj) {
       if (!val[obj.a_code]) return '-'
       return val[obj.a_code][0].counter
+    },
+    v_name (val) {
+      const key = Object.keys(val)[0]
+      return val[key].v_name
+    },
+    ca_name (val) {
+      const key = Object.keys(val)[0]
+      return val[key].ca_name
+    },
+    ready (val, code) {
+      if (!val[code]) return ''
+      const acts = val[code][0]
+      return (acts.ready === 'Y') ? '준비중' : acts.a_year
     }
   }
 }

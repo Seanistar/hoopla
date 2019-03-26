@@ -19,7 +19,7 @@
       <template slot="items" slot-scope="props">
         <tr>
           <td class="text-xs-center">{{ props.item|yearKey }}</td>
-          <td class="text-xs-center" v-for="(nt, i) in stdCodes" :key="i">{{ props.item|yearBy|counter(nt) }}</td>
+          <td class="text-xs-center" v-for="(nt, i) in stdCodes" :key="i">{{ props.item|keyBy|counter(nt) }}</td>
         </tr>
       </template>
       <template slot="no-data">

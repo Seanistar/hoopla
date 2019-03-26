@@ -18,8 +18,8 @@
       <template slot="items" slot-scope="props">
         <tr> <!--@click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">-->
           <td class="text-xs-center">{{ props.item|yearKey }}</td>
-          <td class="text-xs-center" v-for="(ec, i) in ebsCodes" :key="i">{{ props.item|yearBy|counter(ec) }}</td>
-          <td class="text-xs-center">{{ props.item|yearBy|sumRow }}</td>
+          <td class="text-xs-center" v-for="(ec, i) in ebsCodes" :key="i">{{ props.item|keyBy|counter(ec) }}</td>
+          <td class="text-xs-center">{{ props.item|keyBy|sumRow }}</td>
         </tr>
       </template>
       <template slot="no-data">

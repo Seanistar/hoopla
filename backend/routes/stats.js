@@ -93,4 +93,34 @@ router.get('/volts', (req, res) => {
   })
 })
 
+router.get('/acts', (req, res) => {
+  const {code} = req.query
+  const _sql = `SELECT * FROM 
+      (SELECT a.v_id, a.act_code a_code, null ready,
+      a.area_code ch_code, a.origin_code og_code, 
+      v.NAME v_name, v.ca_name, YEAR(a.s_date)a_year
+      FROM acts a
+      LEFT JOIN edu_code ec ON a.act_code = ec.code
+      LEFT JOIN volunteers v ON a.v_id = v.id
+      UNION
+      SELECT e.v_id, e.edu_code a_code, ready, 
+      e.area_code ch_code, null, 
+      v.NAME v_name, v.ca_name, YEAR(e.s_date)a_year
+      FROM edus e
+      LEFT JOIN edu_code ec ON e.edu_code = ec.code
+      LEFT JOIN volunteers v ON e.v_id = v.id
+      WHERE ec.TYPE = 'N') UV
+      WHERE ch_code = '${code}'
+      ORDER BY v_id`
+  db.query(_sql, (err, rows) => {
+    if (!err) {
+      console.log('stat acts has done', _sql)
+      res.status(200).send(rows)
+    } else {
+      console.warn('stat acts error : ' + err)
+      res.status(500).send('Internal Server Error')
+    }
+  })
+})
+
 module.exports = router

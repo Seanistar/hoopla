@@ -78,6 +78,7 @@ export const FETCH_STAT_YEARLY_END = 'fetchStatYearlyEnd'
 export const FETCH_STAT_CHURCH_END = 'fetchStatChurchEnd'
 export const FETCH_STAT_AREA_END = 'fetchStatAreaEnd'
 export const FETCH_STAT_VOLT_END = 'fetchStatVoltEnd'
+export const FETCH_STAT_ACTS_END = 'fetchStatActsEnd'
 
 // will be obsoleted
 export const SET_TOPIC = 'setTopic'

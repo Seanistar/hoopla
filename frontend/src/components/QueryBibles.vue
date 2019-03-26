@@ -18,7 +18,7 @@
       <template slot="items" slot-scope="props">
         <tr> <!--@click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">-->
           <td class="text-xs-center">{{ props.item|yearKey }}</td>
-          <td class="text-xs-center" v-for="(tr, i) in trnCodes" :key="i">{{ props.item|yearBy|counter(tr) }}</td>
+          <td class="text-xs-center" v-for="(tr, i) in trnCodes" :key="i">{{ props.item|keyBy|counter(tr) }}</td>
         </tr>
       </template>
       <template slot="no-data">

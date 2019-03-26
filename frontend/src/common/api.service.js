@@ -98,6 +98,9 @@ export const StatService = {
   },
   get_volt (params) {
     return ApiService.query('stats/volts', params)
+  },
+  get_acts (params) {
+    return ApiService.query('stats/acts', params)
   }
 }
 

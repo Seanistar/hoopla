@@ -24,7 +24,7 @@
       <template slot="items" slot-scope="props">
         <tr>
           <td class="text-xs-center">{{Object.keys(props.item)[0]}}</td>
-          <td v-for="(at, idx) in churchList" class="text-xs-center" :key="idx">{{props.item|yearBy|counter(at)|units}}</td>
+          <td v-for="(at, idx) in churchList" class="text-xs-center" :key="idx">{{props.item|keyBy|counter(at)|units}}</td>
         </tr>
       </template>
       <template slot="no-data">
