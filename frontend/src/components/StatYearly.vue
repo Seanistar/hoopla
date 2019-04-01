@@ -12,13 +12,16 @@
                   v-model="church"></v-combobox>
       </v-flex>
       <v-flex xs3 ml-3>
-        <v-radio-group v-model="type" row height="30">
+        <v-radio-group v-model="type" row height="20">
           <v-radio label="교육 현황" value="edus"></v-radio>
           <v-radio label="봉사 현황" value="acts"></v-radio>
         </v-radio-group>
       </v-flex>
+      <v-flex xs3 text-xs-right>
+        <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
+      </v-flex>
     </v-layout>
-    <v-data-table :items="items" :pagination.sync="pagination" class="elevation-1">
+    <v-data-table id="yearly" :items="items" :pagination.sync="pagination" class="elevation-1">
       <template slot="headers" slot-scope="props">
         <template v-if="type === 'edus'">
           <tr>
@@ -80,6 +83,7 @@ import { FETCH_STAT_YEARLY } from '@/store/actions.type'
 import { groupBy, orderBy, map } from 'lodash/collection'
 import { sumBy } from 'lodash/math'
 import FiltersMixin from '../common/filters.mixin'
+import XLSX from 'xlsx'
 
 export default {
   name: 'StatYearly',
@@ -158,6 +162,11 @@ export default {
         return {code: o.s_code, name: full}
       })
       this.churchList = orderBy(list, ['name'])
+    },
+    toExcel () {
+      const table = document.getElementsByTagName('table')
+      const wb = XLSX.utils.table_to_book(table[0])
+      XLSX.writeFile(wb, 'stats_yearly.xlsx')
     }
   },
   filters: {

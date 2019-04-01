@@ -1,13 +1,18 @@
 <template>
   <v-container pt-2 pb-3 mt-2 elevation-3>
     <v-layout pb-2 pl-2 align-center>
-      <v-flex xs2>
+      <v-flex xs2 text-xs-left>
+        <router-link :to="{name: 'view-query', params: {id: v_id, menu: 'm-0'}}" class="txt-deco-none" replace>
+          <v-btn outline color="primary">조회 화면 이동</v-btn>
+        </router-link>
+      </v-flex>
+      <v-flex xs3>
         <div>전체 교육 : {{volunteerEdus.length}} 건</div>
       </v-flex>
       <v-flex xs4>
         <slot name="voltInfo"></slot>
       </v-flex>
-      <v-flex xs6 text-xs-right>
+      <v-flex xs3 text-xs-right>
         <menu-buttons class="pt-0" :disabled="isDisable" @click-menu="onClickMenu" refs="acts"/>
       </v-flex>
     </v-layout>

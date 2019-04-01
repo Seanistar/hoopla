@@ -16,6 +16,9 @@
           <v-radio label="봉사 현황" value="acts"></v-radio>
         </v-radio-group>
       </v-flex>
+      <v-flex xs3 text-xs-right>
+        <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
+      </v-flex>
     </v-layout>
     <v-data-table :items="items" :pagination.sync="pagination" class="elevation-1">
       <template slot="headers" slot-scope="props">
@@ -76,10 +79,11 @@
 <script>
 import { mapGetters } from 'vuex'
 import { FETCH_STAT_CHURCH } from '@/store/actions.type'
-import { groupBy, find, map } from 'lodash/collection'
+import { groupBy, sortBy, find, map } from 'lodash/collection'
 import FiltersMixin from '../common/filters.mixin'
 import { range } from 'lodash/util'
 import { sumBy } from 'lodash/math'
+import XLSX from 'xlsx'
 
 export default {
   name: 'StatChurch',
@@ -145,6 +149,7 @@ export default {
           this.items.push(obj)
         }
       })
+      this.items = sortBy(this.items, o => Object.keys(o))
 
       const ye = groupBy(qv, 'e_code')
       let rs = {}
@@ -159,6 +164,11 @@ export default {
         this.areaList = map(this.largeCodes, o => { return {code: o.l_code, name: o.l_name} })
       })
       this.areaList = [{code: '', name: '선택없음'}].concat(this.areaList)
+    },
+    toExcel () {
+      const table = document.getElementsByTagName('table')
+      const wb = XLSX.utils.table_to_book(table[0])
+      XLSX.writeFile(wb, 'stats_churches.xlsx')
     }
   },
   filters: {

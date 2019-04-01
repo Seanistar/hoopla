@@ -70,13 +70,15 @@ router.get('/volts', (req, res) => {
   const {area} = req.query
   let _sql = ''
   if (area) {
-    _sql = `SELECT MAX(area_code)a_code, a.s_name a_name, COUNT(id)counter, YEAR(au_date)au_year 
+    _sql = `SELECT MAX(area_code)a_code, a.s_name a_name, 
+    COUNT(id)counter, SUM(v.state='ACT')actor, YEAR(au_date)au_year 
     FROM volunteers v
     INNER JOIN area_code a ON v.area_code = a.a_code`
     if (area) _sql += ` WHERE a.l_code = '${area}'`
     _sql += ` GROUP BY area_code, au_year`
   } else {
-    _sql = `SELECT MAX(a.l_code)a_code, MAX(a.l_name)a_name, COUNT(id)counter, YEAR(au_date)au_year
+    _sql = `SELECT MAX(a.l_code)a_code, MAX(a.l_name)a_name, 
+    COUNT(id)counter, SUM(v.state='ACT')actor, YEAR(au_date)au_year
     FROM volunteers v
     INNER JOIN area_code a ON v.area_code = a.a_code
     GROUP BY a.l_code, au_year`

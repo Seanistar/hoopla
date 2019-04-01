@@ -1,9 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from '@/store'
+import JwtService from '@/common/jwt.service'
+import { CHECK_AUTH } from '@/store/actions.type'
+import { REMOVE_AUTH } from '@/store/mutations.type'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode: 'history', // connect-history-api-fallback
   routes: [
     {
@@ -73,3 +77,21 @@ export default new Router({
     { path: '*', redirect: '/' }
   ]
 })
+
+export default router
+
+// Ensure we checked auth before each page load.
+router.beforeEach(
+  (to, from, next) => {
+    if (to.name === 'home' && !JwtService.getToken()) return next()
+
+    return Promise
+      .all([store.dispatch(CHECK_AUTH)])
+      .then(next)
+      .catch(err => {
+        console.warn(err.message)
+        store.commit(REMOVE_AUTH)
+        location.replace('/')
+      })
+  }
+)

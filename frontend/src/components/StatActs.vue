@@ -6,6 +6,9 @@
                   :items="churchList" item-value="code" item-text="name"
                   v-model="church"></v-combobox>
       </v-flex>
+      <v-flex xs9 text-xs-right>
+        <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
+      </v-flex>
     </v-layout>
     <v-data-table :items="items" hide-actions class="elevation-1">
       <template slot="headers" slot-scope="props">
@@ -46,6 +49,7 @@ import { FETCH_STAT_ACTS } from '@/store/actions.type'
 import { groupBy, orderBy, map, find } from 'lodash/collection'
 import { pick } from 'lodash/object'
 import FiltersMixin from '../common/filters.mixin'
+import XLSX from 'xlsx'
 
 export default {
   name: 'StatYearly',
@@ -114,6 +118,11 @@ export default {
       if (!org) return
       const res = find(this.smallCodes(), (o) => o.s_code === org)
       return res ? res.s_name.slice(0, 3) : ''
+    },
+    toExcel () {
+      const table = document.getElementsByTagName('table')
+      const wb = XLSX.utils.table_to_book(table[0])
+      XLSX.writeFile(wb, 'stats_activities.xlsx')
     }
   }
 }

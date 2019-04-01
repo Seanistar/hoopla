@@ -6,6 +6,9 @@
                   v-model="area" :items="areaList" item-value="code" item-text="name">
         </v-select>
       </v-flex>
+      <v-flex xs9 text-xs-right>
+        <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
+      </v-flex>
     </v-layout>
 
     <v-layout align-center justify-center class="progress-circular" v-if="isVolunteersLoading && !fetched">
@@ -24,7 +27,7 @@
       <template slot="items" slot-scope="props">
         <tr>
           <td class="text-xs-center">{{Object.keys(props.item)[0]}}</td>
-          <td v-for="(at, idx) in churchList" class="text-xs-center" :key="idx">{{props.item|keyBy|counter(at)|units}}</td>
+          <td v-for="(at, idx) in churchList" class="text-xs-center" :key="idx">{{props.item|keyBy|counter(at)|units}} {{props.item|keyBy|actor(at)|units}}</td>
         </tr>
       </template>
       <template slot="no-data">
@@ -40,6 +43,7 @@ import { FETCH_STAT_VOLT } from '@/store/actions.type'
 import { groupBy, orderBy, map } from 'lodash/collection'
 import { sumBy } from 'lodash/math'
 import FiltersMixin from '../common/filters.mixin'
+import XLSX from 'xlsx'
 
 export default {
   name: 'StatVolts',
@@ -104,7 +108,7 @@ export default {
       const ye = groupBy(qv, 'a_code')
       let rs = {}
       Object.keys(ye).forEach(f => {
-        rs[f] = [{counter: sumBy(ye[f], 'counter')}]
+        rs[f] = [{counter: sumBy(ye[f], 'counter'), actor: sumBy(ye[f], 'actor')}]
       })
       this.items = [{'합계': rs}].concat(this.items)
       this.fetched = true
@@ -121,12 +125,21 @@ export default {
       } else {
         this.churchList = this.areaList
       }
+    },
+    toExcel () {
+      const table = document.getElementsByTagName('table')
+      const wb = XLSX.utils.table_to_book(table[0])
+      XLSX.writeFile(wb, 'stats_volunteers.xlsx')
     }
   },
   filters: {
     units (x) {
       if (!Number.isInteger(x) || Number.isNaN(x)) return x
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    },
+    actor (val, obj) {
+      if (!val[obj.code]) return ''
+      return '(' + val[obj.code][0].actor + ')'
     }
   }
 }

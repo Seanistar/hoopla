@@ -1,11 +1,16 @@
 <template>
   <v-container pt-2 mt-1>
-    <v-flex xs6 mb-2>
-      <v-radio-group v-model="type" row height="20" hide-details>
-        <v-radio label="교육 현황" value="edus"></v-radio>
-        <v-radio label="봉사 현황" value="acts"></v-radio>
-      </v-radio-group>
-    </v-flex>
+    <v-layout>
+      <v-flex xs6 mb-2>
+        <v-radio-group v-model="type" row height="20" hide-details>
+          <v-radio label="교육 현황" value="edus"></v-radio>
+          <v-radio label="봉사 현황" value="acts"></v-radio>
+        </v-radio-group>
+      </v-flex>
+      <v-flex xs6 text-xs-right>
+        <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
+      </v-flex>
+    </v-layout>
     <v-data-table :items="items" hide-actions class="elevation-1">
       <template slot="headers" slot-scope="props">
         <template v-if="type === 'edus'">
@@ -68,6 +73,7 @@ import { FETCH_STAT_AREA } from '@/store/actions.type'
 import { groupBy, find } from 'lodash/collection'
 import { sumBy } from 'lodash/math'
 import FiltersMixin from '../common/filters.mixin'
+import XLSX from 'xlsx'
 
 export default {
   name: 'StatChurch',
@@ -125,6 +131,11 @@ export default {
         rs[f] = [{uv_count: sumBy(ye[f], 'uv_count'), gp_count: sumBy(ye[f], 'gp_count')}]
       })
       this.items = [{'합계': rs}].concat(this.items)
+    },
+    toExcel () {
+      const table = document.getElementsByTagName('table')
+      const wb = XLSX.utils.table_to_book(table[0])
+      XLSX.writeFile(wb, 'stats_areas.xlsx')
     }
   },
   filters: {
