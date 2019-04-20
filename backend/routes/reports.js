@@ -80,7 +80,7 @@ router.get('/group-acts', (req, res) => {
     SELECT a.act_code, a.group_type, COUNT(a.id)g_count, SUM(numbers) p_count
     FROM volunteers v
     INNER JOIN acts a ON v.id = a.v_id
-    WHERE a.area_code=? AND (a.s_date>=? AND a.s_date<=?) AND a.group_type != 'x'
+    WHERE a.area_code=? AND (a.s_date>=? AND a.s_date<=?) AND a.group_type != 'X'
     GROUP BY a.act_code, a.group_type`,
     [a_code, s_date, e_date]
   ]
