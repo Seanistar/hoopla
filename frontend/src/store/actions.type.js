@@ -61,6 +61,7 @@ export const DELETE_REPORT_ACT = 'deleteReportAct'
 export const CREATE_REPORT_ACT = 'createReportAct'
 export const UPDATE_REPORT_ACT = 'updateReportAct'
 export const FETCH_DYNAMIC_STATE = 'fetchDynamicState'
+export const FETCH_REPORT_GROUP_ACTS = 'fetchReportGroupActs'
 
 // utilize
 export const FETCH_SMALL_LEADER = 'fetchSmallLeader'
@@ -71,6 +72,7 @@ export const FETCH_STAT_CHURCH = 'fetchStatChurch'
 export const FETCH_STAT_AREA = 'fetchStatArea'
 export const FETCH_STAT_VOLT = 'fetchStatVolt'
 export const FETCH_STAT_ACTS = 'fetchStatActs'
+export const FETCH_STAT_OTHERS = 'fetchStatOthers'
 
 // will be obsoleted
 export const DELETE_AUTHOR = 'deleteAuthor'

@@ -32,7 +32,8 @@
       <v-progress-circular indeterminate color="#00b0f5"></v-progress-circular>
     </v-layout>
 
-    <v-data-table :headers="headers" :items="volunteers" class="elevation-5" hide-actions>
+    <v-data-table :headers="headers" :items="volunteers"
+                  class="elevation-5" disable-initial-sort hide-actions>
       <template slot="items" slot-scope="props">
         <tr @dblclick="editItem(props.item)">
           <td class="text-xs-center"><span>{{(props.index + 1)}}</span></td>
@@ -116,14 +117,12 @@ export default {
       this.fetched = false
       let reqCode = code !== undefined ? code : (this.model ? this.model.code : '')
       const params = {code: reqCode, name: this.voltName}
-      console.log('fetch volt...', params)
+
       await this.$store.dispatch(GET_TOTAL_COUNT)
       await this.$store.dispatch(FETCH_VOLUNTEERS, {params})
+
       this.fetched = true
-      reqCode && this.$store.commit(SET_CHANGED_CODE, reqCode)
-    },
-    onChange (name) {
-      console.log('changed', name)
+      this.$store.commit(SET_CHANGED_CODE, reqCode)
     },
     newVolunteer () {
       // if (!this.model || !this.model.code) return alert('본당을 선택하세요!')

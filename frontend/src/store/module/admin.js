@@ -99,17 +99,17 @@ const mutations = {
   [SET_ADMIN] (state, data) {
     const pos = state.admins.findIndex((o) => o.admin_id === data.admin_id)
     if (pos > -1) {
-      console.log('set position : ', pos, data)
+      // console.log('set position : ', pos, data)
       Object.assign(state.admins[pos], data)
     } else {
-      console.log('no pos and add position : ', pos)
+      // console.log('no pos and add position : ', pos)
       state.admins.push(data)
     }
   },
   [REMOVE_ADMIN] (state, id) {
     const pos = state.admins.findIndex((o) => o.id === id)
     if (pos > -1) {
-      console.log('remove position : ', pos)
+      // console.log('remove position : ', pos)
       state.admins.splice(pos, 1)
     }
   },

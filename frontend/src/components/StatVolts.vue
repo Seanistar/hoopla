@@ -19,7 +19,8 @@
       v-if="churchList.length">
       <template slot="headers" slot-scope="props">
         <tr>
-          <th class="body-2 font-weight-bold w-10">연도</th>
+          <th class="body-2 font-weight-bold w-5">연도</th>
+          <th class="body-2 font-weight-bold w-5">합계</th>
           <th class="align-center body-1 w-5" v-for="(church, idx) in churchList" :key="idx"><p class="head-title">{{church.name}}</p></th>
         </tr>
       </template>
@@ -27,11 +28,12 @@
       <template slot="items" slot-scope="props">
         <tr>
           <td class="text-xs-center">{{Object.keys(props.item)[0]}}</td>
-          <td v-for="(at, idx) in churchList" class="text-xs-center" :key="idx">{{props.item|keyBy|counter(at)|units}} {{props.item|keyBy|actor(at)|units}}</td>
+          <td class="text-xs-center" >{{summary[Object.keys(props.item)[0]]}}</td>
+          <td v-for="(at, idx) in churchList" class="text-xs-center" :key="idx">{{props.item|keyBy|counter(at)|units}} <!--{{props.item|keyBy|actor(at)|units}}--></td>
         </tr>
       </template>
       <template slot="no-data">
-        <tr class="text-xs-center"><td colspan="31">현황 내역이 없습니다.</td></tr>
+        <tr class="text-xs-center"><td colspan="100">현황 내역이 없습니다.</td></tr>
       </template>
     </v-data-table>
   </v-container>
@@ -63,6 +65,7 @@ export default {
     items: [],
     areaList: [],
     churchList: [],
+    summary: {},
     area: null,
     church: null,
     fetched: false,
@@ -97,20 +100,34 @@ export default {
       if (!qv) return
 
       this.items = []
-      const yg = groupBy(qv, 'au_year')
+      const yg = groupBy(qv, 'a_year')
       Object.keys(yg).forEach(k => {
-        yg[k] = groupBy(yg[k], 'a_code')
+        yg[k] = groupBy(yg[k], 'as_code')
         let obj = {}; obj[k] = yg[k]
         this.items.push(obj)
       })
       this.items.reverse()
 
-      const ye = groupBy(qv, 'a_code')
       let rs = {}
+      const ye = groupBy(qv, 'a_year')
       Object.keys(ye).forEach(f => {
-        rs[f] = [{counter: sumBy(ye[f], 'counter'), actor: sumBy(ye[f], 'actor')}]
+        rs[f] = sumBy(ye[f], 'counter')
       })
-      this.items = [{'합계': rs}].concat(this.items)
+      this.summary = Object.assign({}, rs)
+      /* if (!this.area) {
+        const ye = groupBy(qv, 'as_code')
+        Object.keys(ye).forEach(f => {
+          rs[f] = [{counter: sumBy(ye[f], 'counter'), actor: sumBy(ye[f], 'actor')}]
+        })
+        this.items = [{'합계': rs}].concat(this.items)
+      } else {
+        const ye = groupBy(qv, 'a_year')
+        Object.keys(ye).forEach(f => {
+          rs[f] = sumBy(ye[f], 'counter')
+        })
+        this.summary = Object.assign({}, rs)
+      } */
+
       this.fetched = true
     },
     setArea () {
@@ -156,7 +173,7 @@ export default {
     padding: 3px !important;
     text-align: center;
   }
-  tbody tr:first-child {
+  tr td:nth-child(2), tr th:nth-child(2) {
     background-color: orange;
   }
   .head-title {

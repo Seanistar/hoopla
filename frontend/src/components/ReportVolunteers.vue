@@ -1,8 +1,8 @@
 <template>
   <v-container pt-2>
     <v-layout row wrap align-center mb-1>
-      <v-flex x2>
-        <v-subheader class="subheading font-weight-bold">{{s_name}} 본당
+      <v-flex x4>
+        <v-subheader class="subheading font-weight-bold">{{s_name}} 본당 ({{$parent.E_DATE.slice(0, 4)}})
         </v-subheader>
       </v-flex>
       <v-flex xs8>
@@ -11,14 +11,14 @@
             <span class="mr-2">총 봉사자수 :</span>
             <input :value="volts.tv" readonly class="pa-1 text-xs-right input-box mr-1">명
           </v-subheader>
-          <v-subheader class="body-2 w-27 pr-0">
+          <!--<v-subheader class="body-2 w-27 pr-0">
             <span class="mr-2">활동 봉사자수 :</span>
             <input :value="volts.av" readonly class="pa-1 text-xs-right input-box mr-1">명
           </v-subheader>
           <v-subheader class="body-2 w-27 pr-0">
             <span class="mr-2">쉬는 봉사자수 :</span>
             <input :value="volts.bv" readonly class="pa-1 text-xs-right input-box mr-1">명
-          </v-subheader>
+          </v-subheader>-->
         </v-layout>
       </v-flex>
       <!--<v-flex xs12 sm3>
@@ -30,7 +30,7 @@
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
         <tr @click="moveToQuery(props.item.id)"> <!--@click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">-->
-          <td class="text-xs-center">{{ props.item.id }}</td>
+          <td class="text-xs-center">{{ props.item.ca_id|churchID }}</td>
           <td class="text-xs-center">{{ props.item.name }}</td>
           <td class="text-xs-center">{{ props.item.ca_name }}</td>
           <td class="text-xs-center">{{ props.item.au_date }}</td>
@@ -93,8 +93,9 @@ export default {
   },
   methods: {
     async fetchData (code) {
-      const date = this.$parent.E_DATE
-      await this.$store.dispatch(FETCH_REPORT_VOLTS, {a_code: code, e_date: date})
+      const sDate = this.$parent.S_DATE
+      const eDate = this.$parent.E_DATE
+      await this.$store.dispatch(FETCH_REPORT_VOLTS, {a_code: code, s_date: sDate, e_date: eDate})
       this.fetched = true
       this.makeSTAT()
     },
@@ -141,6 +142,11 @@ export default {
       const pn2 = no.toString().slice(3, 7)
       const pn3 = no.toString().slice(7)
       return `${pn1}-${pn2}-${pn3}`
+    },
+    churchID (id) {
+      const n1 = id.toString().slice(0, 2)
+      const n2 = id.toString().slice(2)
+      return `${n1}-${n2}`
     }
   }
 }

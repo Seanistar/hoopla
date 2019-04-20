@@ -104,7 +104,7 @@
                 </v-flex>
                 <v-flex xs6>
                   <!--<date-picker ref="e_date" title="교육 종료일" :disabled="isMonthEdu" @close-date-picker="onPicked" refs="e_date"></date-picker>-->
-                  <v-text-field label="교육 종료일" hide-details mask="####-##-##" v-model="item.e_date"></v-text-field>
+                  <v-text-field label="교육 종료일" hide-details mask="####-##-##" disabled v-model="item.e_date"></v-text-field>
                 </v-flex>
               </v-layout>
               <v-flex xs8>
@@ -221,26 +221,28 @@ export default {
         this.reset()
         return
       }
-      if (this.item.edu_code === 53) {
+      this.makeDate()
+      /* if (this.item.edu_code === 53) {
         if (!this.item.r_year || this.item.r_year === '선택없음') return alert('시작 연도를 확인해주세요!')
       } else {
         if (!this.item.e_date || !this.item.s_date) return alert('기간을 확인해주세요!')
         this.item.s_date = this.makeDate(this.item.s_date, true)
         this.item.e_date = this.makeDate(this.item.e_date, false)
-        /* if (this.item.e_date < this.item.s_date) {
-          this.$refs['e_date'].setDate(null)
-          return alert('종료일이 시작일보다 빠릅니다!')
-        } */
-      }
+      } */
       if (this.isECount) this.selected = range(3, 3 + parseInt(this.selected[0]))
       this.item.months = this.selected.join(',')
       this.$emit('close-input-item', this.item)
       this.reset()
     },
-    makeDate (date, isStart) {
-      if (date.length <= 4) return date + (isStart ? '0101' : '1231')
-      else if (date.length <= 6) return date + (isStart ? '01' : '28')
-      return date
+    makeDate () {
+      const sDate = this.item.s_date
+      if (!sDate) return alert('시작 연도를 입력해주세요!')
+      if (sDate.length <= 4) this.item.s_date += '0101'
+      else if (sDate.length <= 6) this.item.s_date += '01'
+
+      this.item.e_date = sDate
+      if (sDate.length <= 4) this.item.e_date += '1231'
+      else if (sDate.length <= 6) this.item.e_date += '28'
     },
     smallEdus () {
       if (!this.item.e_type) return

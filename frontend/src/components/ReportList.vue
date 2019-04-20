@@ -50,10 +50,10 @@
           <td class="text-xs-center">{{ props.item.r_year }}</td>
           <!--<td class="text-xs-center">{{ props.item.r_half === 'A' ? '상반기' : '하반기' }}</td>-->
           <td class="text-xs-center">{{ props.item.area_name }}</td>
-          <td class="text-xs-center">{{ props.item.name }}</td>
+          <!--<td class="text-xs-center">{{ props.item.name }}</td>-->
           <!--<td class="text-xs-center">{{ props.item.phone|formatted }}</td>-->
           <td class="text-xs-center">{{ props.item.created|datestamp }}</td>
-          <td class="text-xs-center">{{ props.item.numbers }}</td>
+          <!--<td class="text-xs-center">{{ props.item.numbers }}</td>-->
           <td class="text-xs-center">{{ props.item.s_date|monthstamp }} ~ {{ props.item.e_date|monthstamp }}</td>
           <td class="justify-center layout px-0">
             <v-icon small class="mr-3" @click.self="editReport(props.item.id, props.item.s_code)">edit</v-icon>
@@ -119,9 +119,9 @@ export default {
       { text: '보고연도', value: 'r_code' },
       // { text: '기간구분', value: 'r_half' },
       { text: '소속', value: 'area_name' },
-      { text: '작성자', value: 'name' },
+      // { text: '작성자', value: 'name' },
       { text: '작성일', value: 'created' },
-      { text: '봉사자수', value: 'number' },
+      // { text: '봉사자수', value: 'number' },
       { text: '보고기간', value: 'e_date' },
       { text: '편집', value: 'edit', sortable: false }
     ]
@@ -139,12 +139,17 @@ export default {
       this.fetched = true
 
       // reqCode && this.$store.dispatch(FETCH_SMALL_LEADER, reqCode)
-      reqCode && this.$store.commit(SET_CHANGED_CODE, reqCode)
+      this.$store.commit(SET_CHANGED_CODE, reqCode)
     },
     async newReport () {
       if (!this.model || !this.model.code || !this.rYear) return alert('보고서 조건을 선택하세요!')
       await this.$store.dispatch(FETCH_SMALL_LEADER, this.model.code)
-      const rObj = {sCode: this.model.code, sName: this.model.name, rYear: this.rYear, rHalf: this.rHalf}
+      const rObj = {
+        sCode: this.model.code,
+        sName: this.model.name.split('(')[0],
+        rYear: this.rYear,
+        rHalf: this.rHalf
+      }
       this.$router.push({name: 'edit-report', params: {rObj}})
     },
     async editReport (id, sCode) {

@@ -19,19 +19,24 @@
         <tbody v-if="actItems.length">
           <tr v-for="(at, n) in actItems" :key="n">
             <td style="width: 3%">{{n+1}}</td>
-            <td style="width: 10%" v-if="at.origin_code"><v-text-field flat solo hide-details disabled :value="at.name"></v-text-field></td>
+            <td style="width: 10%" v-if="at.other_code"><v-text-field flat solo hide-details disabled :value="at.name"></v-text-field></td>
             <td style="width: 10%" v-else><v-select :items="voltList" item-text="name" item-value="id"
                           v-model="at.v_id" @change="onChangeName(at)" flat solo box hide-details></v-select></td>
             <td style="width: 15%"><v-text-field flat solo hide-details v-model="at.ca_name"></v-text-field></td>
-            <td style="width: 15%"><v-select :items="codeList" item-text="name" item-value="code"
+            <td style="width: 12%"><v-select :items="codeList" item-text="name" item-value="code"
                           v-model="at.act_code" flat solo box hide-details></v-select></td>
-            <td style="width: 11%"><v-text-field flat solo hide-details style="margin: 0 25%"
-                              v-model="at.numbers"></v-text-field></td>
-            <td style="width: 10%">
+            <td style="width: 11%"><v-text-field flat solo hide-details style="margin: 0 15%"
+                              v-model="at.numbers" @focus="onFocusNumber(at)"></v-text-field></td>
+            <td style="width: 8%">
               <v-text-field flat solo hide-details mask="####-##-##" v-model="at.s_date" @blur="at.s_date = makeToDate($event, true)"></v-text-field></td>
-            <td style="width: 10%">
+            <td style="width: 8%">
               <v-text-field flat solo hide-details mask="####-##-##" v-model="at.e_date" @blur="at.e_date = makeToDate($event, false)"></v-text-field></td>
-            <td style="width: 10%"><v-text-field flat solo hide-details v-model="at.content"></v-text-field></td>
+            <td style="width: 13%">
+              <v-radio-group v-model="at.group_type" row hide-details class="px-3">
+                <v-radio label="낮반" value="D"></v-radio>
+                <v-radio label="직장인반" value="N"></v-radio>
+              </v-radio-group>
+            </td>
             <td style="width: 4%"><v-icon @click="deleteAct(n, at.id)">delete</v-icon></td>
             <td style="width: 4%"><v-icon @click="moveToQuery(at.v_id)">forward</v-icon></td>
           </tr>
@@ -106,7 +111,7 @@ export default {
       { text: '인원수(명)', value: 'groups' },
       { text: '시작일', value: 's_date' },
       { text: '종료일', value: 'e_date' },
-      { text: '내용', value: 'content' },
+      { text: '활동 구분', value: 'group_type' },
       { text: '삭제', value: '' },
       { text: '이동', value: '' }
     ]
@@ -142,12 +147,13 @@ export default {
       this.actItems = this.actItems.concat(newActs)
     },
     doneList () {
-      const res = find(this.actItems, a => a.id && a.s_date === null)
+      const res = find(this.actItems, a => a.v_id && a.s_date === null)
       if (res) return this.$showSnackBar('시작일이 없는 내역은 저장되지 않습니다.')
 
       let isDone = false
       forEach(this.actItems, async (a, idx) => {
         if (!a.v_id) return
+        if (!a.e_date) a.e_date = this.$parent.E_DATE
         if (!a.id) {
           a.area_code = this.small.cd
           await this.$store.dispatch(CREATE_VOLUNTEER_ACT, a)
@@ -180,9 +186,13 @@ export default {
     makeToDate (event, isStart) {
       let date = event.target.value
       date = date.replace(/-/g, '')
-      if (date.length <= 4) return date + (isStart ? '0101' : '1231')
+      if (date.length === 0) return isStart ? this.$parent.S_DATE : this.$parent.E_DATE
+      else if (date.length <= 4) return date + (isStart ? '0101' : '0831')
       else if (date.length <= 6) return date + (isStart ? '01' : '28')
       return date
+    },
+    onFocusNumber (src) {
+      if (src.numbers === 0) src.numbers = null
     }
   }
 }

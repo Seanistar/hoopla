@@ -3,7 +3,7 @@ import {
   FETCH_REPORTS,
   FETCH_REPORT_STATE, FETCH_DYNAMIC_STATE,
   FETCH_REPORT_ACTS, FETCH_REPORT_VOLTS,
-  FETCH_SMALL_LEADER,
+  FETCH_SMALL_LEADER, FETCH_REPORT_GROUP_ACTS,
   CREATE_REPORT, UPDATE_REPORT, DELETE_REPORT,
   CREATE_REPORT_ACT, UPDATE_REPORT_ACT, DELETE_REPORT_ACT
 } from '../actions.type'
@@ -13,7 +13,7 @@ import {
   FETCH_REPORT_VOLTS_END,
   FETCH_REPORT_ACTS_END,
   FETCH_DYNAMIC_STATE_END,
-  SET_SMALL_LEADER,
+  SET_SMALL_LEADER, FETCH_REPORT_GROUP_ACTS_END,
   ADD_REPORT, SET_REPORT, REMOVE_REPORT,
   SET_REPORT_ACT, ADD_REPORT_ACT, REMOVE_REPORT_ACT
 } from '../mutations.type'
@@ -26,6 +26,7 @@ const state = {
   smallLeader: {},
   reportCount: 0,
   reportActs: [],
+  reportGroupActs: [],
   reportVolts: [],
   dynamicSTAT: []
 }
@@ -38,6 +39,7 @@ const getters = {
   smallLeader: state => state.smallLeader,
   reportVolts: state => state.reportVolts,
   reportActs: state => state.reportActs,
+  reportGroupActs: state => state.reportGroupActs,
   dynamicSTAT: state => state.dynamicSTAT
 }
 
@@ -86,6 +88,15 @@ const actions = {
     return ReportService.query_acts(params)
       .then(({ data }) => {
         context.commit(FETCH_REPORT_ACTS_END, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
+  [FETCH_REPORT_GROUP_ACTS] (context, plug) {
+    return ReportService.query_group_acts(plug)
+      .then(({ data }) => {
+        context.commit(FETCH_REPORT_GROUP_ACTS_END, data)
       })
       .catch((error) => {
         throw new Error(error)
@@ -193,6 +204,10 @@ const mutations = {
     state.reportActs = acts
     state.isLoading = false
   },
+  [FETCH_REPORT_GROUP_ACTS_END] (state, acts) {
+    state.reportGroupActs = acts
+    state.isLoading = false
+  },
   [ADD_REPORT] (state, report) {
     state.reportInfo = report
     state.reports.push(report)
@@ -201,17 +216,17 @@ const mutations = {
     state.reportInfo = data
     const pos = state.reports.findIndex((o) => o.id === data.id)
     if (pos > -1) {
-      console.log('set position : ', pos)
+      // console.log('set position : ', pos)
       Object.assign(state.reports[pos], data)
     } else {
-      console.log('no pos and add position : ', pos)
+      // console.log('no pos and add position : ', pos)
       state.reports.push(data)
     }
   },
   [REMOVE_REPORT] (state, id) {
     const pos = state.reports.findIndex((o) => o.id === id)
     if (pos > -1) {
-      console.log('remove position : ', pos)
+      // console.log('remove position : ', pos)
       state.reports.splice(pos, 1)
     }
   },
@@ -221,17 +236,17 @@ const mutations = {
   [SET_REPORT_ACT] (state, data) {
     const pos = state.reportActs.findIndex((o) => o.id === data.id)
     if (pos > -1) {
-      console.log('set position : ', pos)
+      // console.log('set position : ', pos)
       Object.assign(state.reportActs[pos], data)
     } else {
-      console.log('no pos and add position : ', pos)
+      // console.log('no pos and add position : ', pos)
       state.reportActs.push(data)
     }
   },
   [REMOVE_REPORT_ACT] (state, id) {
     const pos = state.reportActs.findIndex((o) => o.id === id)
     if (pos > -1) {
-      console.log('remove position : ', pos)
+      // console.log('remove position : ', pos)
       state.reportActs.splice(pos, 1)
     }
   },

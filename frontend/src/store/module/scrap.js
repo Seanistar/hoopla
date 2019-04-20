@@ -108,7 +108,7 @@ const mutations = {
   [SET_SCRAP] (state, data) {
     const pos = state.scraps.findIndex((o) => o.id === data.id)
     if (pos > -1) {
-      console.log('set position : ', pos)
+      // console.log('set position : ', pos)
       Object.assign(state.scraps[pos], data.obj)
     }
     state.scrapItem = data.obj

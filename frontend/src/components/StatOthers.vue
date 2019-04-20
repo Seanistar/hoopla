@@ -2,45 +2,46 @@
   <v-container pt-2 mt-1>
     <v-layout row align-baseline>
       <v-flex xs3>
-        <v-combobox label="본당을 선택하세요" class="text-xs-center body-2" clearable
+        <v-combobox label="소속 본당을 선택하세요" class="text-xs-center body-2" clearable
                   :items="churchList" item-value="code" item-text="name"
                   v-model="church"></v-combobox>
       </v-flex>
-      <v-flex xs9 text-xs-right>
+      <v-flex xs3>
+        <v-combobox label="타 본당을 선택하세요" class="text-xs-center body-2 ml-3" clearable
+                    :items="churchList" item-value="code" item-text="name"
+                    v-model="other"></v-combobox>
+      </v-flex>
+      <v-flex xs6 text-xs-right>
         <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
       </v-flex>
     </v-layout>
-    <v-data-table :items="items" hide-actions class="elevation-1">
+    <v-data-table :items="items"
+                  :pagination.sync="pagination" :rows-per-page-items="perPage"
+                  class="elevation-1">
       <template slot="headers" slot-scope="props">
         <tr>
           <th rowspan="2" class="align-center body-2"><p class="head-title">번호</p></th>
           <th rowspan="2" class="align-center body-2"><p class="head-title">성명</p></th>
-          <th rowspan="2" class="align-center body-2"><p class="head-title">구분</p></th>
+          <th rowspan="2" class="align-center body-2"><p class="head-title">소속 본당</p></th>
           <th colspan="10" class="align-center body-2"><p class="head-title">봉사 항목</p></th>
         </tr>
         <tr>
-          <th class="align-center body-2" v-for="header in stdCodes" :key="header.code"><p class="head-title">{{header.name|subject}}</p></th>
+          <th class="align-center body-2" v-for="header in actCodes" :key="header.code"><p class="head-title">{{header.name|subject}}</p></th>
         </tr>
       </template>
       <template slot="items" slot-scope="props">
         <tr>
-          <td rowspan="2" class="text-xs-center w-5">{{props.index + 1}}</td>
-          <td rowspan="2" class="text-xs-center w-10">&nbsp;{{props.item|v_name}}&nbsp;<br/>{{props.item|ca_name}}</td>
-          <td>노트</td>
-          <td class="text-xs-left"
-              v-for="at in stdCodes" :key="at.code"><span class="caption pl-2">{{props.item|keyBy|ready(at.code)}}</span>
-          </td>
-        </tr>
-        <tr>
-          <td>봉사</td>
+          <td class="text-xs-center">{{props.index + 1}}</td>
+          <td class="text-xs-center w-10">{{props.item|v_name}}&nbsp;<br/>{{props.item|ca_name}}</td>
+          <td class="text-xs-center w-10">{{props.item|s_name}}</td>
           <td class="text-xs-left"
               v-for="at in actCodes" :key="at.code">
-              <div class="caption pl-2" v-for="(oa, idx) in orgList(props.item, at.code)" :key="idx">{{oa.a_year}}&nbsp;{{otherActor(oa)}}</div>
+              <div class="caption pl-2" v-for="(oa, idx) in orgList(props.item, at.code)" :key="idx">&nbsp;{{oa.a_year}}&nbsp;{{orgActor(oa)}}</div>
           </td>
         </tr>
       </template>
       <template slot="no-data">
-        <tr class="text-xs-center"><td colspan="34">현황 내역이 없습니다.</td></tr>
+        <tr class="text-xs-center"><td colspan="12">현황 내역이 없습니다.</td></tr>
       </template>
     </v-data-table>
   </v-container>
@@ -48,34 +49,35 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { FETCH_STAT_ACTS } from '@/store/actions.type'
+import { FETCH_STAT_OTHERS } from '@/store/actions.type'
 import { groupBy, orderBy, map, find } from 'lodash/collection'
 import { pick } from 'lodash/object'
 import FiltersMixin from '../common/filters.mixin'
 import XLSX from 'xlsx'
 
 export default {
-  name: 'StatYearly',
+  name: 'StatOthers',
   mixins: [ FiltersMixin ],
   computed: {
     ...mapGetters([
       'actCodes',
-      'stdCodes',
       'smallCodes',
-      'statActs'
+      'statOthers'
     ])
   },
   data: () => ({
     items: [],
     churchList: [],
-    church: { code: '01-10-01', name: '가락동' }
+    church: null,
+    other: null,
+    pagination: { rowsPerPage: 50 },
+    perPage: [50, 100, 200, {text: '$vuetify.dataIterator.rowsPerPageAll', value: -1}]
   }),
   watch: {
-    church (nv) {
-      if (!nv) {
-        this.items = []
-        return
-      }
+    church () {
+      this.fetchData()
+    },
+    other () {
       this.fetchData()
     }
   },
@@ -85,25 +87,26 @@ export default {
   },
   methods: {
     async fetchData () {
-      if (!this.church || !this.church.code) return
-      const params = {}
-      if (this.church) params['code'] = this.church.code
-      await this.$store.dispatch(FETCH_STAT_ACTS, {params})
+      const params = { }
+      if (this.church) params['ch_code'] = this.church.code
+      if (this.other) params['ot_code'] = this.other.code
+      await this.$store.dispatch(FETCH_STAT_OTHERS, {params})
       this.$nextTick(() => { this._mapData() })
     },
     _mapData () {
-      const qv = this.statActs
+      const qv = this.statOthers
       if (!qv) return
 
       this.items = []
       const yg = groupBy(qv, 'v_id')
       Object.keys(yg).forEach(k => {
-        const vl = pick(yg[k][0], ['v_name', 'ca_name'])
+        const vl = pick(yg[k][0], ['v_name', 'ca_name', 's_name'])
         yg[k] = groupBy(yg[k], 'a_code')
         let obj = {}; obj[k] = yg[k]
         Object.assign(obj[k], vl)
         this.items.push(obj)
       })
+      // console.log(this.items)
     },
     setArea () {
       const list = map(this.smallCodes(), o => {
@@ -117,7 +120,7 @@ export default {
       const tar = val[key][code]
       return !Array.isArray(tar) ? null : tar
     },
-    otherActor (obj) {
+    orgActor (obj) {
       if (!obj.ot_code) return
       const res = find(this.smallCodes(), (o) => o.s_code === obj.ot_code)
       return res ? res.s_name.slice(0, 3) : ''
@@ -125,7 +128,7 @@ export default {
     toExcel () {
       const table = document.getElementsByTagName('table')
       const wb = XLSX.utils.table_to_book(table[0])
-      XLSX.writeFile(wb, 'stats_activities.xlsx')
+      XLSX.writeFile(wb, 'stats_others.xlsx')
     }
   }
 }

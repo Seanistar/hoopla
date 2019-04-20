@@ -123,9 +123,8 @@ export default {
   methods: {
     closeDialog () {
       // if (!this.item.id) return alert('코드 확인이 되지 않았습니다!')
-      if (!this.item.e_date || !this.item.s_date) return alert('기간을 확인해주세요!')
-      this.item.s_date = this.makeDate(this.item.s_date, true)
-      this.item.e_date = this.makeDate(this.item.e_date, false)
+      // if (!this.item.e_date || !this.item.s_date) return alert('기간을 확인해주세요!')
+      this.makeDate()
       /* if (this.item.e_date < this.item.s_date) {
         this.$refs['e_date'].setDate(null)
         return alert('종료일이 시작일보다 빠릅니다!')
@@ -133,11 +132,21 @@ export default {
       this.$emit('close-input-item', this.item)
       this.reset()
     },
-    makeDate (date, isStart) {
+    makeDate () {
+      const sDate = this.item.s_date
+      if (!sDate) return alert('시작 연도를 입력해주세요!')
+      if (sDate.length <= 4) this.item.s_date += '0101'
+      else if (sDate.length <= 6) this.item.s_date += '01'
+
+      this.item.e_date = sDate
+      if (sDate.length <= 4) this.item.e_date += '1231'
+      else if (sDate.length <= 6) this.item.e_date += '28'
+    },
+    /* makeDate (date, isStart) {
       if (date.length <= 4) return date + (isStart ? '0101' : '1231')
       else if (date.length <= 6) return date + (isStart ? '01' : '28')
       return date
-    },
+    }, */
     reset () {
       this.item = { id: 0 }
       // const sdr = this.$refs['s_date']; sdr && sdr.setDate(null)

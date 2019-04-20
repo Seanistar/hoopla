@@ -67,6 +67,7 @@ export const SET_REPORT_ACT = 'setReportAct'
 export const ADD_REPORT_ACT = 'addReportAct'
 export const REMOVE_REPORT_ACT = 'removeReportAct'
 export const FETCH_REPORT_VOLTS_END = 'fetchReportVolts'
+export const FETCH_REPORT_GROUP_ACTS_END = 'fetchReportGroupActs'
 
 // utils
 export const SET_SMALL_LEADER = 'setSmallLeader'
@@ -79,6 +80,7 @@ export const FETCH_STAT_CHURCH_END = 'fetchStatChurchEnd'
 export const FETCH_STAT_AREA_END = 'fetchStatAreaEnd'
 export const FETCH_STAT_VOLT_END = 'fetchStatVoltEnd'
 export const FETCH_STAT_ACTS_END = 'fetchStatActsEnd'
+export const FETCH_STAT_OTHERS_END = 'fetchStatOthersEnd'
 
 // will be obsoleted
 export const SET_TOPIC = 'setTopic'

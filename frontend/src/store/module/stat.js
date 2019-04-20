@@ -4,7 +4,8 @@ import {
   FETCH_STAT_CHURCH,
   FETCH_STAT_VOLT,
   FETCH_STAT_AREA,
-  FETCH_STAT_ACTS
+  FETCH_STAT_ACTS,
+  FETCH_STAT_OTHERS
 } from '../actions.type'
 import {
   FETCH_STAT_YEARLY_END,
@@ -12,6 +13,7 @@ import {
   FETCH_STAT_AREA_END,
   FETCH_STAT_VOLT_END,
   FETCH_STAT_ACTS_END,
+  FETCH_STAT_OTHERS_END,
   FETCH_START
 } from '../mutations.type'
 
@@ -21,7 +23,8 @@ const state = {
   churchList: [],
   areaList: [],
   voltList: [],
-  actsList: []
+  actsList: [],
+  otherList: []
 }
 
 const getters = {
@@ -29,7 +32,8 @@ const getters = {
   statChurch: state => state.churchList,
   statArea: state => state.areaList,
   statVolts: state => state.voltList,
-  statActs: state => state.actsList
+  statActs: state => state.actsList,
+  statOthers: state => state.otherList
 }
 
 const actions = {
@@ -82,6 +86,16 @@ const actions = {
       .catch((error) => {
         throw new Error(error)
       })
+  },
+  [FETCH_STAT_OTHERS] (context, params) {
+    context.commit(FETCH_START)
+    return StatService.get_others(params)
+      .then(({ data }) => {
+        context.commit(FETCH_STAT_OTHERS_END, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
   }
 }
 
@@ -103,6 +117,9 @@ const mutations = {
   },
   [FETCH_STAT_ACTS_END] (state, data) {
     state.actsList = data
+  },
+  [FETCH_STAT_OTHERS_END] (state, data) {
+    state.otherList = data
   }
 }
 

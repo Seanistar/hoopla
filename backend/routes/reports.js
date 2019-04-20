@@ -32,18 +32,18 @@ router.get('/', (req, res) => {
 })
 
 router.get('/volts', (req, res) => {
-  let {a_code, e_date} = req.query
+  let {a_code, s_date, e_date} = req.query
   // e_date = `${e_date} 23:59:59`
   const sql = [`
-    SELECT id, name, ca_name, ca_id, au_date, state, phone, br_date 
-    FROM volunteers
-    WHERE area_code=? AND au_date <= ?`,
-    [a_code, e_date]
+    SELECT DISTINCT v.id, name, ca_name, ca_id, au_date, state, phone, br_date 
+    FROM volunteers v 
+    INNER JOIN acts a ON v.id = a.v_id
+    WHERE v.area_code=? AND a.s_date BETWEEN ? AND ?`,
+    [a_code, s_date, e_date]
   ] // WHERE area_code=? AND registered <= DATE_FORMAT(?, '%Y-%m-%d %H:%i:%s')`
-  console.log('report volts...', sql)
   db.query(...sql, (err, rows) => {
     if (!err) {
-      console.log('volts query has done')
+      console.log('volts query has done', sql)
       res.status(200).send(rows)
     } else {
       console.warn('volts query error : ' + err)
@@ -63,10 +63,30 @@ router.get('/acts', (req, res) => {
     WHERE a.area_code=? AND (a.s_date>=? AND a.s_date<=?)`, //  AND a.e_date<=?
     [a_code, s_date, e_date]
   ]
-  console.log('report acts...' + sql)
   db.query(...sql, (err, rows) => {
     if (!err) {
-      console.log('acts query has done')
+      console.log('acts query has done', sql)
+      res.status(200).send(rows)
+    } else {
+      console.warn('acts query error : ' + err)
+      res.status(500).send('Internal Server Error')
+    }
+  })
+})
+
+router.get('/group-acts', (req, res) => {
+  let {a_code, s_date, e_date} = req.query
+  const sql = [`
+    SELECT a.act_code, a.group_type, COUNT(a.id)g_count, SUM(numbers) p_count
+    FROM volunteers v
+    INNER JOIN acts a ON v.id = a.v_id
+    WHERE a.area_code=? AND (a.s_date>=? AND a.s_date<=?) AND a.group_type != 'x'
+    GROUP BY a.act_code, a.group_type`,
+    [a_code, s_date, e_date]
+  ]
+  db.query(...sql, (err, rows) => {
+    if (!err) {
+      console.log('group-acts query has done', sql)
       res.status(200).send(rows)
     } else {
       console.warn('acts query error : ' + err)
@@ -107,6 +127,23 @@ router.get('/page/:id', (req, res) => {
 })
 
 router.put('/', async (req, res) => {
+  try {
+    console.log(req.body.data)
+    const data = JSON.parse(req.body.data)
+    if (!data.rb) throw new Error('no base')
+
+    const numbers = await getActiveVoltsNumber(data.rb.s_code, data.rb.s_date, data.rb.e_date)
+    data.rb.numbers = numbers
+    const newID = await updateData('reports', data.rb)
+    if (!newID) throw new Error('failed to insert')
+    res.status(200).send({newID})
+  } catch(e) {
+    console.warn('parse error : ', e)
+    return res.status(500).send('Internal Server Error')
+  }
+})
+
+/*router.put('/', async (req, res) => {
   let prList = []
   try {
     console.log(req.body.data)
@@ -134,8 +171,7 @@ router.put('/', async (req, res) => {
       console.warn('put query error : ' + err)
       res.status(500).send('Internal Server Error')
     })
-
-})
+})*/
 
 router.post('/:id', (req, res) => {
   let prList = []
@@ -398,6 +434,27 @@ const getVoltsNumber = (a_code) => {
     return db.query(...sql, (err, rows) => {
       if (!err) {
         console.log('getVoltsNumber query has done', rows[0])
+        resolve(rows[0].numbers)
+      } else {
+        console.warn('getVoltsNumber query error : ' + err)
+        resolve(0)
+      }
+    })
+  })
+}
+
+const getActiveVoltsNumber = (a_code, s_date, e_date) => {
+  return new _promise(function(resolve) {
+    const sql = [`
+      SELECT COUNT(DISTINCT v.id) numbers
+      FROM volunteers v
+      INNER JOIN acts a ON v.id = a.v_id
+      WHERE v.area_code = ? AND a.s_date BETWEEN ? AND ?`,
+      [a_code, s_date, e_date]
+    ]
+    return db.query(...sql, (err, rows) => {
+      if (!err) {
+        console.log('getActiveVoltsNumber query has done', rows[0])
         resolve(rows[0].numbers)
       } else {
         console.warn('getVoltsNumber query error : ' + err)

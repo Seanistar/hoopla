@@ -28,8 +28,8 @@ router.get('/', (req, res) => {
     else if(code) _sql += `v.area_code = '${code}'`
     else _sql += `v.name LIKE (\'%${name}%\')`
   }
-  _sql += ' ORDER BY v.au_date DESC LIMIT 100'
-  //console.log(_sql, req.query)
+  _sql += ' ORDER BY v.registered DESC LIMIT 100'
+  // console.log(_sql, req.query)
   db.query(_sql, (err, rows) => {
     if (!err) {
       res.status(200).send(rows)
@@ -311,19 +311,19 @@ router.get('/act/:id', (req, res) => {
 
 router.put('/act', (req, res) => {
   let sql = null
-  const {v_id, act_code, s_date, e_date, area_code, numbers, content, s_code} = req.body
+  const {v_id, act_code, s_date, e_date, area_code, numbers, content, group_type, s_code} = req.body
   console.log(area_code, s_code)
   if(s_code && area_code !== s_code) { // in case do act at other church
     sql = [`
-      INSERT INTO acts (v_id, act_code, s_date, e_date, area_code, origin_code, numbers, content) 
-      VALUES (?,?,?,?,?,?,?,?)`,
-        [v_id, act_code, s_date, e_date, s_code, area_code, numbers, content]
+      INSERT INTO acts (v_id, act_code, s_date, e_date, area_code, other_code, numbers, content, group_type) 
+      VALUES (?,?,?,?,?,?,?,?,?)`,
+        [v_id, act_code, s_date, e_date, area_code, s_code, numbers, content, group_type]
       ]
   } else {
     sql = [`
-      INSERT INTO acts (v_id, act_code, s_date, e_date, area_code, numbers, content) 
-      VALUES (?,?,?,?,?,?,?)`,
-        [v_id, act_code, s_date, e_date, area_code, numbers, content]
+      INSERT INTO acts (v_id, act_code, s_date, e_date, area_code, numbers, content, group_type) 
+      VALUES (?,?,?,?,?,?,?,?)`,
+        [v_id, act_code, s_date, e_date, area_code, numbers, content, group_type]
       ]
   }
 
@@ -340,22 +340,22 @@ router.put('/act', (req, res) => {
 
 router.post('/act/:id', (req, res) => {
   const id = req.params.id
-  const {act_code, s_date, e_date, area_code, s_code, numbers, content} = req.body
+  const {act_code, s_date, e_date, area_code, s_code, numbers, content, group_type} = req.body
   console.log(area_code, s_code)
   let sql = null
   if (s_code && area_code !== s_code) {
     sql = [`
       UPDATE acts 
-      SET act_code=?, s_date=?, e_date=?, area_code=?, origin_code=?, numbers=?, content=?
+      SET act_code=?, s_date=?, e_date=?, area_code=?, other_code=?, numbers=?, content=?, group_type=?
       WHERE id=?`,
-        [act_code, s_date, e_date, s_code, area_code, numbers, content, id]
+        [act_code, s_date, e_date, area_code, s_code, numbers, content, group_type, id]
       ]
   } else {
     sql = [`
       UPDATE acts 
-      SET act_code=?, s_date=?, e_date=?, area_code=?, numbers=?, content=?
+      SET act_code=?, s_date=?, e_date=?, area_code=?, numbers=?, content=?, group_type=?
       WHERE id=?`,
-        [act_code, s_date, e_date, area_code, numbers, content, id]
+        [act_code, s_date, e_date, area_code, numbers, content, group_type, id]
       ]
   }
 

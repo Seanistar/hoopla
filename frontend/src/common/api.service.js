@@ -101,6 +101,9 @@ export const StatService = {
   },
   get_acts (params) {
     return ApiService.query('stats/acts', params)
+  },
+  get_others (params) {
+    return ApiService.query('stats/others', params)
   }
 }
 
@@ -179,6 +182,9 @@ export const ReportService = {
   },
   query_acts (data) {
     return ApiService.query('reports/acts', {params: data})
+  },
+  query_group_acts (data) {
+    return ApiService.query('reports/group-acts', {params: data})
   },
   query_volts (data) {
     return ApiService.query('reports/volts', {params: data})

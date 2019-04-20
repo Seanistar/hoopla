@@ -42,6 +42,10 @@ const FiltersMixin = {
       const key = Object.keys(val)[0]
       return val[key].ca_name
     },
+    s_name (val) {
+      const key = Object.keys(val)[0]
+      return val[key].s_name
+    },
     ready (val, code) {
       if (!val[code]) return ''
       const acts = val[code][0]

@@ -410,14 +410,14 @@ const mutations = {
   [YES_VOLUNTEER_LEADER] (state, ldr) {
     const pos = state.volunteers.findIndex((o) => o.id === ldr.id)
     if (pos > -1) {
-      console.log('set position : ', pos)
+      // console.log('set position : ', pos)
       Object.assign(state.volunteers[pos], {l_work: 'Y', ls_date: ldr.ls_date})
     }
   },
   [NO_VOLUNTEER_LEADER] (state, ldr) {
     const pos = state.volunteers.findIndex((o) => o.id === ldr.id)
     if (pos > -1) {
-      console.log('set position : ', pos)
+      // console.log('set position : ', pos)
       Object.assign(state.volunteers[pos], {l_work: 'N', ls_date: null, le_date: null})
     }
   },
