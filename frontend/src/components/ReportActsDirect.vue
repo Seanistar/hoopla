@@ -18,27 +18,41 @@
         </thead>
         <tbody v-if="actItems.length">
           <tr v-for="(at, n) in actItems" :key="n">
-            <td style="width: 3%">{{n+1}}</td>
-            <td style="width: 10%" v-if="at.other_code"><v-text-field flat solo hide-details disabled :value="at.name"></v-text-field></td>
-            <td style="width: 10%" v-else><v-select :items="voltList" item-text="name" item-value="id"
-                          v-model="at.v_id" @change="onChangeName(at)" flat solo box hide-details></v-select></td>
-            <td style="width: 15%"><v-text-field flat solo hide-details v-model="at.ca_name"></v-text-field></td>
-            <td style="width: 12%"><v-select :items="codeList" item-text="name" item-value="code"
-                          v-model="at.act_code" flat solo box hide-details></v-select></td>
-            <td style="width: 11%"><v-text-field flat solo hide-details style="margin: 0 15%"
-                              v-model="at.numbers" @focus="onFocusNumber(at)"></v-text-field></td>
+            <td style="width: 3%" :style="{backgroundColor: isFromOther(at) ? 'orange': ''}">{{n+1}}</td>
+            <td style="width: 10%" v-if="isFromOther(at)">
+              <v-text-field flat solo hide-details disabled :value="at.name"></v-text-field>
+            </td>
+            <td style="width: 10%" v-else>
+              <v-select :items="voltList" item-text="name" item-value="id"
+                          v-model="at.v_id" @change="onChangeName(at)" flat solo box hide-details></v-select>
+            </td>
+            <td style="width: 15%">
+              <v-text-field flat solo hide-details :disabled="isFromOther(at)" v-model="at.ca_name"></v-text-field>
+            </td>
+            <td style="width: 12%">
+              <v-select :items="codeList" item-text="name" item-value="code"
+                          v-model="at.act_code" :disabled="isFromOther(at)" flat solo box hide-details></v-select>
+            </td>
+            <td style="width: 11%">
+              <v-text-field flat solo hide-details :disabled="isFromOther(at)" style="margin: 0 15%"
+                              v-model="at.numbers" @focus="onFocusNumber(at)"></v-text-field>
+            </td>
             <td style="width: 8%">
-              <v-text-field flat solo hide-details mask="####-##-##" v-model="at.s_date" @blur="at.s_date = makeToDate($event, true)"></v-text-field></td>
+              <v-text-field flat solo hide-details :disabled="isFromOther(at)" mask="####-##-##"
+                            v-model="at.s_date" @blur="at.s_date = makeToDate($event, true)"></v-text-field>
+            </td>
             <td style="width: 8%">
-              <v-text-field flat solo hide-details mask="####-##-##" v-model="at.e_date" @blur="at.e_date = makeToDate($event, false)"></v-text-field></td>
+              <v-text-field flat solo hide-details :disabled="isFromOther(at)" mask="####-##-##"
+                            v-model="at.e_date" @blur="at.e_date = makeToDate($event, false)"></v-text-field>
+            </td>
             <td style="width: 13%">
-              <v-radio-group v-model="at.group_type" row hide-details class="px-3">
+              <v-radio-group v-model="at.group_type" :disabled="isFromOther(at)" row hide-details class="px-3">
                 <v-radio label="낮반" value="D"></v-radio>
                 <v-radio label="직장인반" value="N"></v-radio>
               </v-radio-group>
             </td>
-            <td style="width: 4%"><v-icon @click="deleteAct(n, at.id)">delete</v-icon></td>
-            <td style="width: 4%"><v-icon @click="moveToQuery(at.v_id)">forward</v-icon></td>
+            <td style="width: 4%"><span v-if="!isFromOther(at)"><v-icon @click="deleteAct(n, at.id)">delete</v-icon></span></td>
+            <td style="width: 4%"><span v-if="!isFromOther(at)"><v-icon @click="moveToQuery(at.v_id)">forward</v-icon></span></td>
           </tr>
         </tbody>
         <tbody v-else>
@@ -193,6 +207,10 @@ export default {
     },
     onFocusNumber (src) {
       if (src.numbers === 0) src.numbers = null
+    },
+    isFromOther (item) {
+      if (!item.other_code) return false
+      return item.area_code !== this.small.cd
     }
   }
 }

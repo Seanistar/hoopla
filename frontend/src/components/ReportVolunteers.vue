@@ -36,6 +36,7 @@
           <td class="text-xs-center">{{ props.item.au_date }}</td>
           <td class="text-xs-center">{{ activityState[props.item.state] }}</td>
           <td class="text-xs-center">{{ props.item.phone|formatted }}</td>
+          <td class="text-xs-center">{{ props.item.other_name }}</td>
           <td class="text-xs-center">{{ props.item.br_date }}</td>
         </tr>
       </template>
@@ -79,6 +80,7 @@ export default {
       { text: '선서일', value: 'au_date' },
       { text: '활동상태', value: 'state' },
       { text: '연락처', value: 'phone', sortable: false },
+      { text: '타본당 봉사', value: 'other_code' },
       { text: '생년월일', value: 'br_date' }
     ]
   }),

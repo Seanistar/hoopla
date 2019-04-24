@@ -164,6 +164,8 @@ export default {
 
       this.$nextTick(() => {
         this.$parent.RID = rid
+        const path = `${location.pathname}/${rid}`
+        window.history.replaceState({}, null, path)
         this.fetch(rid)
       })
     },
@@ -175,7 +177,7 @@ export default {
           if (r.group_type === 'N') {
             obj['ng'] = r.g_count
             obj['np'] = r.p_count
-          } else {
+          } else if (r.group_type === 'D') {
             obj['dg'] = r.g_count
             obj['dp'] = r.p_count
           }

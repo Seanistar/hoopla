@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import ReportStates from '@/components/ReportStates'
+// import ReportStates from '@/components/ReportStates'
 import ReportVolunteers from '@/components/ReportVolunteers'
 import ReportActs from '@/components/ReportActs'
 import ReportDirect from '@/components/ReportActsDirect'
@@ -24,7 +24,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'EditReport',
-  components: { ReportStates, ReportVolunteers, ReportDirect, ReportActs, ReportGroupActs, FloatButton },
+  components: { ReportVolunteers, ReportDirect, ReportActs, ReportGroupActs, FloatButton },
   props: { id: undefined, rObj: Object },
   computed: {
     ...mapGetters([
@@ -33,7 +33,7 @@ export default {
       'authInfo'
     ]),
     targetComponents () {
-      return ['ReportGroupActs', 'ReportVolunteers', 'ReportDirect', 'ReportActs', 'ReportStates']
+      return ['ReportGroupActs', 'ReportVolunteers', 'ReportDirect', 'ReportActs']
     },
     RID: {
       get () { return this.r_id },
@@ -63,7 +63,7 @@ export default {
     e_date: undefined,
     s_date: undefined,
     tabIdx: 0,
-    titles: ['봉사 현황', '봉사자 활동 명단', '그룹 봉사 (전체입력)', '그룹 봉사 (개별입력)', '현황 내역']
+    titles: ['본당 그룹 현황', '활동 봉사자 명단', '그룹 봉사 (전체입력)', '그룹 봉사 (개별입력)']
   }),
   created () {
     this.r_id = this.id

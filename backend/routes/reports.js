@@ -35,7 +35,8 @@ router.get('/volts', (req, res) => {
   let {a_code, s_date, e_date} = req.query
   // e_date = `${e_date} 23:59:59`
   const sql = [`
-    SELECT DISTINCT v.id, name, ca_name, ca_id, au_date, state, phone, br_date 
+    SELECT DISTINCT v.id, name, ca_name, ca_id, au_date, state, phone, br_date,
+    other_code, (SELECT s_name FROM area_code WHERE s_code = a.other_code) other_name  
     FROM volunteers v 
     INNER JOIN acts a ON v.id = a.v_id
     WHERE v.area_code=? AND a.s_date BETWEEN ? AND ?`,
@@ -56,12 +57,13 @@ router.get('/acts', (req, res) => {
   let {a_code, s_date, e_date} = req.query
   const sql = [`
     SELECT a.*, v.name, v.ca_name, v.ca_id, e.name act_name,
-    CONCAT(a.v_id, '-', a.act_code) v_a_c 
+    CONCAT(a.v_id, '-', a.act_code) v_a_c, 
+    (SELECT s_name FROM area_code WHERE s_code = a.other_code) other_name 
     FROM acts a
     LEFT JOIN volunteers v ON a.v_id = v.id
     LEFT JOIN edu_code e ON e.code = a.act_code
-    WHERE a.area_code=? AND (a.s_date>=? AND a.s_date<=?)`, //  AND a.e_date<=?
-    [a_code, s_date, e_date]
+    WHERE (a.area_code=? OR a.other_code=?) AND (a.s_date>=? AND a.s_date<=?)`, //  AND a.e_date<=?
+    [a_code, a_code, s_date, e_date]
   ]
   db.query(...sql, (err, rows) => {
     if (!err) {
@@ -80,9 +82,9 @@ router.get('/group-acts', (req, res) => {
     SELECT a.act_code, a.group_type, COUNT(a.id)g_count, SUM(numbers) p_count
     FROM volunteers v
     INNER JOIN acts a ON v.id = a.v_id
-    WHERE a.area_code=? AND (a.s_date>=? AND a.s_date<=?) AND a.group_type != 'X'
+    WHERE (a.area_code=? AND ISNULL(other_code)) OR (other_code=?) AND (a.s_date>=? AND a.s_date<=?) AND a.group_type != 'X'
     GROUP BY a.act_code, a.group_type`,
-    [a_code, s_date, e_date]
+    [a_code, a_code, s_date, e_date]
   ]
   db.query(...sql, (err, rows) => {
     if (!err) {

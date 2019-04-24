@@ -153,7 +153,13 @@ export default {
       // const edr = this.$refs['e_date']; edr && edr.setDate(null)
     },
     setItem (data) {
-      if (data !== undefined) this.item = cloneDeep(data)
+      if (data !== undefined) {
+        this.item = cloneDeep(data)
+        if (data.other_code) {
+          this.item.s_name = data.other_name
+          this.item.s_code = data.other_code
+        }
+      }
       // const sdr = this.$refs['s_date']; sdr && sdr.setDate(data.s_date)
       // const edr = this.$refs['e_date']; edr && edr.setDate(data.e_date)
     },
