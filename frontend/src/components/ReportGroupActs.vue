@@ -132,8 +132,8 @@ export default {
 
       const payload = {
         a_code: this.states.ro.s_code,
-        s_date: this.states.ro.s_date,
-        e_date: this.states.ro.e_date
+        s_date: sDate,
+        e_date: eDate
       }
       await this.$store.dispatch(FETCH_REPORT_GROUP_ACTS, payload)
       const src = groupBy(this.reportGroupActs, 'act_code')

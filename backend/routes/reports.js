@@ -62,7 +62,7 @@ router.get('/acts', (req, res) => {
     FROM acts a
     LEFT JOIN volunteers v ON a.v_id = v.id
     LEFT JOIN edu_code e ON e.code = a.act_code
-    WHERE (a.area_code=? OR a.other_code=?) AND (a.s_date>=? AND a.s_date<=?)`, //  AND a.e_date<=?
+    WHERE (a.area_code=? OR a.other_code=?) AND (a.s_date BETWEEN ? AND ?)`, //  AND a.e_date<=?
     [a_code, a_code, s_date, e_date]
   ]
   db.query(...sql, (err, rows) => {
@@ -82,7 +82,7 @@ router.get('/group-acts', (req, res) => {
     SELECT a.act_code, a.group_type, COUNT(a.id)g_count, SUM(numbers) p_count
     FROM volunteers v
     INNER JOIN acts a ON v.id = a.v_id
-    WHERE (a.area_code=? AND ISNULL(other_code)) OR (other_code=?) AND (a.s_date>=? AND a.s_date<=?) AND a.group_type != 'X'
+    WHERE ((a.area_code=? AND ISNULL(other_code)) OR (other_code=?)) AND (a.s_date BETWEEN ? AND ?) AND a.group_type != 'X'
     GROUP BY a.act_code, a.group_type`,
     [a_code, a_code, s_date, e_date]
   ]
