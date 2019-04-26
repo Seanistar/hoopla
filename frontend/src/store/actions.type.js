@@ -73,6 +73,7 @@ export const FETCH_STAT_AREA = 'fetchStatArea'
 export const FETCH_STAT_VOLT = 'fetchStatVolt'
 export const FETCH_STAT_ACTS = 'fetchStatActs'
 export const FETCH_STAT_OTHERS = 'fetchStatOthers'
+export const FETCH_STAT_LEADERS = 'fetchStatLeaders'
 
 // will be obsoleted
 export const DELETE_AUTHOR = 'deleteAuthor'

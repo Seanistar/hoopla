@@ -19,19 +19,21 @@ import StatArea from '@/components/StatArea'
 import StatVolt from '@/components/StatVolts'
 import StatActs from '@/components/StatActs'
 import StatOthers from '@/components/StatOthers'
+import StatLeaders from '@/components/StatLeaders'
 import FloatButton from '@/components/control/FloatButton'
 
 export default {
   name: 'Stats',
-  components: { StatYearly, StatChurch, StatArea, StatVolt, StatActs, StatOthers, FloatButton },
+  components: { StatYearly, StatChurch, StatArea, StatVolt, StatActs, StatOthers, StatLeaders, FloatButton },
   computed: {
     targetComponents () {
-      return ['StatArea', 'StatYearly', 'StatChurch', 'StatVolt', 'StatActs', 'StatOthers']
+      return ['StatArea', 'StatYearly', 'StatChurch', 'StatVolt', 'StatActs', 'StatOthers', 'StatLeaders']
     }
   },
   data: () => ({
     tabIdx: 0,
-    titles: ['교구별 현황', '연도별 현황', '본당별 현황', '전체 봉사자 현황', '봉사 활동 현황', '타 본당 봉사 현황']
+    titles: ['교구별 현황', '연도별 현황', '본당별 현황',
+      '전체 봉사자 현황', '봉사 활동 현황', '타 본당 봉사 현황', '대표 봉사자 현황']
   })
 }
 </script>

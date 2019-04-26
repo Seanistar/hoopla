@@ -151,4 +151,25 @@ router.get('/others', (req, res) => {
   })
 })
 
+router.get('/leaders', (req, res) => {
+  const {s_year} = req.query
+  let _sql = `
+    SELECT l.area_code a_code, v.ca_id, l.s_date, ac.s_name, v.name, v.ca_name, v.phone
+    FROM leaders l 
+    LEFT JOIN volunteers v ON l.v_id = v.id
+    LEFT JOIN area_code ac ON l.area_code = ac.a_code
+    WHERE l.work = 'Y'`
+  if (s_year) _sql += ` AND YEAR(l.s_date) = '${s_year}'`
+
+  db.query(_sql, (err, rows) => {
+    if (!err) {
+      console.log('stat leaders has done', _sql)
+      res.status(200).send(rows)
+    } else {
+      console.warn('stat leaders error : ' + err)
+      res.status(500).send('Internal Server Error')
+    }
+  })
+})
+
 module.exports = router

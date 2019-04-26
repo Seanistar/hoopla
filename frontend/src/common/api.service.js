@@ -104,6 +104,9 @@ export const StatService = {
   },
   get_others (params) {
     return ApiService.query('stats/others', params)
+  },
+  get_leaders (params) {
+    return ApiService.query('stats/leaders', params)
   }
 }
 
