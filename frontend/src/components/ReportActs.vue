@@ -32,6 +32,7 @@
                   <th>참여 인원 수</th>
                   <th>시작 날짜</th>
                   <th>종료 날짜</th>
+                  <th>소속 본당</th>
                   <th>활동 내용</th>
                 </tr>
               </template>
@@ -41,6 +42,7 @@
                   <td class="text-xs-center">{{ props.item.numbers }}</td>
                   <td class="text-xs-center">{{ props.item.s_date }}</td>
                   <td class="text-xs-center">{{ props.item.e_date }}</td>
+                  <td class="text-xs-center">{{ props.item.church_name }}</td>
                   <td class="text-xs-center">{{ props.item.content }}</td>
                 </tr>
               </template>
@@ -189,7 +191,7 @@ export default {
       if (data === undefined) return
 
       if (data.v_id === undefined) data.v_id = data.id
-      const item = pick(data, ['id', 'v_id', 'act_code', 'act_name', 'name', 'ca_name', 'area_code', 's_code', 's_date', 'e_date', 'content', 'numbers'])
+      const item = pick(data, ['id', 'v_id', 'act_code', 'act_name', 'name', 'ca_name', 'area_code', 's_code', 's_date', 'e_date', 'group_type', 'content', 'numbers'])
       console.log('input item...', item)
       this.updateActItem(item)
     },

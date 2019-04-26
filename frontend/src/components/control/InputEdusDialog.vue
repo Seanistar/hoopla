@@ -222,13 +222,6 @@ export default {
         return
       }
       this.makeDate()
-      /* if (this.item.edu_code === 53) {
-        if (!this.item.r_year || this.item.r_year === '선택없음') return alert('시작 연도를 확인해주세요!')
-      } else {
-        if (!this.item.e_date || !this.item.s_date) return alert('기간을 확인해주세요!')
-        this.item.s_date = this.makeDate(this.item.s_date, true)
-        this.item.e_date = this.makeDate(this.item.e_date, false)
-      } */
       if (this.isECount) this.selected = range(3, 3 + parseInt(this.selected[0]))
       this.item.months = this.selected.join(',')
       this.$emit('close-input-item', this.item)
@@ -240,9 +233,11 @@ export default {
       if (sDate.length <= 4) this.item.s_date += '0101'
       else if (sDate.length <= 6) this.item.s_date += '01'
 
-      this.item.e_date = sDate
-      if (sDate.length <= 4) this.item.e_date += '1231'
-      else if (sDate.length <= 6) this.item.e_date += '28'
+      if (!this.item.e_date) {
+        this.item.e_date = sDate
+        if (sDate.length <= 4) this.item.e_date += '1231'
+        else if (sDate.length <= 6) this.item.e_date += '28'
+      }
     },
     smallEdus () {
       if (!this.item.e_type) return

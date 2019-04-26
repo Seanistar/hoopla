@@ -57,12 +57,13 @@ router.get('/acts', (req, res) => {
   let {a_code, s_date, e_date} = req.query
   const sql = [`
     SELECT a.*, v.name, v.ca_name, v.ca_id, e.name act_name,
-    CONCAT(a.v_id, '-', a.act_code) v_a_c, 
-    (SELECT s_name FROM area_code WHERE s_code = a.other_code) other_name 
+    CONCAT(a.v_id, '-', a.act_code) v_a_c,
+    IF(a.other_code IS NOT NULL, (SELECT s_name FROM area_code WHERE s_code = a.area_code), NULL) church_name, 
+    IF(a.other_code IS NOT NULL, (SELECT s_name FROM area_code WHERE s_code = a.other_code), NULL) other_name 
     FROM acts a
     LEFT JOIN volunteers v ON a.v_id = v.id
     LEFT JOIN edu_code e ON e.code = a.act_code
-    WHERE (a.area_code=? OR a.other_code=?) AND (a.s_date BETWEEN ? AND ?)`, //  AND a.e_date<=?
+    WHERE (a.area_code=? OR a.other_code=?) AND (a.s_date BETWEEN ? AND ?)`,
     [a_code, a_code, s_date, e_date]
   ]
   db.query(...sql, (err, rows) => {

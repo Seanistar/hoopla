@@ -285,7 +285,7 @@ export default {
       this.$store.commit(SET_QUERY_INFO, {cond: this.formData, good: item})
       setTimeout(() => {
         this.$router.push({name: 'view-query', params: {id: item.id}})
-      }, 10)
+      }, 100)
     },
     onClickMemo (item) {
       if (!item.memo) return

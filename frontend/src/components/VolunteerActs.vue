@@ -23,7 +23,7 @@
           <td class="text-xs-center w-10">{{ props.item.numbers }}명</td>
           <td class="text-xs-center w-15">{{ props.item.s_date }}</td>
           <td class="text-xs-center w-15">{{ props.item.e_date }}</td>
-          <td class="text-xs-center w-15">{{ props.item.s_name }} 본당</td>
+          <td class="text-xs-center w-15">{{ props.item.other_name || props.item.s_name }} 본당</td>
           <td class="text-xs-center">{{ props.item.content }}</td>
         </tr>
       </template>
@@ -139,7 +139,7 @@ export default {
       if (data === undefined) return
 
       if (isUndefined(data.v_id)) data.v_id = data.id
-      console.log('input item...', data, data.area_code, data.s_code)
+      // console.log('input item...', data, data.area_code, data.s_code)
       this.updateActItem(data)
     }
   }

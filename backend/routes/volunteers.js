@@ -294,7 +294,8 @@ router.delete('/edu/:id', (req, res) => {
  */
 router.get('/act/:id', (req, res) => {
   const select = `
-    SELECT a.*, c.name act_name, r.s_name 
+    SELECT a.*, c.name act_name, r.s_name,
+    IF(a.other_code IS NOT NULL, (SELECT s_name FROM area_code WHERE s_code = a.other_code), NULL) other_name 
     FROM acts a 
     LEFT JOIN edu_code c ON a.act_code = c.code
     LEFT JOIN area_code r ON a.area_code = r.a_code  
@@ -311,8 +312,8 @@ router.get('/act/:id', (req, res) => {
 
 router.put('/act', (req, res) => {
   let sql = null
-  const {v_id, act_code, s_date, e_date, area_code, numbers, content, group_type, s_code} = req.body
-  console.log(area_code, s_code)
+  let {v_id, act_code, s_date, e_date, area_code, numbers, content, group_type, s_code} = req.body
+  if (!group_type) group_type = 'X'
   if(s_code && area_code !== s_code) { // in case do act at other church
     sql = [`
       INSERT INTO acts (v_id, act_code, s_date, e_date, area_code, other_code, numbers, content, group_type) 
@@ -340,8 +341,8 @@ router.put('/act', (req, res) => {
 
 router.post('/act/:id', (req, res) => {
   const id = req.params.id
-  const {act_code, s_date, e_date, area_code, s_code, numbers, content, group_type} = req.body
-  console.log(area_code, s_code)
+  let {act_code, s_date, e_date, area_code, s_code, numbers, content, group_type} = req.body
+  if (!group_type) group_type = 'X'
   let sql = null
   if (s_code && area_code !== s_code) {
     sql = [`

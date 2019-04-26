@@ -31,7 +31,6 @@
                   </v-layout>
                 </v-flex>
               </template>-->
-
               <v-flex xs6>
                 <v-select label="봉사 그룹명" :items="actCodes" item-text="name" item-value="code"
                           hide-details v-model="item.act_code"></v-select>
@@ -53,6 +52,12 @@
               </v-flex>
               <v-flex xs12>
                 <v-text-field v-model="item.content" hide-details label="봉사활동 내용"></v-text-field>
+              </v-flex>
+              <v-flex xs12>
+                <v-radio-group label="봉사 구분  : " v-model="item.group_type" row hide-details>
+                  <v-radio class="ml-4" label="낮반" value="D"></v-radio>
+                  <v-radio label="직장인반" value="N"></v-radio>
+                </v-radio-group>
               </v-flex>
             </v-layout>
           </v-container>
@@ -101,15 +106,6 @@ export default {
       }
     }
   },
-  /* watch: {
-    'item.e_date' (date) {
-      if (!this.item.s_date || !date) return
-      if (date < this.item.s_date) {
-        alert('종료일이 시작일보다 빠릅니다.')
-        this.$refs['e_date'].setDate(null)
-      }
-    }
-  }, */
   data: () => ({
     finder: false,
     churchFinder: false,
@@ -122,13 +118,7 @@ export default {
   },
   methods: {
     closeDialog () {
-      // if (!this.item.id) return alert('코드 확인이 되지 않았습니다!')
-      // if (!this.item.e_date || !this.item.s_date) return alert('기간을 확인해주세요!')
       this.makeDate()
-      /* if (this.item.e_date < this.item.s_date) {
-        this.$refs['e_date'].setDate(null)
-        return alert('종료일이 시작일보다 빠릅니다!')
-      } */
       this.$emit('close-input-item', this.item)
       this.reset()
     },
@@ -138,19 +128,14 @@ export default {
       if (sDate.length <= 4) this.item.s_date += '0101'
       else if (sDate.length <= 6) this.item.s_date += '01'
 
-      this.item.e_date = sDate
-      if (sDate.length <= 4) this.item.e_date += '1231'
-      else if (sDate.length <= 6) this.item.e_date += '28'
+      if (!this.item.e_date) {
+        this.item.e_date = sDate
+        if (sDate.length <= 4) this.item.e_date += '1231'
+        else if (sDate.length <= 6) this.item.e_date += '28'
+      }
     },
-    /* makeDate (date, isStart) {
-      if (date.length <= 4) return date + (isStart ? '0101' : '1231')
-      else if (date.length <= 6) return date + (isStart ? '01' : '28')
-      return date
-    }, */
     reset () {
       this.item = { id: 0 }
-      // const sdr = this.$refs['s_date']; sdr && sdr.setDate(null)
-      // const edr = this.$refs['e_date']; edr && edr.setDate(null)
     },
     setItem (data) {
       if (data !== undefined) {
@@ -160,8 +145,6 @@ export default {
           this.item.s_code = data.other_code
         }
       }
-      // const sdr = this.$refs['s_date']; sdr && sdr.setDate(data.s_date)
-      // const edr = this.$refs['e_date']; edr && edr.setDate(data.e_date)
     },
     onPicked (obj) {
       console.log('picked date...', obj.type, obj.date)

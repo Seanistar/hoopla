@@ -51,8 +51,13 @@
                 <v-radio label="직장인반" value="N"></v-radio>
               </v-radio-group>
             </td>
-            <td style="width: 4%"><span v-if="!isFromOther(at)"><v-icon @click="deleteAct(n, at.id)">delete</v-icon></span></td>
-            <td style="width: 4%"><span v-if="!isFromOther(at)"><v-icon @click="moveToQuery(at.v_id)">forward</v-icon></span></td>
+            <template v-if="isFromOther(at)">
+              <td colspan="2">{{at.church_name}}</td>
+            </template>
+            <template v-else>
+              <td style="width: 4%"><span v-if="!isFromOther(at)"><v-icon @click="deleteAct(n, at.id)">delete</v-icon></span></td>
+              <td style="width: 4%"><span v-if="!isFromOther(at)"><v-icon @click="moveToQuery(at.v_id)">forward</v-icon></span></td>
+            </template>
           </tr>
         </tbody>
         <tbody v-else>
@@ -179,8 +184,8 @@ export default {
           }
         }
       })
+      setTimeout(() => this.fetchData(this.small.cd), 500)
       isDone && this.$showSnackBar('저장되었습니다.')
-      setTimeout(() => this.fetchData(this.small.cd), 100)
     },
     deleteAct (idx, id) {
       if (!confirm('삭제하시겠습니까?')) return
