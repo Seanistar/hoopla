@@ -49,7 +49,7 @@
             :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
           <td class="text-xs-center">{{ props.item.r_year }}</td>
           <!--<td class="text-xs-center">{{ props.item.r_half === 'A' ? '상반기' : '하반기' }}</td>-->
-          <td class="text-xs-center">{{ props.item.area_name }}</td>
+          <td class="text-xs-center" style="cursor: pointer">{{ props.item.area_name }}</td>
           <!--<td class="text-xs-center">{{ props.item.name }}</td>-->
           <!--<td class="text-xs-center">{{ props.item.phone|formatted }}</td>-->
           <td class="text-xs-center">{{ props.item.created|datestamp }}</td>

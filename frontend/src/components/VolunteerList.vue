@@ -37,14 +37,14 @@
       <template slot="items" slot-scope="props">
         <tr @dblclick="editItem(props.item)">
           <td class="text-xs-center"><span>{{(props.index + 1)}}</span></td>
-          <td class="text-xs-center">
+          <td class="text-xs-center" style="cursor: pointer">
             <span>{{ props.item.name }}</span>
             <v-badge color="orange" class="badge-pos"
                      overlap v-show="props.item.is_leader === 'Y'">
               <v-icon slot="badge" small>face</v-icon>
             </v-badge>
           </td>
-          <td class="text-xs-center">{{ props.item.ca_name }}</td>
+          <td class="text-xs-center" style="cursor: pointer">{{ props.item.ca_name }}</td>
           <td class="text-xs-center">{{ activityState[props.item.state] }}</td>
           <td class="text-xs-center">{{ props.item.sa_name }}</td>
           <td class="text-xs-center">{{ props.item.au_date }}</td>
@@ -148,7 +148,7 @@ export default {
     },
     async setCodeInfo (code) {
       if (!this.areaCodes.length) await this.$store.dispatch('fetchAreaCodes')
-      const list = map(this.smallCodes(this.authInfo), o => {
+      const list = map(this.smallCodes(null), o => {
         const full = `${o.s_name} (${o.l_name}-${o.m_name})`
         return {code: o.s_code, name: full}
       })

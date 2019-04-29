@@ -90,8 +90,8 @@
               :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
             <td class="text-xs-center w-4">{{ props.index + 1 }}</td>
             <td class="text-xs-center w-10">{{ props.item.ca_id|dash }}</td>
-            <td class="text-xs-center w-10">{{ props.item.name }}</td>
-            <td class="text-xs-center w-15">{{ props.item.ca_name }}</td>
+            <td class="text-xs-center w-10" style="cursor: pointer">{{ props.item.name }}</td>
+            <td class="text-xs-center w-15" style="cursor: pointer">{{ props.item.ca_name }}</td>
             <td class="text-xs-center w-10">{{ props.item.au_date|monthstamp }}</td>
             <td class="text-xs-center w-13">{{ props.item.la_name }}</td>
             <td class="text-xs-center w-15">{{ props.item.sa_name }}</td>

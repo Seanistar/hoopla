@@ -104,7 +104,7 @@
                 </v-flex>
                 <v-flex xs6>
                   <!--<date-picker ref="e_date" title="교육 종료일" :disabled="isMonthEdu" @close-date-picker="onPicked" refs="e_date"></date-picker>-->
-                  <v-text-field label="교육 종료일" hide-details mask="####-##-##" disabled v-model="item.e_date"></v-text-field>
+                  <v-text-field label="교육 종료일" hide-details mask="####-##-##" v-model="item.e_date"></v-text-field>
                 </v-flex>
               </v-layout>
               <v-flex xs8>

@@ -1,11 +1,14 @@
 <template>
   <v-container pt-2 mt-1>
     <v-layout>
-      <v-flex xs6 mb-2>
+      <v-flex xs2 mb-2>
         <v-radio-group v-model="type" row height="20" hide-details>
           <v-radio label="교육 현황" value="edus"></v-radio>
           <v-radio label="봉사 현황" value="acts"></v-radio>
         </v-radio-group>
+      </v-flex>
+      <v-flex xs4 mt-3>
+        <div class="body-2 grey--text">※ 현재 연도 자료입니다.</div>
       </v-flex>
       <v-flex xs6 text-xs-right>
         <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
