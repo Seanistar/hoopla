@@ -1,12 +1,12 @@
 <template>
   <v-container class="elevation-3 pt-2 mb-4">
     <v-layout row wrap pb-0 align-baseline>
-      <v-flex xs6>
+      <v-flex :class="winWidth >= 600 ? 'xs6' : 'xs12'">
         <v-layout row align-baseline>
           <!--<v-flex xs2>
             <v-subheader class="body-2 pr-0">소속본당 : </v-subheader>
           </v-flex>-->
-          <v-flex xs5>
+          <v-flex :class="winWidth >= 600 ? 'xs5' : ['xs6', 'ml-3']">
             <v-combobox label="소속본당" class="body-2" @input="fetchReports()"
                         v-model="model" :items="items" item-value="code" item-text="name"
                         :search-input.sync="search" clearable single-line> <!--:disabled="authInfo.level === 'L3'"-->
@@ -21,7 +21,7 @@
               </template>
             </v-combobox>
           </v-flex>
-          <v-flex xs3 ml-3 pl-2>
+          <v-flex :class="winWidth >= 600 ? 'xs3' : 'xs6'" ml-3 pl-2>
             <v-select label="연도선택" class="w-90 text-xs-center body-1" single-line
                       :items="years" v-model="rYear"></v-select>
           </v-flex>
@@ -32,7 +32,7 @@
           </v-flex>-->
         </v-layout>
       </v-flex>
-      <v-flex xs6>
+      <v-flex xs6 v-if="winWidth >= 600">
         <v-layout justify-end>
           <!--<v-btn color="deep-orange accent-2" outline dark class="mb-2" @click="deleteReport">보고 삭제</v-btn>-->
           <v-btn color="indigo accent-2" outline dark class="mb-2" @click="newReport">신규 보고</v-btn>
@@ -47,7 +47,7 @@
       <template slot="items" slot-scope="props">
         <tr @click="selected = props.item" @dblclick="editReport(props.item.id, props.item.s_code)"
             :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">
-          <td class="text-xs-center">{{ props.item.r_year }}</td>
+          <td class="text-xs-center w-5">{{ props.item.r_year }}</td>
           <!--<td class="text-xs-center">{{ props.item.r_half === 'A' ? '상반기' : '하반기' }}</td>-->
           <td class="text-xs-center" style="cursor: pointer">{{ props.item.area_name }}</td>
           <!--<td class="text-xs-center">{{ props.item.name }}</td>-->
@@ -113,6 +113,7 @@ export default {
     selected: {},
     rYear: '',
     rHalf: '',
+    winWidth: '',
     perPage: [50, 100, {'text': '$vuetify.dataIterator.rowsPerPageAll', 'value': -1}],
     pagination: {descending: true},
     headers: [
@@ -128,6 +129,7 @@ export default {
   }),
   created () {
     this.headers.map(h => { h.class = ['text-xs-center', 'body-1'] })
+    this.winWidth = window.innerWidth
   },
   methods: {
     async fetchReports (code) {
@@ -201,5 +203,10 @@ export default {
 <style scoped>
   .w-100px {
     width: 100px;
+  }
+  @media only screen and (max-width: 600px) {
+    td {
+      padding: 0 !important;
+    }
   }
 </style>

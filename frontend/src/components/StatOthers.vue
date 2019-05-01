@@ -1,36 +1,36 @@
 <template>
   <v-container pt-2 mt-1>
     <v-layout row align-baseline>
-      <v-flex xs3>
+      <v-flex :class="$parent.window.width >= 600 ? 'xs3' : 'xs4'">
         <v-combobox label="소속 본당을 선택하세요" class="text-xs-center body-2" clearable
                   :items="churchList" item-value="code" item-text="name"
                   v-model="church"></v-combobox>
       </v-flex>
-      <v-flex xs3>
+      <v-flex :class="$parent.window.width >= 600 ? 'xs3' : 'xs4'">
         <v-combobox label="타 본당을 선택하세요" class="text-xs-center body-2 ml-3" clearable
                     :items="churchList" item-value="code" item-text="name"
                     v-model="other"></v-combobox>
       </v-flex>
-      <v-flex xs6 text-xs-right>
+      <v-flex :class="$parent.window.width >= 600 ? 'xs6' : 'xs4'" text-xs-right>
         <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
       </v-flex>
     </v-layout>
     <v-data-table :items="items"
                   :pagination.sync="pagination" :rows-per-page-items="perPage"
-                  class="elevation-1">
+                  class="elevation-1 main-table">
       <template slot="headers" slot-scope="props">
-        <tr>
-          <th rowspan="2" class="align-center body-2"><p class="head-title">번호</p></th>
+        <tr class="data-column">
+          <th rowspan="2" class="align-center body-2 w-5"><p class="head-title">번호</p></th>
           <th rowspan="2" class="align-center body-2"><p class="head-title">성명</p></th>
           <th rowspan="2" class="align-center body-2"><p class="head-title">소속 본당</p></th>
           <th colspan="10" class="align-center body-2"><p class="head-title">봉사 항목</p></th>
         </tr>
-        <tr>
+        <tr class="data-column">
           <th class="align-center body-2" v-for="header in actCodes" :key="header.code"><p class="head-title">{{header.name|subject}}</p></th>
         </tr>
       </template>
       <template slot="items" slot-scope="props">
-        <tr>
+        <tr class="data-column">
           <td class="text-xs-center">{{props.index + 1}}</td>
           <td class="text-xs-center w-10">{{props.item|v_name}}&nbsp;<br/>{{props.item|ca_name}}</td>
           <td class="text-xs-center w-10">{{props.item|s_name}}</td>

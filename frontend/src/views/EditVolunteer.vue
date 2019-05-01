@@ -77,6 +77,7 @@ export default {
   props: { id: undefined },
   data: () => ({
     tabIdx: 0,
+    winWidth: 0,
     v_id: undefined,
     voltInfo: {},
     voltCore: { ca_id: null, name: '', ca_name: '', area_code: null },

@@ -1,6 +1,6 @@
 <template>
   <v-container pt-2 mt-1>
-    <v-layout row align-baseline>
+    <v-layout row align-baseline v-if="$parent.window.width >= 600">
       <v-flex xs3>
         <v-select label="교구선택" class="body-2" clearable
                     v-model="area" :items="areaList" item-value="code" item-text="name">
@@ -20,17 +20,38 @@
         <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
       </v-flex>
     </v-layout>
-    <v-data-table :items="items" :pagination.sync="pagination" class="elevation-1">
+    <v-layout wrap v-else>
+      <v-flex xs12>
+        <v-layout row mb-0>
+          <v-flex xs6 ml-2>
+            <v-select label="교구선택" class="body-2" clearable
+                      v-model="area" :items="areaList" item-value="code" item-text="name">
+            </v-select>
+          </v-flex>
+          <v-flex xs6 ml-3 pl-2>
+            <v-select label="연도선택" class="w-90 text-xs-center body-1" clearable
+                      :items="years" v-model="year"></v-select>
+          </v-flex>
+        </v-layout>
+      </v-flex>
+      <v-flex xs12 ml-3>
+        <v-radio-group v-model="type" row height="30" hide-details>
+          <v-radio label="교육 현황" value="edus"></v-radio>
+          <v-radio label="봉사 현황" value="acts"></v-radio>
+        </v-radio-group>
+      </v-flex>
+    </v-layout>
+    <v-data-table :items="items" :pagination.sync="pagination" class="elevation-1 main-table">
       <template slot="headers" slot-scope="props">
         <template v-if="type === 'edus'">
           <tr>
-            <th rowspan="3" class="body-2 font-weight-bold w-10">본당 구분</th>
+            <th rowspan="3" class="body-2 font-weight-bold w-10"><p class="head-title">본당 구분</p></th>
             <th :colspan="ebsCodes.length" class="body-2 font-weight-bold">교육 현황 (명)</th>
             <th :colspan="grpCodes.length" class="body-2 font-weight-bold">그룹 공부 현황 (명)</th>
             <th :colspan="trnCodes.length" class="body-2 font-weight-bold">성서 연수 현황 (명)</th>
             <th :colspan="stdCodes.length" class="body-2 font-weight-bold">노트 검사 현황 (명)</th>
           </tr>
-          <tr>
+          <tr class="data-column">
             <th rowspan="2" class="align-center caption" v-for="header in ebsCodes" :key="header.code"><p class="head-title">{{header.name}}</p></th>
             <th rowspan="2" class="align-center caption" v-for="header in grpCodes" :key="header.code"><p class="head-title">{{header.name|subject}}</p></th>
             <th rowspan="2" class="align-center caption" v-for="header in trnCodes" :key="header.code"><p class="head-title">{{header.name|subject}}</p></th>
@@ -39,13 +60,13 @@
         </template>
         <template v-else>
           <tr>
-            <th rowspan="3" class="body-2 font-weight-bold w-10">본당 구분</th>
+            <th rowspan="3" class="body-2 font-weight-bold w-10"><p class="head-title">본당 구분</p></th>
             <th :colspan="actCodes.length * 2" class="body-2 font-weight-bold">봉사 현황</th>
           </tr>
-          <tr>
+          <tr class="data-column">
             <th colspan="2" class="align-center caption" v-for="header in actCodes" :key="header.code">{{header.name}}</th>
           </tr>
-          <tr>
+          <tr class="data-column">
             <template v-for="n in actCodes.length">
               <th class="align-center caption" :key="n">그룹</th>
               <th class="align-center caption" :key="actCodes.length + n">인원</th>

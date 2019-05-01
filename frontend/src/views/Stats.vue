@@ -5,7 +5,7 @@
         <strong>{{ text }}</strong>
       </v-tab>
     </v-tabs>
-    <v-layout mt-4 pt-0 class="elevation-3">
+    <v-layout :class="[window.width <= 600 ? 'mt-2' : 'mt-4']" pt-0 class="elevation-3">
       <component :is="targetComponents[tabIdx]" />
     </v-layout>
     <!--<float-button path="stats"/>-->
@@ -32,11 +32,32 @@ export default {
   },
   data: () => ({
     tabIdx: 0,
+    window: {
+      width: 0,
+      height: 0
+    },
     titles: ['교구별 현황', '연도별 현황', '본당별 현황',
       '전체 봉사자 현황', '봉사 활동 현황', '타 본당 봉사 현황', '대표 봉사자 현황']
-  })
+  }),
+  created () {
+    this.window.width = window.innerWidth
+    this.window.height = window.innerHeight
+  }
 }
 </script>
 
 <style scoped>
+</style>
+
+<style>
+  @media screen and (max-width: 600px) {
+    .data-column th {
+      width: 80px !important;
+    }
+    .main-table .v-table__overflow table.v-table {
+      width: 1600px !important;
+      overflow-x: auto;
+    }
+    .w-5 { width: 5% !important; }
+  }
 </style>

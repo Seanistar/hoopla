@@ -1,12 +1,12 @@
 <template>
   <v-container pt-2 mt-3>
     <v-layout row align-baseline>
-      <v-flex xs3>
+      <v-flex :class="$parent.window.width < 600 ? ['xs6', 'ml-3'] : ['xs2']">
         <v-select label="교구선택" class="body-2" clearable
                   v-model="area" :items="areaList" item-value="code" item-text="name">
         </v-select>
       </v-flex>
-      <v-flex xs9 text-xs-right>
+      <v-flex :class="$parent.window.width >= 600 ? 'xs10' : 'xs6'" text-xs-right>
         <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
       </v-flex>
     </v-layout>

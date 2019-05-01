@@ -7,8 +7,8 @@
       </v-layout>
       <v-divider></v-divider>
       <v-container mb-2>
-        <v-layout>
-        <v-flex xs2>
+        <v-layout :wrap="$parent.winWidth < 600">
+        <v-flex :class="$parent.winWidth < 600 ? 'xs12' : 'xs2'">
           <image-uploader :cid="params.ca_id" :callback="setPhoto">
             <v-progress-circular v-if="isLoading" class="mt-5"></v-progress-circular>
             <template v-else>
@@ -17,7 +17,7 @@
             </template>
           </image-uploader>
         </v-flex>
-        <v-flex xs10 ml-3>
+        <v-flex :class="$parent.winWidth < 600 ? 'xs12' : 'xs10'" ml-3>
           <v-layout>
             <v-flex xs6>
               <v-combobox label="본당" :value="name.sa"

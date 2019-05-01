@@ -1,7 +1,7 @@
 <template>
   <v-container class="elevation-5 pt-3">
     <v-layout row align-baseline pb-0>
-      <v-flex xs10>
+      <v-flex :class="winWidth >= 600 ? 'xs10' : 'xs12'">
         <v-layout row align-baseline>
           <v-flex xs4>
             <v-combobox class="body-2" v-model="model"
@@ -21,7 +21,7 @@
           </v-flex>
         </v-layout>
       </v-flex>
-      <v-flex xs2>
+      <v-flex xs2 v-if="winWidth >= 600">
         <v-layout justify-end>
           <v-btn color="indigo accent-2" outline dark class="mb-3" @click="newVolunteer">신규 봉사자</v-btn>
         </v-layout>
@@ -78,6 +78,7 @@ export default {
     search: null,
     voltName: null,
     fetched: false,
+    winWidth: 0,
     headers: [
       { text: '번호', value: 'id', sortable: false },
       { text: '성명', value: 'name' },
@@ -111,6 +112,7 @@ export default {
   },
   created () {
     this.headers.map(h => { h.class = ['text-xs-center', 'body-2', 'pl-39x'] })
+    this.winWidth = window.innerWidth
   },
   methods: {
     async fetchVolunteers (code) {

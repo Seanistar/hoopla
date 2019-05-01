@@ -5,7 +5,7 @@
         <v-subheader class="subheading font-weight-bold pr-0">{{small.nm}} 본당 ({{reportYear}})
         </v-subheader>
       </v-flex>
-      <v-flex xs6 justify-end>
+      <v-flex xs6 justify-end v-if="$parent.winWidth >= 600">
         <menu-buttons :disabled="!isEnabled" @click-menu="onClickMenu" refs="acts" />
       </v-flex>
     </v-layout>
@@ -54,7 +54,7 @@
         <div class="text-xs-center">봉사 내역이 없습니다.</div>
       </template>
     </v-data-table>
-    <v-layout pt-2 pb-0>
+    <v-layout pt-2 pb-0 v-if="$parent.winWidth >= 600">
       <v-flex xs6 justify-start>
         <v-subheader class="body-2"><span class="mr-2">대표 봉사자 :</span>
           <input :value="smallLeader.lv_name" class="pa-1 input-box">

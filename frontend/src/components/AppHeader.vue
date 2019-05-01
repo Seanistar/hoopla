@@ -92,3 +92,10 @@ export default {
     cursor: pointer;
   }
 </style>
+<style>
+  @media only screen and (max-width: 600px) {
+    .v-toolbar__content, .v-toolbar__extension {
+      padding: 0 3px !important;
+    }
+  }
+</style>

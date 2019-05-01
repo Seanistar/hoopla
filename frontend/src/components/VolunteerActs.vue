@@ -1,13 +1,13 @@
 <template>
   <v-container pt-2 pb-3 mt-2 elevation-3>
     <v-layout pb-2 pl-2 align-center>
-      <v-flex xs2>
+      <v-flex :class="$parent.winWidth < 600 ? 'xs4' : 'xs2'">
         <div>전체 봉사 : {{volunteerActs.length}} 건</div>
       </v-flex>
-      <v-flex xs4>
+      <v-flex :class="$parent.winWidth < 600 ? 'xs8' : 'xs4'">
         <slot name="voltInfo"></slot>
       </v-flex>
-      <v-flex xs6 text-xs-right>
+      <v-flex xs6 text-xs-right v-if="$parent.winWidth >= 600">
         <menu-buttons class="pt-0" :disabled="isDisable" @click-menu="onClickMenu" refs="acts"/>
       </v-flex>
     </v-layout>
@@ -31,7 +31,7 @@
         <tr class="text-xs-center"><td colspan="8">봉사 활동 내역이 없습니다.</td></tr>
       </template>
     </v-data-table>
-    <v-layout row mt-3>
+    <v-layout row mt-3 v-if="$parent.winWidth >= 600">
       <v-flex xs6 text-xs-left>
         <router-link :to="{name: 'view-query', params: {id: v_id, menu: 'm-4'}}" class="txt-deco-none" replace>
           <v-btn outline color="primary">조회 화면 이동</v-btn>

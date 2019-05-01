@@ -1,7 +1,7 @@
 <template>
   <v-container pt-2 pb-3>
     <v-layout row wrap align-center mb-1>
-      <v-flex xs3>
+      <v-flex :class="$parent.winWidth < 600 ? 'xs12' : 'xs3'">
         <v-subheader class="subheading font-weight-bold pr-0">{{small.nm}} 본당 ({{reportYear}})
         </v-subheader>
       </v-flex>
@@ -68,7 +68,7 @@
     <v-layout align-center justify-center class="progress-circular" v-if="!fetched">
       <v-progress-circular indeterminate color="#00b0f5"></v-progress-circular>
     </v-layout>
-    <v-layout>
+    <v-layout v-if="$parent.winWidth >= 600">
       <v-flex xs6 text-xs-left><v-btn large outline @click="addRows">행 추가</v-btn></v-flex>
       <v-flex xs6 text-xs-right><v-btn large outline color="primary" @click="doneList"><b>저장</b></v-btn></v-flex>
     </v-layout>

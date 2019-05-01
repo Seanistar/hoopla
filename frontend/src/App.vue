@@ -45,7 +45,12 @@ export default {
 </script>
 
 <style>
-#app {
-  margin: 0px 2px;
-}
+  #app {
+    margin: 0px 2px;
+  }
+  @media screen and (max-width: 600px) {
+    .container {
+      padding: 1px !important;
+    }
+  }
 </style>

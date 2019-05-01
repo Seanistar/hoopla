@@ -63,10 +63,12 @@ export default {
     e_date: undefined,
     s_date: undefined,
     tabIdx: 0,
+    winWidth: 0,
     titles: ['본당 그룹 현황', '활동 봉사자 명단', '그룹 봉사 (전체입력)', '그룹 봉사 (개별입력)']
   }),
   created () {
     this.r_id = this.id
+    this.winWidth = window.innerWidth
   },
   methods: { // 신규 생성 시 무조건 지정해서 들어온다. (s_code, s_name, r_year, r_half)
     getReportInfo () {

@@ -1,24 +1,24 @@
 <template>
   <v-container pt-2 mt-1>
     <v-layout row align-baseline>
-      <v-flex xs3>
+      <v-flex :class="$parent.window.width >= 600 ? 'xs3' : 'xs6'">
         <v-combobox label="본당을 선택하세요" class="text-xs-center body-2" clearable
                   :items="churchList" item-value="code" item-text="name"
                   v-model="church"></v-combobox>
       </v-flex>
-      <v-flex xs9 text-xs-right>
+      <v-flex :class="$parent.window.width >= 600 ? 'xs9' : 'xs6'" text-xs-right>
         <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
       </v-flex>
     </v-layout>
-    <v-data-table :items="items" hide-actions class="elevation-1">
+    <v-data-table :items="items" hide-actions class="elevation-1 main-table">
       <template slot="headers" slot-scope="props">
-        <tr>
-          <th rowspan="2" class="align-center body-2"><p class="head-title">번호</p></th>
-          <th rowspan="2" class="align-center body-2"><p class="head-title">성명</p></th>
+        <tr class="data-column">
+          <th rowspan="2" class="align-center body-2 w-5"><p class="head-title">번호</p></th>
+          <th rowspan="2" class="align-center body-2 w-5"><p class="head-title">성명</p></th>
           <th rowspan="2" class="align-center body-2"><p class="head-title">구분</p></th>
           <th colspan="10" class="align-center body-2"><p class="head-title">봉사 항목</p></th>
         </tr>
-        <tr>
+        <tr class="data-column">
           <th class="align-center body-2" v-for="header in stdCodes" :key="header.code"><p class="head-title">{{header.name|subject}}</p></th>
         </tr>
       </template>
