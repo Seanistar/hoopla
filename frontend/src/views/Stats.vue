@@ -5,7 +5,7 @@
         <strong>{{ text }}</strong>
       </v-tab>
     </v-tabs>
-    <v-layout :class="[window.width <= 600 ? 'mt-2' : 'mt-4']" pt-0 class="elevation-3">
+    <v-layout :class="[window.width <= 900 ? 'mt-2' : 'mt-4']" pt-0 class="elevation-3">
       <component :is="targetComponents[tabIdx]" />
     </v-layout>
     <!--<float-button path="stats"/>-->
@@ -50,7 +50,7 @@ export default {
 </style>
 
 <style>
-  @media screen and (max-width: 600px) {
+  @media screen and (max-width: 900px) {
     .data-column th {
       width: 80px !important;
     }
@@ -59,5 +59,86 @@ export default {
       overflow-x: auto;
     }
     .w-5 { width: 5% !important; }
+  }
+</style>
+
+<style lang="scss">
+  .theme--light.v-table thead th,
+  .theme--light.v-table tbody td:first-child {
+    background-color: lightgrey;
+  }
+  .fixed-header {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    th {
+      border-right: 1px solid grey;
+    }
+    td {
+      border: 1px solid grey;
+    }
+    th, td {
+      max-width: 25px !important;
+      min-width: 20px !important;
+      padding: 0 3px !important;
+      text-align: center;
+    }
+    .head-title {
+      white-space: normal;
+      margin-bottom: 0 !important;
+    }
+    table {
+      table-layout: fixed;
+      width: calc(92vw - 30px);
+    }
+    .first-row th {
+      position: sticky;
+      top: 0;
+      z-index: 6;
+    }
+    .first-row th:first-child {
+      position: sticky;
+      top: 0;
+      left: 0;
+      z-index: 7;
+    }
+    .second-row th {
+      position: sticky;
+      top: 56px;
+      z-index: 6;
+      border-top: 1px solid grey;
+    }
+    .third-row th {
+      position: sticky;
+      top: 112px;
+      z-index: 6;
+      border-top: 1px solid grey;
+    }
+    .first-column td:first-child {
+      position: sticky;
+      z-index: 5;
+      left: 0;
+    }
+    tr.v-datatable__progress {
+      th {
+        height: unset !important;
+      }
+    }
+    .v-table__overflow {
+      flex-grow: 1;
+      flex-shrink: 1;
+      overflow-x: auto;
+      overflow-y: auto;
+    }
+    .v-datatable.v-table {
+      flex-grow: 0;
+      flex-shrink: 1;
+      .v-datatable__actions {
+        flex-wrap: nowrap;
+        .v-datatable__actions__pagination {
+          white-space: nowrap;
+        }
+      }
+    }
   }
 </style>

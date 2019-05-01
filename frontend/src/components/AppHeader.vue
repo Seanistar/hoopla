@@ -93,7 +93,7 @@ export default {
   }
 </style>
 <style>
-  @media only screen and (max-width: 600px) {
+  @media only screen and (max-width: 900px) {
     .v-toolbar__content, .v-toolbar__extension {
       padding: 0 3px !important;
     }

@@ -1,7 +1,7 @@
 <template>
   <v-container class="elevation-5 pt-3">
     <v-layout row align-baseline pb-0>
-      <v-flex :class="winWidth >= 600 ? 'xs10' : 'xs12'">
+      <v-flex :class="winWidth >= 900 ? 'xs10' : 'xs12'">
         <v-layout row align-baseline>
           <v-flex xs4>
             <v-combobox class="body-2" v-model="model"
@@ -15,13 +15,16 @@
                         @keyup.enter="fetchVolunteers()" label="봉사자 이름" clearable>
             </v-text-field>
           </v-flex>
-          <v-flex xs4 ml-3 body-1>
+          <v-flex xs4 ml-3 body-1 v-if="winWidth >= 900 ">
             <span>봉사자 수 - 전체: <b>{{totalCount|units}}</b> 명</span>
             <span v-if="fetched && (search || voltName)"> / 현재 검색: <b>{{volunteersCount|units}}</b> 명</span>
           </v-flex>
+          <v-flex ml-2 else>
+            <span>현재: <b>{{totalCount|units}}</b> 명</span>
+          </v-flex>
         </v-layout>
       </v-flex>
-      <v-flex xs2 v-if="winWidth >= 600">
+      <v-flex xs2 v-if="winWidth >= 900">
         <v-layout justify-end>
           <v-btn color="indigo accent-2" outline dark class="mb-3" @click="newVolunteer">신규 봉사자</v-btn>
         </v-layout>
@@ -33,9 +36,9 @@
     </v-layout>
 
     <v-data-table :headers="headers" :items="volunteers"
-                  class="elevation-5" disable-initial-sort hide-actions>
+                  disable-initial-sort hide-actions>
       <template slot="items" slot-scope="props">
-        <tr @dblclick="editItem(props.item)">
+        <tr class="first-row" @dblclick="editItem(props.item)">
           <td class="text-xs-center"><span>{{(props.index + 1)}}</span></td>
           <td class="text-xs-center" style="cursor: pointer">
             <span>{{ props.item.name }}</span>

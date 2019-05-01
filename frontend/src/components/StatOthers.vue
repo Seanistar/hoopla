@@ -1,36 +1,36 @@
 <template>
   <v-container pt-2 mt-1>
     <v-layout row align-baseline>
-      <v-flex :class="$parent.window.width >= 600 ? 'xs3' : 'xs4'">
+      <v-flex :class="$parent.window.width >= 900 ? 'xs3' : ['xs6', 'ml-2']">
         <v-combobox label="소속 본당을 선택하세요" class="text-xs-center body-2" clearable
                   :items="churchList" item-value="code" item-text="name"
                   v-model="church"></v-combobox>
       </v-flex>
-      <v-flex :class="$parent.window.width >= 600 ? 'xs3' : 'xs4'">
+      <v-flex :class="$parent.window.width >= 900 ? 'xs3' : ['xs6', 'mx-2']">
         <v-combobox label="타 본당을 선택하세요" class="text-xs-center body-2 ml-3" clearable
                     :items="churchList" item-value="code" item-text="name"
                     v-model="other"></v-combobox>
       </v-flex>
-      <v-flex :class="$parent.window.width >= 600 ? 'xs6' : 'xs4'" text-xs-right>
+      <v-flex text-xs-right v-if="$parent.window.width >= 900">
         <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
       </v-flex>
     </v-layout>
-    <v-data-table :items="items"
-                  :pagination.sync="pagination" :rows-per-page-items="perPage"
-                  class="elevation-1 main-table">
+    <v-data-table :items="items" hide-actions
+                  style="max-height: calc(80vh - 10px);backface-visibility: hidden;"
+                  class="elevation-1 main-table fixed-header v-table__overflow">
       <template slot="headers" slot-scope="props">
-        <tr class="data-column">
-          <th rowspan="2" class="align-center body-2 w-5"><p class="head-title">번호</p></th>
+        <tr class="first-row">
+          <th rowspan="2" class="align-center body-2" style="width: 50px"><p class="head-title">번호</p></th>
           <th rowspan="2" class="align-center body-2"><p class="head-title">성명</p></th>
           <th rowspan="2" class="align-center body-2"><p class="head-title">소속 본당</p></th>
-          <th colspan="10" class="align-center body-2"><p class="head-title">봉사 항목</p></th>
+          <th colspan="9" class="align-center subheading"><p class="head-title"><b>봉사 항목</b></p></th>
         </tr>
-        <tr class="data-column">
+        <tr class="data-column second-row">
           <th class="align-center body-2" v-for="header in actCodes" :key="header.code"><p class="head-title">{{header.name|subject}}</p></th>
         </tr>
       </template>
       <template slot="items" slot-scope="props">
-        <tr class="data-column">
+        <tr class="first-column">
           <td class="text-xs-center">{{props.index + 1}}</td>
           <td class="text-xs-center w-10">{{props.item|v_name}}&nbsp;<br/>{{props.item|ca_name}}</td>
           <td class="text-xs-center w-10">{{props.item|s_name}}</td>
@@ -135,21 +135,7 @@ export default {
 </script>
 
 <style scoped>
-  table, th, td {
-    border: 1px solid grey;
-    border-collapse: collapse;
-  }
-  th, td {
-    max-width: 25px !important;
-    min-width: 20px !important;
-    padding: 3px !important;
-    text-align: center;
-  }
   .w-5 {
     width: 5% !important;;
-  }
-  .head-title {
-    white-space: normal;
-    margin-bottom: 0 !important;
   }
 </style>

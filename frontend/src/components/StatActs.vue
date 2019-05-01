@@ -1,30 +1,32 @@
 <template>
   <v-container pt-2 mt-1>
     <v-layout row align-baseline>
-      <v-flex :class="$parent.window.width >= 600 ? 'xs3' : 'xs6'">
+      <v-flex :class="$parent.window.width >= 900 ? 'xs3' : 'xs6'">
         <v-combobox label="본당을 선택하세요" class="text-xs-center body-2" clearable
                   :items="churchList" item-value="code" item-text="name"
                   v-model="church"></v-combobox>
       </v-flex>
-      <v-flex :class="$parent.window.width >= 600 ? 'xs9' : 'xs6'" text-xs-right>
+      <v-flex :class="$parent.window.width >= 900 ? 'xs9' : 'xs6'" text-xs-right>
         <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
       </v-flex>
     </v-layout>
-    <v-data-table :items="items" hide-actions class="elevation-1 main-table">
+    <v-data-table :items="items" hide-actions
+                  style="max-height: calc(80vh - 10px);backface-visibility: hidden;"
+                  class="elevation-1 main-table fixed-header v-table__overflow">
       <template slot="headers" slot-scope="props">
-        <tr class="data-column">
-          <th rowspan="2" class="align-center body-2 w-5"><p class="head-title">번호</p></th>
-          <th rowspan="2" class="align-center body-2 w-5"><p class="head-title">성명</p></th>
-          <th rowspan="2" class="align-center body-2"><p class="head-title">구분</p></th>
-          <th colspan="10" class="align-center body-2"><p class="head-title">봉사 항목</p></th>
+        <tr class="first-row">
+          <!--<th rowspan="2" class="align-center body-2"><p class="head-title">번호</p></th>-->
+          <th rowspan="2" class="align-center body-2" style="width: 120px"><p class="head-title">성명</p></th>
+          <th rowspan="2" class="align-center body-2" style="width: 50px"><p class="head-title">구분</p></th>
+          <th colspan="9" class="align-center subheading"><p class="head-title"><b>봉사 항목</b></p></th>
         </tr>
-        <tr class="data-column">
+        <tr class="data-column second-row">
           <th class="align-center body-2" v-for="header in stdCodes" :key="header.code"><p class="head-title">{{header.name|subject}}</p></th>
         </tr>
       </template>
       <template slot="items" slot-scope="props">
-        <tr>
-          <td rowspan="2" class="text-xs-center w-5">{{props.index + 1}}</td>
+        <tr class="first-column">
+          <!--<td rowspan="2" class="text-xs-center w-5">{{props.index + 1}}</td>-->
           <td rowspan="2" class="text-xs-center w-10">&nbsp;{{props.item|v_name}}&nbsp;<br/>{{props.item|ca_name}}</td>
           <td>노트</td>
           <td class="text-xs-left"
@@ -32,7 +34,7 @@
           </td>
         </tr>
         <tr>
-          <td>봉사</td>
+          <td style="background-color: unset">봉사</td>
           <td class="text-xs-left"
               v-for="at in actCodes" :key="at.code">
               <div class="caption pl-2" v-for="(oa, idx) in orgList(props.item, at.code)" :key="idx">{{oa.a_year}}&nbsp;{{otherActor(oa)}}</div>
@@ -132,21 +134,7 @@ export default {
 </script>
 
 <style scoped>
-  table, th, td {
-    border: 1px solid grey;
-    border-collapse: collapse;
-  }
-  th, td {
-    max-width: 25px !important;
-    min-width: 20px !important;
-    padding: 3px !important;
-    text-align: center;
-  }
   .w-5 {
     width: 5% !important;;
-  }
-  .head-title {
-    white-space: normal;
-    margin-bottom: 0 !important;
   }
 </style>

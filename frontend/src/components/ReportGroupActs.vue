@@ -1,14 +1,14 @@
 <template>
   <v-container pt-2>
     <v-layout row wrap align-end v-if="fetched && Object.keys(states.ro).length">
-      <v-flex :class="$parent.winWidth >= 600 ? 'xs3' : 'xs6'">
+      <v-flex :class="$parent.winWidth >= 900 ? 'xs3' : 'xs6'">
         <v-layout row wrap pb-0>
           <v-subheader class="subheading font-weight-bold pl-3">
             {{states.ro.s_name}} 본당 ({{states.ro.r_year}})
           </v-subheader>
         </v-layout>
       </v-flex>
-      <v-flex :class="$parent.winWidth >= 600 ? 'xs9' : 'xs6'" text-xs-right>
+      <v-flex :class="$parent.winWidth >= 900 ? 'xs9' : 'xs6'" text-xs-right>
         <v-subheader class="body-2 px-0 justify-end">
           <input v-model="states.ro.s_date" id="s_date" tag="rb" readonly
                  type="text" class="pa-1 input-box mw-25">&nbsp;~&nbsp;

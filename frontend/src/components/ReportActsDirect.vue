@@ -1,7 +1,7 @@
 <template>
   <v-container pt-2 pb-3>
-    <v-layout row wrap align-center mb-1>
-      <v-flex :class="$parent.winWidth < 600 ? 'xs12' : 'xs3'">
+    <v-layout align-center mb-1>
+      <v-flex :class="$parent.winWidth < 900 ? 'xs12' : 'xs3'">
         <v-subheader class="subheading font-weight-bold pr-0">{{small.nm}} 본당 ({{reportYear}})
         </v-subheader>
       </v-flex>
@@ -11,64 +11,65 @@
         </v-subheader>
       </v-flex>-->
     </v-layout>
-    <v-layout>
-      <table class="mt-2 mb-3">
-        <thead>
-          <tr><td v-for="(h, n) in headers" :key="n">{{h.text}}</td></tr>
-        </thead>
-        <tbody v-if="actItems.length">
-          <tr v-for="(at, n) in actItems" :key="n">
-            <td style="width: 3%" :style="{backgroundColor: isFromOther(at) ? 'orange': ''}">{{n+1}}</td>
-            <td style="width: 10%" v-if="isFromOther(at)">
-              <v-text-field flat solo hide-details disabled :value="at.name"></v-text-field>
-            </td>
-            <td style="width: 10%" v-else>
-              <v-select :items="voltList" item-text="name" item-value="id"
-                          v-model="at.v_id" @change="onChangeName(at)" flat solo box hide-details></v-select>
-            </td>
-            <td style="width: 15%">
-              <v-text-field flat solo hide-details :disabled="isFromOther(at)" v-model="at.ca_name"></v-text-field>
-            </td>
-            <td style="width: 12%">
-              <v-select :items="codeList" item-text="name" item-value="code"
-                          v-model="at.act_code" :disabled="isFromOther(at)" flat solo box hide-details></v-select>
-            </td>
-            <td style="width: 11%">
-              <v-text-field flat solo hide-details :disabled="isFromOther(at)" style="margin: 0 15%"
-                              v-model="at.numbers" @focus="onFocusNumber(at)"></v-text-field>
-            </td>
-            <td style="width: 8%">
-              <v-text-field flat solo hide-details :disabled="isFromOther(at)" mask="####-##-##"
-                            v-model="at.s_date" @blur="at.s_date = makeToDate($event, true)"></v-text-field>
-            </td>
-            <td style="width: 8%">
-              <v-text-field flat solo hide-details :disabled="isFromOther(at)" mask="####-##-##"
-                            v-model="at.e_date" @blur="at.e_date = makeToDate($event, false)"></v-text-field>
-            </td>
-            <td style="width: 13%">
-              <v-radio-group v-model="at.group_type" :disabled="isFromOther(at)" row hide-details class="px-3">
-                <v-radio label="낮반" value="D"></v-radio>
-                <v-radio label="직장인반" value="N"></v-radio>
-              </v-radio-group>
-            </td>
-            <template v-if="isFromOther(at)">
-              <td colspan="2">{{at.church_name}}</td>
-            </template>
-            <template v-else>
-              <td style="width: 4%"><span v-if="!isFromOther(at)"><v-icon @click="deleteAct(n, at.id)">delete</v-icon></span></td>
-              <td style="width: 4%"><span v-if="!isFromOther(at)"><v-icon @click="moveToQuery(at.v_id)">forward</v-icon></span></td>
-            </template>
-          </tr>
-        </tbody>
-        <tbody v-else>
-          <tr><td colspan="10" class="text-xs-center py-3">봉사 내역이 없습니다.</td></tr>
-        </tbody>
-      </table>
-    </v-layout>
+
+    <v-data-table :items="actItems" :headers="headers" disable-initial-sort hide-actions
+                  class="group-table">
+      <!--<template slot="headers" slot-scope="props">
+        <tr><th v-for="(h, n) in headers" :key="n">{{h.text}}</th></tr>
+      </template>-->
+      <template slot="items" slot-scope="props">
+        <tr>
+          <td style="width: 20px" :style="{backgroundColor: isFromOther(props.item) ? 'orange': ''}">{{props.index+1}}</td>
+          <td style="width: 100px" v-if="isFromOther(props.item)">
+            <v-text-field flat solo hide-details disabled :value="props.item.name"></v-text-field>
+          </td>
+          <td style="width: 100px" v-else>
+            <v-select :items="voltList" item-text="name" item-value="id"
+                      v-model="props.item.v_id" @change="onChangeName(props.item)" flat solo box hide-details></v-select>
+          </td>
+          <td style="width: 120px">
+            <v-text-field flat solo hide-details :disabled="isFromOther(props.item)" v-model="props.item.ca_name"></v-text-field>
+          </td>
+          <td style="width: 100px">
+            <v-select :items="codeList" item-text="name" item-value="code"
+                      v-model="props.item.act_code" :disabled="isFromOther(props.item)" flat solo box hide-details></v-select>
+          </td>
+          <td style="width: 50px">
+            <v-text-field flat solo hide-details :disabled="isFromOther(props.item)" style="margin: 0 10px"
+                          v-model="props.item.numbers" @focus="onFocusNumber(props.item)"></v-text-field>
+          </td>
+          <td style="width: 100px">
+            <v-text-field flat solo hide-details :disabled="isFromOther(props.item)" mask="####-##-##"
+                          v-model="props.item.s_date" @blur="props.item.s_date = makeToDate($event, true)"></v-text-field>
+          </td>
+          <td style="width: 100px">
+            <v-text-field flat solo hide-details :disabled="isFromOther(props.item)" mask="####-##-##"
+                          v-model="props.item.e_date" @blur="props.item.e_date = makeToDate($event, false)"></v-text-field>
+          </td>
+          <td style="width: 100px">
+            <v-radio-group v-model="props.item.group_type" :disabled="isFromOther(props.item)" hide-details class="px-3">
+              <v-radio label="낮반" value="D"></v-radio>
+              <v-radio label="직장인반" value="N"></v-radio>
+            </v-radio-group>
+          </td>
+          <template v-if="isFromOther(props.item)">
+            <td colspan="2" style="width: 100px">{{props.item.church_name}}</td>
+          </template>
+          <template v-else>
+            <td style="width: 50px"><span v-if="!isFromOther(props.item)"><v-icon @click="deleteAct(n, props.item.id)">delete</v-icon></span></td>
+            <td style="width: 50px"><span v-if="!isFromOther(props.item)"><v-icon @click="moveToQuery(props.item.v_id)">forward</v-icon></span></td>
+          </template>
+        </tr>
+      </template>
+      <template slot="no-data">
+        <tr class="text-xs-center"><td colspan="10">봉사 내역이 없습니다.</td></tr>
+      </template>
+    </v-data-table>
+
     <v-layout align-center justify-center class="progress-circular" v-if="!fetched">
       <v-progress-circular indeterminate color="#00b0f5"></v-progress-circular>
     </v-layout>
-    <v-layout v-if="$parent.winWidth >= 600">
+    <v-layout v-if="$parent.winWidth >= 900">
       <v-flex xs6 text-xs-left><v-btn large outline @click="addRows">행 추가</v-btn></v-flex>
       <v-flex xs6 text-xs-right><v-btn large outline color="primary" @click="doneList"><b>저장</b></v-btn></v-flex>
     </v-layout>
@@ -123,7 +124,7 @@ export default {
     fetched: false,
     small: { nm: '', cd: '' },
     headers: [
-      { text: '번호', value: 'idx' },
+      { text: '번호', value: 'idx', class: ['w-30px'] },
       { text: '이름', value: 'name' },
       { text: '세례명', value: 'ca_name' },
       { text: '그룹명', value: 'act_name' },
@@ -136,7 +137,7 @@ export default {
     ]
   }),
   created () {
-    this.headers.map(h => { h.class = ['text-xs-center', 'body-2', 'pl-39x'] })
+    this.headers.map(h => { h.class = h.class ? [].concat(h.class, ['text-xs-center', 'body-2']) : ['text-xs-center', 'body-2'] })
     const res = this.$parent.getSmall()
     if (res) {
       this.small.nm = res.s_name
@@ -163,7 +164,7 @@ export default {
         const act = cloneDeep(ACTION)
         newActs.push(act)
       }
-      this.actItems = this.actItems.concat(newActs)
+      this.actItems = [].concat(this.actItems, newActs)
     },
     doneList () {
       const res = find(this.actItems, a => a.v_id && a.s_date === null)
@@ -221,24 +222,37 @@ export default {
 }
 </script>
 
-<style scoped>
-  table {
-    width: 100%;
-    margin: 0 auto;
+<style lang="scss">
+
+</style>
+<style lang="scss">
+  @media screen and (max-width: 900px) {
+    .group-table table {
+      width: 1600px;
+    }
   }
-  table, td, th {
-    border: 1px solid grey;
-    border-collapse: collapse;
-    text-align: center;
-  }
-  td:nth-child(2) {
-    width: 13%;
-    padding: 5px;
-  }
-  td input {
-    text-align: right;
-  }
-  .v-icon {
-    cursor: pointer;
+  .group-table {
+    table {
+      width: 100%;
+      margin: 0 auto;
+    }
+    table, td, th {
+      border: 1px solid grey;
+      border-collapse: collapse;
+      text-align: center;
+    }
+    .v-text-field input {
+      text-align: center;
+      width: 100px !important;
+    }
+    .v-radio {
+      width: 110px !important;
+    }
+    .v-select__slot {
+      width: 100px !important;
+    }
+    .v-icon {
+      cursor: pointer;
+    }
   }
 </style>

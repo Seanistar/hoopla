@@ -1,12 +1,12 @@
 <template>
   <v-container class="elevation-3 pt-2 mb-4">
     <v-layout row wrap pb-0 align-baseline>
-      <v-flex :class="winWidth >= 600 ? 'xs6' : 'xs12'">
+      <v-flex :class="winWidth >= 900 ? 'xs6' : 'xs12'">
         <v-layout row align-baseline>
           <!--<v-flex xs2>
             <v-subheader class="body-2 pr-0">소속본당 : </v-subheader>
           </v-flex>-->
-          <v-flex :class="winWidth >= 600 ? 'xs5' : ['xs6', 'ml-3']">
+          <v-flex :class="winWidth >= 900 ? 'xs5' : ['xs6', 'ml-3']">
             <v-combobox label="소속본당" class="body-2" @input="fetchReports()"
                         v-model="model" :items="items" item-value="code" item-text="name"
                         :search-input.sync="search" clearable single-line> <!--:disabled="authInfo.level === 'L3'"-->
@@ -21,7 +21,7 @@
               </template>
             </v-combobox>
           </v-flex>
-          <v-flex :class="winWidth >= 600 ? 'xs3' : 'xs6'" ml-3 pl-2>
+          <v-flex :class="winWidth >= 900 ? 'xs3' : 'xs6'" ml-3 pl-2>
             <v-select label="연도선택" class="w-90 text-xs-center body-1" single-line
                       :items="years" v-model="rYear"></v-select>
           </v-flex>
@@ -32,7 +32,7 @@
           </v-flex>-->
         </v-layout>
       </v-flex>
-      <v-flex xs6 v-if="winWidth >= 600">
+      <v-flex xs6 v-if="winWidth >= 900">
         <v-layout justify-end>
           <!--<v-btn color="deep-orange accent-2" outline dark class="mb-2" @click="deleteReport">보고 삭제</v-btn>-->
           <v-btn color="indigo accent-2" outline dark class="mb-2" @click="newReport">신규 보고</v-btn>
@@ -204,7 +204,7 @@ export default {
   .w-100px {
     width: 100px;
   }
-  @media only screen and (max-width: 600px) {
+  @media only screen and (max-width: 900px) {
     td {
       padding: 0 !important;
     }

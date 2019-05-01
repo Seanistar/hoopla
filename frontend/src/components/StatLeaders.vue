@@ -1,11 +1,11 @@
 <template>
   <v-container pt-2 mt-1>
     <v-layout row align-baseline>
-      <v-flex :class="$parent.window.width >= 600 ? 'xs2' : 'xs6'">
+      <v-flex :class="$parent.window.width >= 900 ? 'xs2' : ['xs6', 'ml-2']">
         <v-select label="연도선택" class="w-90 text-xs-center body-1" clearable
                   :items="years" v-model="s_year"></v-select>
       </v-flex>
-      <v-flex :class="$parent.window.width >= 600 ? 'xs10' : 'xs6'" text-xs-right>
+      <v-flex :class="$parent.window.width >= 900 ? 'xs10' : 'xs6'" text-xs-right>
         <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
       </v-flex>
     </v-layout>
@@ -13,7 +13,7 @@
                   hide-actions class="elevation-1">
       <template slot="items" slot-scope="props">
         <tr>
-          <td class="text-xs-center">{{props.index + 1}}</td>
+          <td class="text-xs-center" style="width: 50px">{{props.index + 1}}</td>
           <td class="text-xs-center">{{props.item.name}}</td>
           <td class="text-xs-center">{{props.item.ca_name}}</td>
           <td class="text-xs-center">{{props.item.s_name}}</td>
@@ -45,10 +45,10 @@ export default {
       return [
         { text: '번호', value: 'id', sortable: false, align: 'center' },
         // { text: '고유번호', value: 'ca_id' },
-        { text: '성명', value: 'name', align: 'center' },
-        { text: '세례명', value: 'ca_name', align: 'center' },
-        { text: '소속 본당', value: 'a_code', align: 'center' },
-        { text: '전화 번호', value: 'phone', sortable: false, align: 'center' }
+        { text: '성명', value: 'name', align: 'center', class: ['body-1', 'font-weight-bold'] },
+        { text: '세례명', value: 'ca_name', align: 'center', class: ['body-1', 'font-weight-bold'] },
+        { text: '소속 본당', value: 'a_code', align: 'center', class: ['body-1', 'font-weight-bold'] },
+        { text: '전화 번호', value: 'phone', sortable: false, align: 'center', class: ['body-1', 'font-weight-bold'] }
       ]
     }
   },
@@ -87,8 +87,7 @@ export default {
 </script>
 
 <style scoped>
-  table, th, td {
-    /*border: 1px solid grey;*/
-    border-collapse: collapse;
+  head-font {
+    font-size: 16px;
   }
 </style>

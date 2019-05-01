@@ -1,11 +1,11 @@
 <template>
   <v-container pt-2>
     <v-layout align-center mb-1>
-      <v-flex :class="$parent.winWidth < 600 ? 'xs6' : 'xs4'">
+      <v-flex :class="$parent.winWidth < 900 ? 'xs6' : 'xs4'">
         <v-subheader class="subheading font-weight-bold">{{s_name}} 본당 ({{$parent.E_DATE.slice(0, 4)}})
         </v-subheader>
       </v-flex>
-      <v-flex :class="$parent.winWidth < 600 ? 'xs6' : 'xs8'">
+      <v-flex :class="$parent.winWidth < 900 ? 'xs6' : 'xs8'">
         <v-layout justify-end>
           <v-subheader class="body-2 w-27 pr-0">
             <span class="mr-2">총 봉사자수 :</span>
@@ -165,7 +165,7 @@ export default {
   tr td {
     cursor: pointer
   }
-  @media only screen and (max-width: 600px) {
+  @media only screen and (max-width: 900px) {
     .w-27 {
       width: 98%;
     }

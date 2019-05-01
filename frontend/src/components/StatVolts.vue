@@ -1,12 +1,12 @@
 <template>
-  <v-container pt-2 mt-3>
+  <v-container pt-2 mt-1>
     <v-layout row align-baseline>
-      <v-flex :class="$parent.window.width < 600 ? ['xs6', 'ml-3'] : ['xs2']">
+      <v-flex :class="$parent.window.width < 900 ? ['xs6', 'ml-3'] : ['xs2']">
         <v-select label="교구선택" class="body-2" clearable
                   v-model="area" :items="areaList" item-value="code" item-text="name">
         </v-select>
       </v-flex>
-      <v-flex :class="$parent.window.width >= 600 ? 'xs10' : 'xs6'" text-xs-right>
+      <v-flex :class="$parent.window.width >= 900 ? 'xs10' : 'xs6'" text-xs-right>
         <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
       </v-flex>
     </v-layout>
@@ -15,10 +15,12 @@
       <v-progress-circular indeterminate color="#00b0f5"></v-progress-circular>
     </v-layout>
 
-    <v-data-table :items="items" :pagination.sync="pagination" class="elevation-1"
+    <v-data-table :items="items" hide-actions
+                  style="max-height: calc(80vh - 10px);backface-visibility: hidden;"
+                  class="elevation-1 main-table fixed-header v-table__overflow"
       v-if="churchList.length">
       <template slot="headers" slot-scope="props">
-        <tr>
+        <tr class="first-row">
           <th class="body-2 font-weight-bold w-5">연도</th>
           <th class="body-2 font-weight-bold w-5">합계</th>
           <th class="align-center body-1 w-5" v-for="(church, idx) in churchList" :key="idx"><p class="head-title">{{church.name}}</p></th>
@@ -26,7 +28,7 @@
       </template>
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <tr>
+        <tr class="first-column">
           <td class="text-xs-center">{{Object.keys(props.item)[0]}}</td>
           <td class="text-xs-center" >{{summary[Object.keys(props.item)[0]]}}</td>
           <td v-for="(at, idx) in churchList" class="text-xs-center" :key="idx">{{props.item|keyBy|counter(at)|units}} <!--{{props.item|keyBy|actor(at)|units}}--></td>
@@ -163,22 +165,8 @@ export default {
 </script>
 
 <style scoped>
-  table, th, td {
-    border: 1px solid grey;
-    border-collapse: collapse;
-  }
-  th {
-    max-width: 30px !important;
-    min-width: 20px !important;
-    padding: 3px !important;
-    text-align: center;
-  }
   tr td:nth-child(2), tr th:nth-child(2) {
     background-color: orange;
-  }
-  .head-title {
-    white-space: normal;
-    margin-bottom: 0 !important;
   }
   .w-5 {
     width: 5% !important;

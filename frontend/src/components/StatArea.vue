@@ -1,6 +1,6 @@
 <template>
   <v-container pt-2 mt-1>
-    <v-layout v-if="$parent.window.width >= 600">
+    <v-layout v-if="$parent.window.width >= 900">
       <v-flex xs2 mb-2>
         <v-radio-group v-model="type" row height="20" hide-details>
           <v-radio label="교육 현황" value="edus"></v-radio>
@@ -15,39 +15,41 @@
       </v-flex>
     </v-layout>
     <v-layout v-else>
-      <v-flex xs12 mb-2>
+      <v-flex xs12>
         <v-radio-group v-model="type" row height="20" hide-details class="ml-3">
           <v-radio label="교육 현황" value="edus"></v-radio>
           <v-radio label="봉사 현황" value="acts"></v-radio>
         </v-radio-group>
       </v-flex>
     </v-layout>
-    <v-data-table :items="items" hide-actions class="elevation-1 main-table">
+    <v-data-table :items="items" hide-actions
+                  style="max-height: calc(80vh - 10px);backface-visibility: hidden;"
+                  class="elevation-1 main-table fixed-header v-table__overflow">
       <template slot="headers" slot-scope="props">
         <template v-if="type === 'edus'">
-          <tr>
-            <th rowspan="3" class="body-2 font-weight-bold w-5"><p class="head-title">교구 구분</p></th>
+          <tr class="first-row">
+            <th rowspan="2" class="body-2 font-weight-bold w-5"><p class="head-title">교구 구분</p></th>
             <th :colspan="ebsCodes.length" class="body-2 font-weight-bold">교육 현황 (명)</th>
             <th :colspan="grpCodes.length" class="body-2 font-weight-bold">그룹 공부 현황 (명)</th>
             <th :colspan="trnCodes.length" class="body-2 font-weight-bold">성서 연수 현황 (명)</th>
             <th :colspan="stdCodes.length" class="body-2 font-weight-bold">노트 검사 현황 (명)</th>
           </tr>
-          <tr class="data-column">
-            <th rowspan="2" class="align-center caption" v-for="header in ebsCodes" :key="header.code"><p class="head-title">{{header.name}}</p></th>
-            <th rowspan="2" class="align-center caption" v-for="header in grpCodes" :key="header.code"><p class="head-title">{{header.name|subject}}</p></th>
-            <th rowspan="2" class="align-center caption" v-for="header in trnCodes" :key="header.code"><p class="head-title">{{header.name|subject}}</p></th>
-            <th rowspan="2" class="align-center caption" v-for="header in stdCodes" :key="header.code"><p class="head-title">{{header.name|subject}}</p></th>
+          <tr class="data-column second-row">
+            <th class="align-center caption" v-for="header in ebsCodes" :key="header.code"><p class="head-title">{{header.name}}</p></th>
+            <th class="align-center caption" v-for="header in grpCodes" :key="header.code"><p class="head-title">{{header.name|subject}}</p></th>
+            <th class="align-center caption" v-for="header in trnCodes" :key="header.code"><p class="head-title">{{header.name|subject}}</p></th>
+            <th class="align-center caption" v-for="header in stdCodes" :key="header.code"><p class="head-title">{{header.name|subject}}</p></th>
           </tr>
         </template>
         <template v-else>
-          <tr>
+          <tr class="first-row">
             <th rowspan="3" class="body-2 font-weight-bold w-5"><p class="head-title">교구 구분</p></th>
             <th :colspan="actCodes.length * 2" class="body-2 font-weight-bold">봉사 현황</th>
           </tr>
-          <tr class="data-column">
+          <tr class="data-column second-row">
             <th colspan="2" class="align-center caption" v-for="header in actCodes" :key="header.code">{{header.name}}</th>
           </tr>
-          <tr class="data-column">
+          <tr class="data-column third-row">
             <template v-for="n in actCodes.length">
               <th class="align-center caption" :key="n">그룹</th>
               <th class="align-center caption" :key="actCodes.length + n">인원</th>
@@ -56,14 +58,14 @@
         </template>
       </template>
       <template slot="items" slot-scope="props">
-        <tr v-if="type === 'edus'">
+        <tr class="first-column" v-if="type === 'edus'">
           <td class="text-xs-center ">{{props.item|yearKey}}</td>
           <td class="text-xs-center" v-for="at in ebsCodes" :key="at.code">{{props.item|keyBy|uv_counter(at)|units}}</td>
           <td class="text-xs-center" v-for="at in grpCodes" :key="at.code">{{props.item|keyBy|uv_counter(at)|units}}</td>
           <td class="text-xs-center" v-for="at in trnCodes" :key="at.code">{{props.item|keyBy|uv_counter(at)|units}}</td>
           <td class="text-xs-center" v-for="at in stdCodes" :key="at.code">{{props.item|keyBy|uv_counter(at)|units}}</td>
         </tr>
-        <tr v-else>
+        <tr class="first-column" v-else>
           <td class="text-xs-center w-10">{{props.item|yearKey}}</td>
           <template v-for="(at, i) in actCodes">
             <td class="text-xs-center" :key="ebsCodes.length + i">{{props.item|keyBy|gp_counter(at)}}</td>
@@ -159,21 +161,7 @@ export default {
 </script>
 
 <style scoped>
-  table, th, td {
-    border: 1px solid grey;
-    border-collapse: collapse;
-  }
-  th, td {
-    max-width: 25px !important;
-    min-width: 20px !important;
-    padding: 3px !important;
-    text-align: center;
-  }
   tbody tr:first-child {
     background-color: orange;
-  }
-  .head-title {
-    white-space: normal;
-    margin-bottom: 0 !important;
   }
 </style>

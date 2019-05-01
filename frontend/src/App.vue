@@ -48,7 +48,7 @@ export default {
   #app {
     margin: 0px 2px;
   }
-  @media screen and (max-width: 600px) {
+  @media screen and (max-width: 900px) {
     .container {
       padding: 1px !important;
     }
