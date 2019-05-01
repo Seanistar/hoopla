@@ -56,11 +56,12 @@
     </v-layout>
     <v-data-table :items="items" hide-actions
                   style="max-height: calc(80vh - 10px);backface-visibility: hidden;"
-                  class="elevation-1 main-table fixed-header v-table__overflow">
+                  :class="type === 'edus' ? 'main-table' : 'acts-table'"
+                  class="elevation-1 fixed-header v-table__overflow">
       <template slot="headers" slot-scope="props">
         <template v-if="type === 'edus'">
           <tr class="first-row">
-            <th rowspan="2" class="body-2 font-weight-bold" style="width: 160px"><p class="head-title">본당 구분</p></th>
+            <th rowspan="2" class="body-2 font-weight-bold" style="width: 120px"><p class="head-title">본당 구분</p></th>
             <th :colspan="ebsCodes.length" class="body-2 font-weight-bold">교육 현황 (명)</th>
             <th :colspan="grpCodes.length" class="body-2 font-weight-bold">그룹 공부 현황 (명)</th>
             <th :colspan="trnCodes.length" class="body-2 font-weight-bold">성서 연수 현황 (명)</th>
@@ -75,7 +76,7 @@
         </template>
         <template v-else>
           <tr class="first-row">
-            <th rowspan="3" class="body-2 font-weight-bold" style="width: 160px"><p class="head-title">본당 구분</p></th>
+            <th rowspan="3" class="body-2 font-weight-bold" style="width: 120px"><p class="head-title">본당 구분</p></th>
             <th :colspan="actCodes.length * 2" class="body-2 font-weight-bold">봉사 현황</th>
           </tr>
           <tr class="data-column second-row">

@@ -59,7 +59,8 @@
     </v-layout>
     <v-data-table id="yearly" :items="items" hide-actions
                   style="max-height: calc(80vh - 10px);backface-visibility: hidden;"
-                  class="elevation-1 main-table fixed-header v-table__overflow">
+                  :class="type === 'edus' ? 'main-table' : 'acts-table'"
+                  class="elevation-1 fixed-header v-table__overflow">
       <template slot="headers" slot-scope="props">
         <template v-if="type === 'edus'">
           <tr class="first-row">

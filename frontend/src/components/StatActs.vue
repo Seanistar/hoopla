@@ -1,7 +1,7 @@
 <template>
   <v-container pt-2 mt-1>
     <v-layout row align-baseline>
-      <v-flex :class="$parent.window.width >= 900 ? 'xs3' : 'xs6'">
+      <v-flex :class="$parent.window.width >= 900 ? 'xs3' : ['xs6', 'ml-2']">
         <v-combobox label="본당을 선택하세요" class="text-xs-center body-2" clearable
                   :items="churchList" item-value="code" item-text="name"
                   v-model="church"></v-combobox>

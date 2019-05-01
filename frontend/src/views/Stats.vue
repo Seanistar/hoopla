@@ -55,7 +55,11 @@ export default {
       width: 80px !important;
     }
     .main-table .v-table__overflow table.v-table {
-      width: 1600px !important;
+      width: 1800px !important;
+      overflow-x: auto;
+    }
+    .acts-table .v-table__overflow table.v-table {
+      width: 1400px !important;
       overflow-x: auto;
     }
     .w-5 { width: 5% !important; }
@@ -63,14 +67,17 @@ export default {
 </style>
 
 <style lang="scss">
-  .theme--light.v-table thead th,
-  .theme--light.v-table tbody td:first-child {
-    background-color: lightgrey;
-  }
   .fixed-header {
     display: flex;
     flex-direction: column;
     height: 100%;
+
+    .theme--light.v-table tbody td:first-child {
+      background-color: lightgrey;
+    }
+    table.v-table thead tr {
+      height: 40px;
+    }
     th {
       border-right: 1px solid grey;
     }
@@ -104,13 +111,13 @@ export default {
     }
     .second-row th {
       position: sticky;
-      top: 56px;
+      top: 40px;
       z-index: 6;
       border-top: 1px solid grey;
     }
     .third-row th {
       position: sticky;
-      top: 112px;
+      top: 80px;
       z-index: 6;
       border-top: 1px solid grey;
     }

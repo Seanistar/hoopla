@@ -39,7 +39,7 @@
                   disable-initial-sort hide-actions>
       <template slot="items" slot-scope="props">
         <tr class="first-row" @dblclick="editItem(props.item)">
-          <td class="text-xs-center"><span>{{(props.index + 1)}}</span></td>
+          <td class="text-xs-center" style="padding: 0 10px"><span>{{(props.index + 1)}}</span></td>
           <td class="text-xs-center" style="cursor: pointer">
             <span>{{ props.item.name }}</span>
             <v-badge color="orange" class="badge-pos"

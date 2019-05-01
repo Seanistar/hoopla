@@ -48,6 +48,9 @@ export default {
   #app {
     margin: 0px 2px;
   }
+  .theme--light.v-table thead th {
+    background-color: lightgrey;
+  }
   @media screen and (max-width: 900px) {
     .container {
       padding: 1px !important;

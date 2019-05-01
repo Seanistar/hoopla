@@ -16,7 +16,7 @@
     </v-layout>
     <v-layout v-else>
       <v-flex xs12>
-        <v-radio-group v-model="type" row height="20" hide-details class="ml-3">
+        <v-radio-group v-model="type" row height="20" class="ml-3">
           <v-radio label="교육 현황" value="edus"></v-radio>
           <v-radio label="봉사 현황" value="acts"></v-radio>
         </v-radio-group>
@@ -24,7 +24,8 @@
     </v-layout>
     <v-data-table :items="items" hide-actions
                   style="max-height: calc(80vh - 10px);backface-visibility: hidden;"
-                  class="elevation-1 main-table fixed-header v-table__overflow">
+                  :class="type === 'edus' ? 'main-table' : 'acts-table'"
+                  class="elevation-1  fixed-header v-table__overflow">
       <template slot="headers" slot-scope="props">
         <template v-if="type === 'edus'">
           <tr class="first-row">
