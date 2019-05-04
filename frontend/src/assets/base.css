@@ -49,3 +49,10 @@
 .txt-deco-none {
   text-decoration: none !important;
 }
+
+.progress-circular {
+  margin: auto 0;
+  height: 45vh;
+  width: 80vw;
+  position: absolute;
+}

@@ -1,7 +1,7 @@
 <template>
   <v-container pt-2 mt-1>
     <v-layout v-if="$parent.window.width >= 900">
-      <v-flex xs2 mb-2>
+      <v-flex xs4 mb-2>
         <v-radio-group v-model="type" row height="20" hide-details>
           <v-radio label="교육 현황" value="edus"></v-radio>
           <v-radio label="봉사 현황" value="acts"></v-radio>
@@ -10,7 +10,7 @@
       <v-flex xs4 mt-3>
         <div class="body-2 grey--text">※ 현재 연도 자료입니다.</div>
       </v-flex>
-      <v-flex xs6 text-xs-right>
+      <v-flex xs4 text-xs-right>
         <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
       </v-flex>
     </v-layout>
@@ -22,6 +22,11 @@
         </v-radio-group>
       </v-flex>
     </v-layout>
+
+    <v-layout align-center justify-center class="progress-circular" v-if="!fetched">
+      <v-progress-circular indeterminate color="#00b0f5"></v-progress-circular>
+    </v-layout>
+
     <v-data-table :items="items" hide-actions
                   style="max-height: calc(80vh - 10px);backface-visibility: hidden;"
                   :class="type === 'edus' ? 'main-table' : 'acts-table'"
@@ -105,6 +110,7 @@ export default {
   },
   data: () => ({
     items: [],
+    fetched: false,
     type: 'edus'
   }),
   watch: {
@@ -120,6 +126,7 @@ export default {
   },
   methods: {
     async fetchData () {
+      this.fetched = false
       const params = { type: this.type }
       await this.$store.dispatch(FETCH_STAT_AREA, {params})
       this.$nextTick(() => { this._mapData() })
@@ -145,6 +152,7 @@ export default {
         rs[f] = [{uv_count: sumBy(ye[f], 'uv_count'), gp_count: sumBy(ye[f], 'gp_count')}]
       })
       this.items = [{'합계': rs}].concat(this.items)
+      this.fetched = true
     },
     toExcel () {
       const table = document.getElementsByTagName('table')

@@ -152,7 +152,7 @@ router.get('/others', (req, res) => {
 })
 
 router.get('/leaders', (req, res) => {
-  const {s_year} = req.query
+  const {s_year, l_area} = req.query
   let _sql = `
     SELECT l.area_code a_code, v.ca_id, l.s_date, ac.s_name, v.name, v.ca_name, v.phone
     FROM leaders l 
@@ -160,6 +160,7 @@ router.get('/leaders', (req, res) => {
     LEFT JOIN area_code ac ON l.area_code = ac.a_code
     WHERE l.work = 'Y'`
   if (s_year) _sql += ` AND YEAR(l.s_date) = '${s_year}'`
+  if (l_area) _sql += ` AND ac.l_code = '${l_area}'`
 
   db.query(_sql, (err, rows) => {
     if (!err) {

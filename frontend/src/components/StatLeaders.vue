@@ -5,10 +5,20 @@
         <v-select label="연도선택" class="w-90 text-xs-center body-1" clearable
                   :items="years" v-model="s_year"></v-select>
       </v-flex>
-      <v-flex :class="$parent.window.width >= 900 ? 'xs10' : 'xs6'" text-xs-right>
+      <v-flex ml-2 :class="$parent.window.width >= 900 ? 'xs3' : ['xs6', 'mr-2']">
+        <v-select label="교구선택" class="body-2" clearable
+                  :items="areaList" v-model="l_area" item-value="code" item-text="name">
+        </v-select>
+      </v-flex>
+      <v-flex text-xs-right v-if="$parent.window.width >= 900">
         <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
       </v-flex>
     </v-layout>
+
+    <v-layout align-center justify-center class="progress-circular" v-if="!fetched">
+      <v-progress-circular indeterminate color="#00b0f5"></v-progress-circular>
+    </v-layout>
+
     <v-data-table id="leaders" :items="statLeaders" :headers="headers"
                   hide-actions class="elevation-1">
       <template slot="items" slot-scope="props">
@@ -31,12 +41,13 @@
 import { mapGetters } from 'vuex'
 import { FETCH_STAT_LEADERS } from '@/store/actions.type'
 import { range } from 'lodash/util'
+import { map } from 'lodash/collection'
 import XLSX from 'xlsx'
 
 export default {
   name: 'StatLeaders',
   computed: {
-    ...mapGetters(['statLeaders']),
+    ...mapGetters(['statLeaders', 'largeCodes']),
     years () {
       const start = (new Date()).getFullYear()
       return ['선택없음'].concat(range(start, 1994, -1))
@@ -54,21 +65,36 @@ export default {
   },
   data: () => ({
     items: [],
-    s_year: null
+    areaList: [],
+    fetched: false,
+    s_year: null,
+    l_area: null
   }),
   watch: {
     s_year (nv, ov) {
+      if (!ov && !nv) return
+      this.fetchData()
+    },
+    l_area (nv, ov) {
       if (!ov && !nv) return
       this.fetchData()
     }
   },
   created () {
     this.fetchData()
+    this.$nextTick(() => { this.setArea() })
   },
   methods: {
     async fetchData () {
-      const params = { s_year: this.s_year }
+      const params = { s_year: this.s_year, l_area: this.l_area }
       await this.$store.dispatch(FETCH_STAT_LEADERS, {params})
+      this.fetched = true
+    },
+    setArea () {
+      this.$nextTick(() => {
+        this.areaList = map(this.largeCodes, o => { return {code: o.l_code, name: o.l_name} })
+      })
+      this.areaList = [{code: '', name: '선택없음'}].concat(this.areaList)
     },
     toExcel () {
       const table = document.getElementsByTagName('table')

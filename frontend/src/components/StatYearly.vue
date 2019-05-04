@@ -57,6 +57,11 @@
         </v-radio-group>
       </v-flex>
     </v-layout>
+
+    <v-layout align-center justify-center class="progress-circular" v-if="!fetched">
+      <v-progress-circular indeterminate color="#00b0f5"></v-progress-circular>
+    </v-layout>
+
     <v-data-table id="yearly" :items="items" hide-actions
                   style="max-height: calc(80vh - 10px);backface-visibility: hidden;"
                   :class="type === 'edus' ? 'main-table' : 'acts-table'"
@@ -147,6 +152,7 @@ export default {
     area: null,
     church: null,
     type: 'edus',
+    fetched: false,
     pagination: {rowsPerPage: 25}
   }),
   watch: {
@@ -168,6 +174,7 @@ export default {
   },
   methods: {
     async fetchData () {
+      this.fetched = false
       const params = { church: this.church && this.church.code, area: this.area, type: this.type }
       await this.$store.dispatch(FETCH_STAT_YEARLY, {params})
       this.$nextTick(() => { this._mapData() })
@@ -191,6 +198,7 @@ export default {
         rs[f] = [{uv_count: sumBy(ye[f], 'uv_count'), gp_count: sumBy(ye[f], 'gp_count')}]
       })
       this.items = [{'합계': rs}].concat(this.items)
+      this.fetched = true
     },
     setArea () {
       this.$nextTick(() => {

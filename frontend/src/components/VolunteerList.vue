@@ -15,11 +15,11 @@
                         @keyup.enter="fetchVolunteers()" label="봉사자 이름" clearable>
             </v-text-field>
           </v-flex>
-          <v-flex xs4 ml-3 body-1 v-if="winWidth >= 900 ">
+          <v-flex xs4 ml-3 body-1 v-if="winWidth >= 900">
             <span>봉사자 수 - 전체: <b>{{totalCount|units}}</b> 명</span>
             <span v-if="fetched && (search || voltName)"> / 현재 검색: <b>{{volunteersCount|units}}</b> 명</span>
           </v-flex>
-          <v-flex ml-2 else>
+          <v-flex ml-2 v-else>
             <span>현재: <b>{{totalCount|units}}</b> 명</span>
           </v-flex>
         </v-layout>
@@ -178,11 +178,5 @@ export default {
   .badge-pos {
     top: -15px;
     right: -15px
-  }
-  .progress-circular {
-    margin: auto 0;
-    height: 400px;
-    width: 80vw;
-    position: absolute;
   }
 </style>

@@ -1,13 +1,13 @@
 <template>
-  <v-container pt-4 pb-3 mt-2 elevation-3>
-    <v-layout pb-2 pl-2>
-      <v-flex xs2>
+  <v-container pt-3 pb-3 mt-2 elevation-3>
+    <v-layout pb-2 pl-2 align-center>
+      <v-flex :class="$parent.winWidth < 900 ? 'xs4' : 'xs2'">
         <div>전체 이력 : {{volunteerLeader.length}} 건</div>
       </v-flex>
-      <v-flex xs4>
+      <v-flex :class="$parent.winWidth < 900 ? 'xs8' : 'xs4'">
         <slot name="voltInfo"></slot>
       </v-flex>
-      <v-flex xs6>
+      <v-flex xs6 v-if="$parent.winWidth >= 900">
         <div class="text-xs-right caption grey--text">※ 봉사자 기본 정보에서 대표자 정보 변경 시 자동 갱신됩니다.</div>
       </v-flex>
     </v-layout>

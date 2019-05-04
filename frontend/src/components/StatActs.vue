@@ -10,6 +10,11 @@
         <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
       </v-flex>
     </v-layout>
+
+    <v-layout align-center justify-center class="progress-circular" v-if="!fetched">
+      <v-progress-circular indeterminate color="#00b0f5"></v-progress-circular>
+    </v-layout>
+
     <v-data-table :items="items" hide-actions
                   style="max-height: calc(80vh - 10px);backface-visibility: hidden;"
                   class="elevation-1 main-table fixed-header v-table__overflow">
@@ -42,7 +47,7 @@
         </tr>
       </template>
       <template slot="no-data">
-        <tr class="text-xs-center"><td colspan="34">현황 내역이 없습니다.</td></tr>
+        <tr class="text-xs-center"><td colspan="11">현황 내역이 없습니다.</td></tr>
       </template>
     </v-data-table>
   </v-container>
@@ -70,6 +75,7 @@ export default {
   data: () => ({
     items: [],
     churchList: [],
+    fetched: false,
     church: { code: '01-10-01', name: '가락동' }
   }),
   watch: {
@@ -88,6 +94,7 @@ export default {
   methods: {
     async fetchData () {
       if (!this.church || !this.church.code) return
+      this.fetched = false
       const params = {}
       if (this.church) params['code'] = this.church.code
       await this.$store.dispatch(FETCH_STAT_ACTS, {params})
@@ -106,6 +113,8 @@ export default {
         Object.assign(obj[k], vl)
         this.items.push(obj)
       })
+
+      this.fetched = true
     },
     setArea () {
       const list = map(this.smallCodes(), o => {
@@ -134,6 +143,9 @@ export default {
 </script>
 
 <style scoped>
+  .stats-acts-table tr td {
+   width: 80px !important;
+  }
   .w-5 {
     width: 5% !important;;
   }

@@ -85,6 +85,7 @@ export default {
   }),
   created () {
     if (this.id > 0) this.v_id = this.id
+    this.winWidth = window.innerWidth
   },
   methods: {
     isAccessible () {

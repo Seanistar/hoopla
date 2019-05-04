@@ -85,8 +85,8 @@ export default {
       border: 1px solid grey;
     }
     th, td {
-      max-width: 25px !important;
-      min-width: 20px !important;
+      max-width: 50px !important;
+      min-width: 25px !important;
       padding: 0 3px !important;
       text-align: center;
     }
@@ -96,7 +96,7 @@ export default {
     }
     table {
       table-layout: fixed;
-      width: calc(92vw - 30px);
+      width: calc(92vw - 30px) !important;
     }
     .first-row th {
       position: sticky;

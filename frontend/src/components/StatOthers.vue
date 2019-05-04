@@ -15,6 +15,11 @@
         <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
       </v-flex>
     </v-layout>
+
+    <v-layout align-center justify-center class="progress-circular" v-if="!fetched">
+      <v-progress-circular indeterminate color="#00b0f5"></v-progress-circular>
+    </v-layout>
+
     <v-data-table :items="items" hide-actions
                   style="max-height: calc(80vh - 10px);backface-visibility: hidden;"
                   class="elevation-1 main-table fixed-header v-table__overflow">
@@ -70,6 +75,7 @@ export default {
     churchList: [],
     church: null,
     other: null,
+    fetched: false,
     pagination: { rowsPerPage: 50 },
     perPage: [50, 100, 200, {text: '$vuetify.dataIterator.rowsPerPageAll', value: -1}]
   }),
@@ -87,7 +93,8 @@ export default {
   },
   methods: {
     async fetchData () {
-      const params = { }
+      this.fetched = false
+      const params = {}
       if (this.church) params['ch_code'] = this.church.code
       if (this.other) params['ot_code'] = this.other.code
       await this.$store.dispatch(FETCH_STAT_OTHERS, {params})
@@ -106,6 +113,7 @@ export default {
         Object.assign(obj[k], vl)
         this.items.push(obj)
       })
+      this.fetched = true
       // console.log(this.items)
     },
     setArea () {

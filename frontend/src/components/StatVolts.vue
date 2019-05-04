@@ -16,14 +16,14 @@
     </v-layout>
 
     <v-data-table :items="items" hide-actions
-                  style="max-height: calc(80vh - 10px);backface-visibility: hidden;"
-                  class="elevation-1 main-table fixed-header v-table__overflow"
-      v-if="churchList.length">
+                  style="max-height: calc(80vh - 10px); backface-visibility: hidden;"
+                  class="elevation-1 main-table fixed-header v-table__overflow stat-volts-table"
+                  v-if="churchList.length">
       <template slot="headers" slot-scope="props">
         <tr class="first-row">
-          <th class="body-2 font-weight-bold w-5">연도</th>
-          <th class="body-2 font-weight-bold w-5">합계</th>
-          <th class="align-center body-1 w-5" v-for="(church, idx) in churchList" :key="idx"><p class="head-title">{{church.name}}</p></th>
+          <th class="body-2 font-weight-bold">연도</th>
+          <th class="body-2 font-weight-bold">합계</th>
+          <th class="align-center body-1" v-for="(church, idx) in churchList" :key="idx"><p class="head-title">{{church.name}}</p></th>
         </tr>
       </template>
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
@@ -168,7 +168,14 @@ export default {
   tr td:nth-child(2), tr th:nth-child(2) {
     background-color: orange;
   }
+  .stat-volts-table tr th {
+    width: 50px !important;
+  }
   .w-5 {
     width: 5% !important;
+  }
+  .main-table .v-table__overflow table.v-table {
+    width: 3000px !important;
+    overflow-x: auto;
   }
 </style>

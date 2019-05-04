@@ -80,6 +80,7 @@ export default {
     width: 152px;
     position: relative;
     cursor: pointer;
+    margin: 0 auto;
     /*padding-top: 50% !important;*/
   }
   .input-file {
