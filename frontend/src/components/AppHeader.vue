@@ -10,10 +10,7 @@
           <v-icon>more_vert</v-icon>
         </v-btn>
         <v-list>
-          <v-list-tile
-              v-for="(item, i) in ['인쇄 모드','도움말 보기']"
-              :key="i"
-              @click="selectMenu(i)">
+          <v-list-tile v-for="(item, i) in ['인쇄 모드','도움말 보기']" :key="i" @click="selectMenu(i)">
             <v-list-tile-title>{{ item }}</v-list-tile-title>
           </v-list-tile>
         </v-list>
@@ -26,19 +23,37 @@
         </v-tab>
       </v-tabs>
     </v-toolbar>
+
+    <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+      <v-card>
+        <v-toolbar dark color="blue lighten-1">
+          <v-btn icon dark @click.native="dialog = false"><v-icon>close</v-icon></v-btn>
+          <v-toolbar-title>IXTUS 시스템 사용 도움말</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-btn dark flat @click.native="editable = true" v-if="authInfo && authInfo.level === 'L4'">편집</v-btn>
+            <v-btn dark flat @click.native="dialog = false; editable = false">닫기</v-btn>
+          </v-toolbar-items>
+        </v-toolbar>
+        <app-helper :editable="editable"></app-helper>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import { trimStart } from 'lodash/string'
 import { mapGetters } from 'vuex'
+import AppHelper from './AppHelper'
 
 export default {
   name: 'Header',
+  components: { AppHelper },
   data () {
     return {
-      title: '',
+      editable: false,
       tabIdx: null,
+      dialog: false,
       alert: {show: false, message: '로그인이 필요합니다.'},
       items: [
         {text: '익투스 안내', link: 'home'},
@@ -52,7 +67,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'isAuth'
+      'isAuth', 'authInfo'
     ])
   },
   methods: {
@@ -68,7 +83,7 @@ export default {
     },
     selectMenu (index) {
       if (index === 0) setTimeout(() => window.print(), 200)
-      else if (index === 1) this.$showSnackBar('도움말 준비중입니다!')
+      else if (index === 1) this.dialog = true // this.$showSnackBar('도움말 준비중입니다!')
       // else if (index === 2) window.open('https://www.google.com/intl/ko_ALL/chrome/')
     }
   },

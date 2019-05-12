@@ -23,7 +23,19 @@ const storage = multer.diskStorage({
     cb(null, req.body.cid + '_' + fName)
   }
 })
-//const upload = multer({dest: './upload/'});
+const helperStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './public/helper')
+  },
+  filename: function (req, file, cb) {
+    let ext = (file.mimetype.indexOf('png') > 0) ? 'png' : 'jpg'
+
+    const fName = (new Date()).getFullYear()  + '.' + ext
+    cb(null, req.body.fileID + '_' + fName)
+  }
+})
+
+const helperUpload = multer({ storage: helperStorage });
 const upload = multer({ storage: storage });
 const router = express.Router()
 
@@ -33,5 +45,11 @@ router.post('/upload', upload.single('photoUploader'), (req, res, next) => {
   res.send(req.file.filename)
 })
 
+router.post('/helper', helperUpload.single('helper'), (req, res) => {
+  if (!req.file) return res.status(400).send('No File')
+
+  console.log(req.file.filename)
+  res.status(200).send(req.file.filename)
+})
 
 module.exports = router

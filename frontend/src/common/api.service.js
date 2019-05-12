@@ -74,6 +74,12 @@ export const AdminService = {
   },
   login (params) {
     return ApiService.update('admin/login', params)
+  },
+  getHelper () {
+    return ApiService.query('admin/helper/guide')
+  },
+  updateHelper (data) {
+    return ApiService.update('admin/helper/guide', data)
   }
 }
 
@@ -83,6 +89,9 @@ export const UtilityService = {
   },
   uploadImage (formData) {
     return ApiService.update('photos/upload', formData)
+  },
+  uploadHelperImage (formData) {
+    return ApiService.update('photos/helper', formData)
   }
 }
 

@@ -45,6 +45,8 @@ export const FETCH_ADMINS = 'fetchAdmins'
 export const REGISTER_ADMIN = 'registerAdmin'
 export const UPDATE_ADMIN = 'updateAdmin'
 export const DELETE_ADMIN = 'deleteAdmin'
+export const UPDATE_HELPER = 'updateHelper'
+export const FETCH_HELPER = 'fetchHelper'
 
 // authentication
 export const CHECK_AUTH = 'checkAuth'

@@ -155,4 +155,30 @@ router.delete('/:id', (req, res) => {
   })
 })
 
+router.post('/helper/guide', (req, res) => {
+  const {content} = req.body
+
+  const sql = ['UPDATE helper SET content=? WHERE chapter=1', [content]]
+  db.query(...sql, (err, rows) => {
+    if (!err) {
+      res.status(200).send(rows)
+    } else {
+      console.warn('updateHelper query error : ' + err)
+      res.status(500).send('Internal Server Error')
+    }
+  })
+})
+
+router.get('/helper/guide', (req, res) => {
+  const sql = ['SELECT content FROM helper WHERE chapter=1']
+  db.query(...sql, (err, rows) => {
+    if (!err) {
+      res.status(200).send(rows)
+    } else {
+      console.warn('getHelper query error : ' + err)
+      res.status(500).send('Internal Server Error')
+    }
+  })
+})
+
 module.exports = router

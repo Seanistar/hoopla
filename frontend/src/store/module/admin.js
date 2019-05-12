@@ -5,7 +5,9 @@ import {
   FETCH_ADMINS,
   REGISTER_ADMIN,
   UPDATE_ADMIN,
-  DELETE_ADMIN
+  DELETE_ADMIN,
+  UPDATE_HELPER,
+  FETCH_HELPER
 } from '../actions.type'
 import {
   INIT_AUTH,
@@ -13,12 +15,14 @@ import {
   FETCH_START,
   FETCH_ADMINS_END,
   SET_ADMIN,
+  SET_HELPER,
   REMOVE_ADMIN
 } from '../mutations.type'
 
 const state = {
   isLogin: false,
   isLoading: false,
+  helper: '',
   admins: [],
   adminInfo: { area_code: '01-01-01' }
 }
@@ -27,7 +31,8 @@ const getters = {
   adminInfo: state => state.adminInfo,
   isLogin: state => state.isLogin,
   admins: state => state.admins,
-  isAdminLoading: state => state.isLoading
+  isAdminLoading: state => state.isLoading,
+  helper: state => state.helper
 }
 
 const actions = {
@@ -81,6 +86,25 @@ const actions = {
       .catch((error) => {
         throw new Error(error)
       })
+  },
+  [FETCH_HELPER] (context) {
+    return AdminService.getHelper()
+      .then(({data}) => {
+        context.commit(SET_HELPER, data[0])
+        return data[0]
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
+  [UPDATE_HELPER] (context, data) {
+    return AdminService.updateHelper(data)
+      .then(() => {
+        // context.commit(SET_HELP, params)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
   }
 }
 
@@ -119,6 +143,9 @@ const mutations = {
     }
     state.admins = admins
     state.isLoading = false
+  },
+  [SET_HELPER] (state, data) {
+    state.helper = data
   }
 }
 

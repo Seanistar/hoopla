@@ -43,6 +43,7 @@ export const SET_LOGIN = 'setLogin '
 export const FETCH_ADMINS_END = 'fetchAdmins'
 export const SET_ADMIN = 'setAdmin'
 export const REMOVE_ADMIN = 'removeAdmin'
+export const SET_HELPER = 'setHelper'
 
 // authentication
 export const SET_AUTH = 'setAuth'
