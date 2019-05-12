@@ -59,12 +59,12 @@
               ></v-text-field>
             </v-flex>
             <v-flex xs3 ml-3>
-              <date-picker ref="br_date" title="생년월일"
-                           @close-date-picker="onPicked" refs="br_date"></date-picker>
+              <!--<date-picker ref="br_date" title="생년월일" @close-date-picker="onPicked" refs="br_date"></date-picker>-->
+              <v-text-field label="생년월일" clearable mask="####-##-##" @blur="params.br_date = makeToDate()" v-model="params.br_date"></v-text-field>
             </v-flex>
             <v-flex xs3 ml-3>
-              <date-picker ref="ca_date" title="세례일"
-                           @close-date-picker="onPicked" refs="ca_date"></date-picker>
+              <!--<date-picker ref="ca_date" title="세례일" @close-date-picker="onPicked" refs="ca_date"></date-picker>-->
+              <v-text-field label="세례일" clearable mask="####-##-##" @blur="params.ca_date = makeToDate()" v-model="params.ca_date"></v-text-field>
             </v-flex>
           </v-layout>
 
@@ -288,7 +288,7 @@ export default {
       else {
         const res = await VolunteerService.get(this.v_id)
         item = res.data[0]
-        console.warn('loaded by service...')
+        // console.warn('loaded by service...')
       }
       !isEmpty(item) && this.$nextTick(() => {
         Object.keys(item).forEach(k => {
@@ -315,8 +315,16 @@ export default {
       this.params = item
     },
     onPicked (obj) {
-      console.log('picked date...', obj.type, obj.date)
+      // console.log('picked date...', obj.type, obj.date)
       this.params[obj.type] = obj.date
+    },
+    makeToDate () {
+      let date = event.target.value
+      date = date.replace(/-/g, '')
+      if (date.length === 0) return ''
+      else if (date.length <= 4) return date + '0101'
+      else if (date.length <= 6) return date + '01'
+      return date
     },
     async onChangedCode (info) {
       this.name.la = info ? info.l_name : ''
@@ -409,7 +417,7 @@ export default {
       let vid = null
       try {
         vid = await this[CREATE_VOLUNTEER](this.form)
-        console.log(vid)
+        // console.log(vid)
         if (vid < 0) return this.$showSnackBar('봉사자 번호가 중복되었습니다. 다시 확인해주세요.')
         else this.$showSnackBar('추가되었습니다.')
       } catch (e) {
