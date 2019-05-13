@@ -12,11 +12,11 @@
           ></ckeditor>
         </div>
 
-        <v-card-actions class="px-0 mt-4 box-btn" v-if="editable">
+        <v-card-actions class="px-0 mt-2 box-btn" v-if="editable">
           <v-flex xs12 text-xs-right>
-            <v-btn @click.stop="onCancel" color="#dfdfdf" class="btn-cancel">
+            <!--<v-btn @click.stop="onCancel" color="#dfdfdf" class="btn-cancel">
               <div>취소</div>
-            </v-btn>
+            </v-btn>-->
             <v-btn @click.stop="onSubmit" :disabled="isEqualInfo()" color="primary" class="bc-primary btn-ok">
               <div>저장</div>
             </v-btn>
@@ -44,11 +44,15 @@ export default {
   watch: {
     editable (val) {
       setTimeout(() => {
+        // const save = val ? 200 : 150
         const box = document.querySelector('.ck-editor__editable')
-        if (box) box.style.height = window.innerWidth < 600 ? '200px' : '400px'
-        if (val && !this.content) this.content = '<p>도움말을 입력하세요.</p>'
+        if (box) box.style.height = '100%'
+
+        const bar = document.querySelector('.ck-toolbar')
+        if (val) bar.classList.remove('no-display')
+        else bar.classList.add('no-display')
+        // if (val && !this.content) this.content = '<p>도움말을 입력하세요.</p>'
       }, 10)
-      // console.log('watched...', val)
     }
   },
   data () {
@@ -85,6 +89,14 @@ export default {
   },
   created () {
     this.fetchInfo()
+  },
+  mounted () {
+    setTimeout(() => {
+      const box = document.querySelector('.ck-editor__editable')
+      if (box) box.style.height = '100%' //  (window.innerHeight - 150) + 'px'
+      const bar = document.querySelector('.ck-toolbar')
+      bar.classList.add('no-display')
+    }, 100)
   }
 }
 </script>
@@ -132,5 +144,10 @@ export default {
     font-size: 13px;
     color: #515151;
     margin-bottom: 6px;
+  }
+</style>
+<style>
+  .no-display {
+    display: none !important;
   }
 </style>
