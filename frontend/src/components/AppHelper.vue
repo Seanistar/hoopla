@@ -60,11 +60,6 @@ export default {
       config: {
         originType: 'discussion',
         extraPlugins: [ UploadAdapterPlugin ],
-        toolbar: [
-          'heading', '|', 'bold', 'italic', 'link', '|',
-          'bulletedList', 'numberedList', '|',
-          'blockQuote', 'imageUpload', '|', 'undo', 'redo'
-        ],
         image: {
           toolbar: [ 'imageTextAlternative', '|', 'imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight' ],
           styles: [ 'full', 'alignLeft', 'alignRight' ]
