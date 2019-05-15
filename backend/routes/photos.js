@@ -30,8 +30,8 @@ const helperStorage = multer.diskStorage({
   filename: function (req, file, cb) {
     let ext = (file.mimetype.indexOf('png') > 0) ? 'png' : 'jpg'
 
-    const fName = (new Date()).getFullYear()  + '.' + ext
-    cb(null, req.body.fileID + '_' + fName)
+    const fName = Date.now() + '.' + ext
+    cb(null, fName)
   }
 })
 
