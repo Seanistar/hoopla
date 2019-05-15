@@ -14,7 +14,11 @@ class UploadAdapter {
       form.append('helper', file, 'helper image')
       UtilityService.uploadHelperImage(form)
         .then(res => {
-          const url = 'http://localhost:3000/helper/' + res.data
+          let url = process.env.NODE_ENV === 'production'
+              ? 'http://172.26.2.212/helper/'
+              : 'http://localhost:3000/helper/'
+          url += res.data
+
           // console.log(url)
           resolve({default: url})
         })
