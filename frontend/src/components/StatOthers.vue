@@ -131,7 +131,7 @@ export default {
     orgActor (obj) {
       if (!obj.ot_code) return
       const res = find(this.smallCodes(), (o) => o.s_code === obj.ot_code)
-      return res ? res.s_name.slice(0, 3) : ''
+      return res ? res.s_name.slice(0, 8) : ''
     },
     toExcel () {
       const table = document.getElementsByTagName('table')
