@@ -7,7 +7,7 @@
           <router-view/>
         </v-container>
       </v-content>
-      <!--<app-footer/>-->
+      <app-footer/>
       <app-snack-bar ref="bar"/>
     </v-app>
   </div>

@@ -96,6 +96,9 @@ export default {
 </script>
 
 <style scoped>
+  .v-toolbar {
+    z-index: 10;
+  }
   .header {
     padding: 15px 0;
   }

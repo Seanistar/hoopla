@@ -441,19 +441,19 @@ const getSmallCodes = (s_name) => {
 router.get('/queried', (req, res) => {
   const {e_type, v_id} = req.query
   const e_sql = `
-    SELECT edu_code e_code, COUNT(id) counter, MAX(YEAR(e.e_date))e_year, c.name e_name
+    SELECT edu_code e_code, COUNT(id) counter, MAX(YEAR(e.s_date))e_year, c.name e_name
     FROM edus e
     LEFT JOIN edu_code c ON e.edu_code = c.code
     WHERE c.type = ? AND e.v_id = ?
     GROUP BY YEAR(e.e_date), e.edu_code`
   const a_sql = `
-    SELECT act_code e_code, COUNT(id) counter, MAX(YEAR(a.e_date))e_year, c.name e_name
+    SELECT act_code e_code, COUNT(id) counter, MAX(YEAR(a.s_date))e_year, c.name e_name
     FROM acts a
     LEFT JOIN edu_code c ON a.act_code = c.code
     WHERE c.type = ? AND a.v_id = ?
     GROUP BY YEAR(a.e_date), a.act_code`
   let sql = [e_type === 'A' ? a_sql : e_sql, [e_type, v_id]]
-  // console.log('queried... ', sql)
+  //console.log('queried... ', sql)
   db.query(...sql, (err, rows) => {
     if (!err) {
       res.status(200).send(rows)

@@ -1,16 +1,20 @@
 <template>
   <v-container pt-2 mt-1>
-    <v-layout v-if="$parent.window.width >= 900">
-      <v-flex xs4 mb-2>
+    <v-layout justify-center v-if="$parent.window.width >= 900">
+      <v-flex xs2 mt-2>
         <v-radio-group v-model="type" row height="20" hide-details>
           <v-radio label="교육 현황" value="edus"></v-radio>
           <v-radio label="봉사 현황" value="acts"></v-radio>
         </v-radio-group>
       </v-flex>
-      <v-flex xs4 mt-3>
-        <div class="body-2 grey--text">※ 현재 연도 자료입니다.</div>
+      <v-flex xs2>
+        <v-select label="연도선택" class="w-90 text-xs-center body-1" clearable
+                  :items="years" v-model="year"></v-select>
       </v-flex>
-      <v-flex xs4 text-xs-right>
+      <!--<v-flex xs2 mt-3>
+        <div class="body-2 grey&#45;&#45;text">※ 현재 연도 자료입니다.</div>
+      </v-flex>-->
+      <v-flex xs8 mt-2 text-xs-right>
         <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
       </v-flex>
     </v-layout>
@@ -74,7 +78,7 @@
         <tr class="first-column" v-else>
           <td class="text-xs-center w-10">{{props.item|yearKey}}</td>
           <template v-for="(at, i) in actCodes">
-            <td class="text-xs-center" :key="ebsCodes.length + i">{{props.item|keyBy|gp_counter(at)}}</td>
+            <td class="text-xs-center" :key="ebsCodes.length + i">{{props.item|keyBy|gp_counter(at)|units}}</td>
             <td class="text-xs-center" :key="(ebsCodes.length + 100) + i">{{props.item|keyBy|uv_counter(at)|units}}</td>
           </template>
         </tr>
@@ -90,6 +94,7 @@
 import { mapGetters } from 'vuex'
 import { FETCH_STAT_AREA } from '@/store/actions.type'
 import { groupBy, find } from 'lodash/collection'
+import { range } from 'lodash/util'
 import { sumBy } from 'lodash/math'
 import FiltersMixin from '../common/filters.mixin'
 import XLSX from 'xlsx'
@@ -106,18 +111,27 @@ export default {
       'stdCodes',
       'areaCodes',
       'statArea'
-    ])
+    ]),
+    years () {
+      const start = (new Date()).getFullYear()
+      return ['선택없음'].concat(range(start, 1975, -1))
+    }
   },
   data: () => ({
     items: [],
     fetched: false,
-    type: 'edus'
+    type: 'edus',
+    year: null
   }),
   watch: {
     'areaCodes' (val) {
       val.length && this._mapData()
     },
     type () {
+      this.fetchData()
+    },
+    year (nv, ov) {
+      if (!ov && !nv) return
       this.fetchData()
     }
   },
@@ -127,7 +141,7 @@ export default {
   methods: {
     async fetchData () {
       this.fetched = false
-      const params = { type: this.type }
+      const params = { type: this.type, year: this.year }
       await this.$store.dispatch(FETCH_STAT_AREA, {params})
       this.$nextTick(() => { this._mapData() })
     },

@@ -53,8 +53,9 @@ router.get('/church', (req, res) => {
 })
 
 router.get('/area', (req, res) => {
-  const {type} = req.query
-  const _sql = `SELECT * FROM stat_area_${type}`
+  const {type, year} = req.query
+  let _sql = `SELECT * FROM stat_area_${type}`
+  if (year) _sql += ` WHERE s_year = '${year}'`
   db.query(_sql, (err, rows) => {
     if (!err) {
       console.log('stat area has done', _sql)
