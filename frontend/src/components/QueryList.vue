@@ -99,9 +99,8 @@
       </v-layout>
       <v-data-table :headers="headers" :items="queryVolunteers"
                     :loading="queried && isQuerying" :disable-initial-sort="true"
-                    :rows-per-page-items="perPage"
-                    rows-per-page-text="페이지 당 보기 개수" no-data-text="조회 조건을 선택하세요."
-      > <!--:pagination.sync="pagination"-->
+                    :rows-per-page-items="perPage" :pagination.sync="pagination"
+                    rows-per-page-text="페이지 당 보기 개수" no-data-text="조회 조건을 선택하세요.">
         <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
         <template slot="items" slot-scope="props">
           <tr @click="selected = props.item" @dblclick="onClickResult(props.item)"
@@ -136,7 +135,6 @@
 
 <script>
 import DatePicker from '@/components/control/DatePicker'
-// import CodeMixin from '@/common/code.mixin'
 import PeopleDialog from '@/components/control/FindPeopleDialog'
 import ChurchDialog from '@/components/control/FindChurchDialog'
 import { QUERY_VOLUNTEERS } from '@/store/actions.type'
@@ -150,7 +148,6 @@ import { startsWith } from 'lodash/string'
 
 export default {
   name: 'QueryList',
-  // mixins: [ CodeMixin ],
   components: { DatePicker, PeopleDialog, ChurchDialog },
   computed: {
     ...mapGetters([
@@ -273,7 +270,7 @@ export default {
     peopleFinder: false,
     churchFinder: false,
     perPage: [25, 50, 100, {text: '$vuetify.dataIterator.rowsPerPageAll', value: -1}],
-    pagination: { sortBy: 'id' },
+    pagination: { sortBy: 'id', rowsPerPage: -1 },
     params: {
       au_s_date: null,
       au_e_date: null,
@@ -281,7 +278,7 @@ export default {
       s_name: '',
       memo: '',
       a_code: '',
-      ages: ''
+      s_age: ''
     },
     headers: [
       { text: '순번', value: 'idx_cnt' },
@@ -314,7 +311,6 @@ export default {
           this.params.st_age = (new Date()).getFullYear() - this.params.s_age + 1
           this.params.ed_age = (this.params.s_age === 80) ? null : this.params.st_age + 9
         }
-        // if (f === 'e_age') this.params.ed_age = (new Date()).getFullYear() - this.params.e_age
       })
       // if (isEmpty) return alert('조회할 항목을 설정하세요.')
       console.log(this.formData)
@@ -365,6 +361,7 @@ export default {
       // console.log(type, val, this.params.a_code)
     },
     toExcel () {
+      if (this.pagination.rowsPerPage !== -1) return alert('전체 페이지 보기로 설정해주세요!')
       const table = document.getElementsByTagName('table')
       const wb = XLSX.utils.table_to_book(table[2])
       XLSX.writeFile(wb, 'queried_list.xlsx')

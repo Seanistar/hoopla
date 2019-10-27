@@ -48,6 +48,11 @@ const router = new Router({
       component: () => import('@/views/Queries')
     },
     {
+      path: '/attenders',
+      name: 'attenders',
+      component: () => import('@/views/Attenders')
+    },
+    {
       path: '/queries/view/:id?/:menu?',
       name: 'view-query',
       props: true,

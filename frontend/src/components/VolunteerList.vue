@@ -35,7 +35,7 @@
       <v-progress-circular indeterminate color="#00b0f5"></v-progress-circular>
     </v-layout>
 
-    <v-data-table :headers="headers" :items="volunteers"
+    <v-data-table :headers="headers" :items="volunteers" hide-actions
                   disable-initial-sort :pagination.sync="pagination" :rows-per-page-items="perPage">
       <template slot="items" slot-scope="props">
         <tr class="first-row" @dblclick="editItem(props.item)">
