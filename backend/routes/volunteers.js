@@ -390,7 +390,7 @@ router.delete('/act/:id', (req, res) => {
  * volunteer querying
  */
 router.get('/query', async (req, res) => {
-  const {a_code, au_s_date, au_e_date, v_name, sa_code, s_name, memo} = req.query
+  const {a_code, au_s_date, au_e_date, st_age, ed_age, v_name, sa_code, s_name, memo} = req.query
   const sns = s_name && await getSmallCodes(s_name)
   let sql = `
     SELECT vl.*, ac.l_name la_name, ac.m_name ma_name, ac.s_name sa_name,
@@ -402,6 +402,9 @@ router.get('/query', async (req, res) => {
   if (au_s_date && au_e_date) sql += ` AND YEAR(vl.au_date) >= ${au_s_date} AND YEAR(vl.au_date) <= ${au_e_date}`
   else if (au_s_date) sql += ` AND YEAR(vl.au_date) >= ${au_s_date}`
   else if (au_e_date) sql += ` AND YEAR(vl.au_date) <= ${au_e_date}`
+  if (st_age && ed_age) sql += ` AND YEAR(vl.br_date) >= ${st_age} AND YEAR(vl.br_date) <= ${ed_age}`
+  //else if (ed_age) sql += ` AND YEAR(vl.br_date) >= ${ed_age}`
+  else if (st_age) sql += ` AND YEAR(vl.br_date) <= ${st_age}`
   if (a_code) sql += ` AND vl.area_code like (\'${a_code}%\')`
   if (v_name) sql += ` AND vl.name like (\'%${v_name}%\')`
   if (sa_code) sql += ` AND vl.area_code = (\'${sa_code}\')`

@@ -59,9 +59,24 @@
               <v-text-field label="메모 내용" v-model="params.memo" hide-details></v-text-field>
             </v-flex>
           </v-layout>
-          <v-layout justify-end row class="my-1">
-            <v-btn color="orange accent-2" outline @click="reset">초기화</v-btn>
-            <v-btn color="indigo accent-2" outline @click="submit">조회</v-btn>
+          <v-layout row pl-2 mb-1>
+            <v-flex xs3>
+              <v-layout>
+                <v-flex xs6>
+                  <v-select label="조회 연령대" v-model="params.s_age" hide-details :items="ages" class="body-1"
+                  ></v-select>
+                </v-flex>
+                <!--<v-flex xs6 pl-2>
+                  <v-select label="조회 끝 연령" v-model="params.e_age" hide-details :items="ages" class="body-1"
+                  ></v-select>
+                </v-flex>-->
+              </v-layout>
+            </v-flex>
+            <v-flex xs9 mt-2 text-xs-right>
+              <v-btn color="green" outline @click="toExcel">내려받기</v-btn>
+              <v-btn color="orange accent-2" outline @click="reset">초기화</v-btn>
+              <v-btn color="indigo accent-2" outline @click="submit">조회</v-btn>
+            </v-flex>
           </v-layout>
         </v-container>
       </transition>
@@ -75,8 +90,11 @@
         <span>{{isQueryBox ? '박스 숨기기' : '박스 펼치기'}}</span>
       </v-tooltip>
       <v-layout pb-2>
-        <v-flex xs12>
+        <v-flex xs6 text-xs-left>
           <div>조회 결과 수 : {{queryCount}} 건</div>
+        </v-flex>
+        <v-flex xs6 text-xs-right>
+          <div>봉사 {{actsCount|units}} 건 / 교육 : {{edusCount|units}} 건</div>
         </v-flex>
       </v-layout>
       <v-data-table :headers="headers" :items="queryVolunteers"
@@ -93,6 +111,7 @@
             <td class="text-xs-center w-10" style="cursor: pointer">{{ props.item.name }}</td>
             <td class="text-xs-center w-15" style="cursor: pointer">{{ props.item.ca_name }}</td>
             <td class="text-xs-center w-10">{{ props.item.au_date|monthstamp }}</td>
+            <td class="text-xs-center w-10">{{ props.item.br_date|datestamp }}</td>
             <td class="text-xs-center w-13">{{ props.item.la_name }}</td>
             <td class="text-xs-center w-15">{{ props.item.sa_name }}</td>
             <td class="text-xs-center w-4">{{ props.item.edu_count }}</td>
@@ -123,9 +142,10 @@ import ChurchDialog from '@/components/control/FindChurchDialog'
 import { QUERY_VOLUNTEERS } from '@/store/actions.type'
 import { SET_QUERY_INFO } from '@/store/mutations.type'
 import { mapGetters } from 'vuex'
+import XLSX from 'xlsx'
 import { range } from 'lodash/util'
 import { uniqBy, concat } from 'lodash/array'
-import { filter, map, find, orderBy } from 'lodash/collection'
+import { filter, map, find, orderBy, reduce } from 'lodash/collection'
 import { startsWith } from 'lodash/string'
 
 export default {
@@ -159,6 +179,15 @@ export default {
     years () {
       const start = (new Date()).getFullYear()
       return ['선택없음'].concat(range(start, 1972, -1))
+    },
+    ages () {
+      return ['선택없음', 30, 40, 50, 60, 70, 80]
+    },
+    actsCount () {
+      return reduce(this.queryVolunteers, (t, v) => t + v.act_count, 0)
+    },
+    edusCount () {
+      return reduce(this.queryVolunteers, (t, v) => t + v.edu_count, 0)
     }
   },
   watch: {
@@ -169,7 +198,7 @@ export default {
       }
       this.params.a_code = code
       this.model.sa_name = this.model.search = ''
-      console.log('la_code', code)
+      // console.log('la_code', code)
     },
     'model.ma_code' (code, old) {
       if (!code) {
@@ -182,7 +211,7 @@ export default {
         const res = find(this.mAreaCodes, (o) => o.m_code === code)
         res && (this.model.search = res.m_name)
       }
-      console.log('ma_code', code)
+      // console.log('ma_code', code)
     },
     'model.sa_code' (code) {
       if (!code) { // 인위적인 초기화
@@ -190,11 +219,20 @@ export default {
         return
       }
       this.params.a_code = code
-      console.log('sa_code', code)
+      // console.log('sa_code', code)
     },
     'params.au_s_date' (val) {
-      if (val && val === '선택없음') this.params.au_s_date = ''
+      if (val === '선택없음') this.params.au_s_date = ''
     }
+    /* 'params.s_age'(val) {
+      if (val === '선택없음') this.params.s_age = ''
+      else if (val && this.params.e_age) {
+        if (val >= this.params.e_age) {
+          alert('끝 연령이 시작 연령보다 커야합니다.')
+          this.params.s_age = ''
+        }
+      }
+    }, */
   },
   async created () {
     this.headers.map(h => {
@@ -242,7 +280,8 @@ export default {
       v_name: '',
       s_name: '',
       memo: '',
-      a_code: ''
+      a_code: '',
+      ages: ''
     },
     headers: [
       { text: '순번', value: 'idx_cnt' },
@@ -250,6 +289,7 @@ export default {
       { text: '성명', value: 'name' },
       { text: '세례명', value: 'ca_name' },
       { text: '선서일', value: 'au_date' },
+      { text: '생년월일', value: 'br_date' },
       { text: '교구명', value: 'la_name' },
       { text: '본당명', value: 'sa_name' },
       { text: '교육', value: 'edu_cnt' },
@@ -261,7 +301,7 @@ export default {
     reset () {
       // this.resetCode()
       this.params.au_s_date = this.params.au_e_date = null
-      this.params.v_name = this.params.s_name = this.params.memo = ''
+      this.params.v_name = this.params.s_name = this.params.memo = this.params.s_age = this.params.e_age = ''
       this.model = { la_name: '', ma_name: '', sa_name: '', search: null }
     },
     submit () {
@@ -270,6 +310,11 @@ export default {
         const obj = this.formData[f]
         // if (obj) isEmpty = false
         if (f === 'v_name') this.params.v_name = obj && obj.replace(/\s*/g, '')
+        if (f === 's_age') {
+          this.params.st_age = (new Date()).getFullYear() - this.params.s_age + 1
+          this.params.ed_age = (this.params.s_age === 80) ? null : this.params.st_age + 9
+        }
+        // if (f === 'e_age') this.params.ed_age = (new Date()).getFullYear() - this.params.e_age
       })
       // if (isEmpty) return alert('조회할 항목을 설정하세요.')
       console.log(this.formData)
@@ -307,7 +352,7 @@ export default {
         this.params.a_code = this.model.ma_code ? this.model.ma_code : this.model.la_code
         return
       }
-      console.log('blur', info)
+      // console.log('blur', info)
       this.model.la_code = info.code.slice(0, 2)
       this.model.ma_code = info.code.slice(0, 5)
       this.params.a_code = this.model.sa_code = info.code
@@ -318,6 +363,11 @@ export default {
 
       this.params.a_code = this.params.area_code
       // console.log(type, val, this.params.a_code)
+    },
+    toExcel () {
+      const table = document.getElementsByTagName('table')
+      const wb = XLSX.utils.table_to_book(table[2])
+      XLSX.writeFile(wb, 'queried_list.xlsx')
     }
   },
   filters: {
@@ -325,6 +375,10 @@ export default {
       const a = code.substring(0, 2)
       const b = code.substring(2)
       return `${a}-${b}`
+    },
+    units (x) {
+      if (!Number.isInteger(x) || Number.isNaN(x)) return x
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     }
   }
 }

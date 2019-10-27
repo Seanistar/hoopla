@@ -36,7 +36,7 @@
     </v-layout>
 
     <v-data-table :headers="headers" :items="volunteers"
-                  disable-initial-sort hide-actions>
+                  disable-initial-sort :pagination.sync="pagination" :rows-per-page-items="perPage">
       <template slot="items" slot-scope="props">
         <tr class="first-row" @dblclick="editItem(props.item)">
           <td class="text-xs-center" style="padding: 0 10px"><span>{{(props.index + 1)}}</span></td>
@@ -71,6 +71,7 @@
 import { mapGetters } from 'vuex'
 import { FETCH_VOLUNTEERS, DELETE_VOLUNTEER, FETCH_SMALL_LEADER, GET_TOTAL_COUNT } from '@/store/actions.type'
 import { SET_CHANGED_CODE } from '@/store/mutations.type'
+import XLSX from 'xlsx'
 import { map, find, orderBy } from 'lodash/collection'
 
 export default {
@@ -82,6 +83,8 @@ export default {
     voltName: null,
     fetched: false,
     winWidth: 0,
+    pagination: {rowsPerPage: 100},
+    perPage: [50, 100, 200, {text: '$vuetify.dataIterator.rowsPerPageAll', value: -1}],
     headers: [
       { text: '번호', value: 'id', sortable: false },
       { text: '성명', value: 'name' },
@@ -140,7 +143,7 @@ export default {
       this.$router.push({name: 'edit-volunteer', params: {id: item.id, item: item}})
     },
     deleteItem (item) {
-      confirm('이 항목을 삭제하시겠습니까?') && this.$store.dispatch(DELETE_VOLUNTEER, item.id)
+      confirm('해당 봉사자의 활동 기록 모두가 사라집니다. \n삭제하시겠습니까?') && this.$store.dispatch(DELETE_VOLUNTEER, item.id)
     },
     setLastChangedCode () {
       let code = this.changedChurchCode
@@ -163,6 +166,11 @@ export default {
       res && this.$nextTick(() => {
         this.model = {name: res.name, code: res.code}
       })
+    },
+    toExcel () {
+      const table = document.getElementsByTagName('table')
+      const wb = XLSX.utils.table_to_book(table[0])
+      XLSX.writeFile(wb, 'volunteers.xlsx')
     }
   },
   filters: {

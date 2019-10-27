@@ -59,7 +59,7 @@
     </v-container>
 
     <v-dialog v-model="dialog" width="500" persistent>
-      <v-card>
+      <v-card @keydown.enter="login">
         <v-card-title class="headline grey lighten-2" primary-title>관리자 로그인</v-card-title>
         <v-card-text>
           <v-layout row>
@@ -75,7 +75,7 @@
               <v-subheader>관리자 암호</v-subheader>
             </v-flex>
             <v-flex xs8>
-              <v-text-field label="Password" v-model="admin.pwd" required
+              <v-text-field label="Password" v-model="admin.pwd" required autofocus
                             :type="showPassword ? 'text' : 'password'"
                             :append-icon="!showPassword ? 'visibility_off' : 'visibility'"
                             @click:append="showPassword = !showPassword"
