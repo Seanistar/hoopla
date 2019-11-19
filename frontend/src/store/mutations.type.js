@@ -83,6 +83,7 @@ export const FETCH_STAT_VOLT_END = 'fetchStatVoltEnd'
 export const FETCH_STAT_ACTS_END = 'fetchStatActsEnd'
 export const FETCH_STAT_OTHERS_END = 'fetchStatOthersEnd'
 export const FETCH_STAT_LEADERS_END = 'fetchStatLeadersEnd'
+export const FETCH_STAT_DISTRICT_END = 'fetchStatDistrictEnd'
 
 // will be obsoleted
 export const SET_TOPIC = 'setTopic'

@@ -6,7 +6,8 @@ import {
   FETCH_STAT_AREA,
   FETCH_STAT_ACTS,
   FETCH_STAT_OTHERS,
-  FETCH_STAT_LEADERS
+  FETCH_STAT_LEADERS,
+  FETCH_STAT_DISTRICT
 } from '../actions.type'
 import {
   FETCH_STAT_YEARLY_END,
@@ -16,6 +17,7 @@ import {
   FETCH_STAT_ACTS_END,
   FETCH_STAT_OTHERS_END,
   FETCH_STAT_LEADERS_END,
+  FETCH_STAT_DISTRICT_END,
   FETCH_START
 } from '../mutations.type'
 
@@ -27,7 +29,8 @@ const state = {
   voltList: [],
   actsList: [],
   otherList: [],
-  leaderList: []
+  leaderList: [],
+  districtList: []
 }
 
 const getters = {
@@ -37,7 +40,8 @@ const getters = {
   statVolts: state => state.voltList,
   statActs: state => state.actsList,
   statOthers: state => state.otherList,
-  statLeaders: state => state.leaderList
+  statLeaders: state => state.leaderList,
+  statDistrict: state => state.districtList
 }
 
 const actions = {
@@ -66,6 +70,16 @@ const actions = {
     return StatService.get_area(params)
       .then(({ data }) => {
         context.commit(FETCH_STAT_AREA_END, data)
+      })
+      .catch((error) => {
+        throw new Error(error)
+      })
+  },
+  [FETCH_STAT_DISTRICT] (context, params) {
+    context.commit(FETCH_START)
+    return StatService.get_district(params)
+      .then(({ data }) => {
+        context.commit(FETCH_STAT_DISTRICT_END, data)
       })
       .catch((error) => {
         throw new Error(error)
@@ -137,6 +151,9 @@ const mutations = {
   },
   [FETCH_STAT_LEADERS_END] (state, data) {
     state.leaderList = data
+  },
+  [FETCH_STAT_DISTRICT_END] (state, data) {
+    state.districtList = data
   }
 }
 

@@ -67,6 +67,26 @@ router.get('/area', (req, res) => {
   })
 })
 
+router.get('/district', (req, res) => {
+  const {type, year, district} = req.query
+  let _sql = `SELECT * FROM stat_district_${type}`
+  if (district || year) {
+    _sql += ' WHERE '
+    if (district && year) _sql += ` m_code = '${district}' and s_year = '${year}'`
+    else if (district) _sql += ` m_code = '${district}'`
+    else if (year) _sql += ` s_year = '${year}'`
+  }
+  db.query(_sql, (err, rows) => {
+    if (!err) {
+      console.log('stat district has done', _sql)
+      res.status(200).send(rows)
+    } else {
+      console.warn('stat district error : ' + err)
+      res.status(500).send('Internal Server Error')
+    }
+  })
+})
+
 router.get('/volts', (req, res) => {
   const {area} = req.query
   let _sql = ''

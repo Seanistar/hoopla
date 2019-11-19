@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container pt-0>
-      <v-text-field label="Catholic Bible Life Movement" readonly></v-text-field>
+      <v-text-field label="Catholic Bible Life Movement" readonly disabled></v-text-field>
       <v-layout>
         <v-flex xs4>
           <v-img src="../static/bible.jpeg" height="450" aspect-ratio="3.0"></v-img>

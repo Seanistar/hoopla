@@ -66,10 +66,10 @@
                   <v-select label="조회 연령대" v-model="params.s_age" hide-details :items="ages" class="body-1"
                   ></v-select>
                 </v-flex>
-                <!--<v-flex xs6 pl-2>
-                  <v-select label="조회 끝 연령" v-model="params.e_age" hide-details :items="ages" class="body-1"
+                <v-flex xs6 pl-2>
+                  <v-select label="조회 연도" v-model="params.s_year" hide-details :items="birthYears" class="body-1"
                   ></v-select>
-                </v-flex>-->
+                </v-flex>
               </v-layout>
             </v-flex>
             <v-flex xs9 mt-2 text-xs-right>
@@ -94,7 +94,7 @@
           <div>조회 결과 수 : {{queryCount}} 건</div>
         </v-flex>
         <v-flex xs6 text-xs-right>
-          <div>봉사 {{actsCount|units}} 건 / 교육 : {{edusCount|units}} 건</div>
+          <div>월교육 : {{edusCount|units}} 건 / 봉사 {{actsCount|units}} 건</div>
         </v-flex>
       </v-layout>
       <v-data-table :headers="headers" :items="queryVolunteers"
@@ -175,7 +175,11 @@ export default {
     formData () { return this.$data.params },
     years () {
       const start = (new Date()).getFullYear()
-      return ['선택없음'].concat(range(start, 1972, -1))
+      return ['선택없음'].concat(range(start, 1920, -1))
+    },
+    birthYears () {
+      const start = (new Date()).getFullYear()
+      return ['선택없음'].concat(range(start - 30, 1920, -1))
     },
     ages () {
       return ['선택없음', 30, 40, 50, 60, 70, 80]
@@ -278,7 +282,8 @@ export default {
       s_name: '',
       memo: '',
       a_code: '',
-      s_age: ''
+      s_age: '',
+      s_year: ''
     },
     headers: [
       { text: '순번', value: 'idx_cnt' },
@@ -307,7 +312,7 @@ export default {
         const obj = this.formData[f]
         // if (obj) isEmpty = false
         if (f === 'v_name') this.params.v_name = obj && obj.replace(/\s*/g, '')
-        if (f === 's_age') {
+        if (f === 's_age' && this.params.s_age) {
           this.params.st_age = (new Date()).getFullYear() - this.params.s_age + 1
           this.params.ed_age = (this.params.s_age === 80) ? null : this.params.st_age + 9
         }

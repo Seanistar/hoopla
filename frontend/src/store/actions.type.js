@@ -12,6 +12,7 @@ export const DELETE_VOLUNTEER = 'deleteVolunteer'
 export const CREATE_VOLUNTEER = 'createVolunteer'
 export const UPDATE_VOLUNTEER = 'updateVolunteer'
 export const GET_TOTAL_COUNT = 'getVolunteerCount'
+export const UPDATE_AUTOMATION = 'updateAutomation'
 
 // volunteer's mandatory education
 export const FETCH_VOLUNTEER_ACTS = 'fetchVolunteerActs'
@@ -76,6 +77,7 @@ export const FETCH_STAT_VOLT = 'fetchStatVolt'
 export const FETCH_STAT_ACTS = 'fetchStatActs'
 export const FETCH_STAT_OTHERS = 'fetchStatOthers'
 export const FETCH_STAT_LEADERS = 'fetchStatLeaders'
+export const FETCH_STAT_DISTRICT = 'fetchStatDistrict'
 
 // will be obsoleted
 export const DELETE_AUTHOR = 'deleteAuthor'

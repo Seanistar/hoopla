@@ -116,6 +116,9 @@ export const StatService = {
   },
   get_leaders (params) {
     return ApiService.query('stats/leaders', params)
+  },
+  get_district (params) {
+    return ApiService.query('stats/district', params)
   }
 }
 
@@ -185,6 +188,9 @@ export const VolunteerService = {
   },
   create_history (data) {
     return ApiService.create('volts/history', data)
+  },
+  update_automation (data) {
+    return ApiService.update('volts/automation', data)
   }
 }
 
@@ -239,49 +245,5 @@ export const CodeService = {
   },
   test (testCode) {
     return ApiService.query(`codes/test`, { params: { code: testCode } })
-  }
-}
-
-export const ScrapService = {
-  query (params) {
-    return ApiService.query('scraps', { params: params })
-  },
-  get (plug) {
-    return ApiService.get('scraps', plug)
-  },
-  create (params) {
-    return ApiService.create('scraps', { scrap: params })
-  },
-  update (plug, params) {
-    return ApiService.update(`scraps/${plug}`, params)
-  },
-  upload (forms) {
-    return ApiService.update('scraps/upload', forms)
-  },
-  destroy (plug) {
-    return ApiService.delete(`scraps/${plug}`)
-  }
-}
-export const TopicService = {
-  query (type, params) {
-    return ApiService.query('topics', { params: params })
-  },
-  get (plug) {
-    return ApiService.get('topics', plug)
-  },
-  getTopics () {
-    return ApiService.get('topics')
-  },
-  getTopicPage (id) {
-    return ApiService.get(`topics/page/${id}`)
-  },
-  addTopicInfo (params) {
-    return ApiService.create('topics/add', params)
-  },
-  editTopicInfo (id, params) {
-    return ApiService.update(`topics/edit/${id}`, params)
-  },
-  deleteTopic (id) {
-    return ApiService.delete(`topics/${id}`)
   }
 }
