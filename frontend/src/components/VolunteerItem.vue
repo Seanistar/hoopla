@@ -332,7 +332,7 @@ export default {
       this.name.sa = info ? info.s_name : ''
       this.params.area_code = info ? info.code : ''
 
-      if (this.v_id === undefined || !this.name.sa) return
+      if (this.v_id === undefined || !this.name.sa) return this.$showSnackBar('본당 정보를 확인해주세요!')
       if (!isEqual(this.volunteerInfo.sa_name, this.name.sa) && confirm('본당 정보를 변경하시겠습니까?')) {
         const history = {
           v_id: this.volunteerInfo.id,

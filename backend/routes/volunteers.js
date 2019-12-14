@@ -7,28 +7,28 @@ const _promise = require('bluebird')
  * volunteer information
  */
 router.get('/', (req, res) => {
-  let _sql = `
+  const {code, name, unlimited} = req.query
+  let _sql = ''
+
+  if (unlimited) {
+    _sql = 'SELECT id, ca_id, me_id FROM volunteers'
+  } else {
+    _sql = `
     SELECT v.*, IF(ISNULL(l.v_id), 'N', 'Y')is_leader,
     a.l_name la_name, a.m_name ma_name, a.s_name sa_name 
     FROM volunteers v
     LEFT JOIN leaders l ON v.id = l.v_id AND l.work = 'Y'
     INNER JOIN area_code a ON v.area_code = a.a_code`
-  /*let select = `
-    SELECT v.*, IF(ISNULL(l.v_id), 'N', 'Y')is_leader,
-      (SELECT COUNT(DISTINCT id) FROM edus e WHERE v_id=v.id AND edu_code BETWEEN 120 AND 130 AND numbers=0) e_count,
-      a.l_name la_name, a.m_name ma_name, a.s_name sa_name 
-    FROM volunteers v
-    LEFT JOIN leaders l ON v.id = l.v_id AND l.work = 'Y'
-    LEFT JOIN area_code a ON v.area_code = a.a_code
-    HAVING e_count > 0`*/
-  const {code, name} = req.query
-  if (code || name) {
-    _sql += ' WHERE '
-    if (code && name) _sql += `v.area_code = '${code}' AND v.name LIKE (\'%${name}%\')`
-    else if(code) _sql += `v.area_code = '${code}'`
-    else _sql += `v.name LIKE (\'%${name}%\')`
+
+    if (code || name) {
+      _sql += ' WHERE '
+      if (code && name) _sql += `v.area_code = '${code}' AND v.name LIKE (\'%${name}%\')`
+      else if(code) _sql += `v.area_code = '${code}'`
+      else _sql += `v.name LIKE (\'%${name}%\')`
+    }
+    _sql += ' ORDER BY v.registered DESC LIMIT 100'
   }
-  _sql += ' ORDER BY v.registered DESC LIMIT 100'
+
   // console.log(_sql, req.query)
   db.query(_sql, (err, rows) => {
     if (!err) {
@@ -289,6 +289,13 @@ router.delete('/edu/:id', (req, res) => {
   })
 })
 
+/*
+router.post('/automation', (req, res) => {
+  console.log('automated...')
+  res.status(200).send({success: true})
+})
+*/
+
 /**********************************************************
  * volunteer activities
  */
@@ -390,11 +397,11 @@ router.delete('/act/:id', (req, res) => {
  * volunteer querying
  */
 router.get('/query', async (req, res) => {
-  const {a_code, au_s_date, au_e_date, st_age, ed_age, v_name, sa_code, s_name, memo} = req.query
+  const {a_code, au_s_date, au_e_date, st_age, ed_age, v_name, sa_code, s_name, s_year, memo} = req.query
   const sns = s_name && await getSmallCodes(s_name)
   let sql = `
     SELECT vl.*, ac.l_name la_name, ac.m_name ma_name, ac.s_name sa_name,
-    (SELECT COUNT(DISTINCT id) FROM edus WHERE v_id = vl.id) edu_count,
+    (SELECT COUNT(DISTINCT id) FROM edus WHERE v_id = vl.id AND edu_code = 53) edu_count,
     (SELECT COUNT(DISTINCT id) FROM acts WHERE v_id = vl.id) act_count 
     FROM volunteers vl LEFT JOIN area_code ac ON vl.area_code = ac.a_code
     WHERE 1 = 1`
@@ -405,6 +412,7 @@ router.get('/query', async (req, res) => {
   if (st_age && ed_age) sql += ` AND YEAR(vl.br_date) >= ${st_age} AND YEAR(vl.br_date) <= ${ed_age}`
   //else if (ed_age) sql += ` AND YEAR(vl.br_date) >= ${ed_age}`
   else if (st_age) sql += ` AND YEAR(vl.br_date) <= ${st_age}`
+  if (s_year) sql += ` AND YEAR(vl.br_date) = ${s_year}`
   if (a_code) sql += ` AND vl.area_code like (\'${a_code}%\')`
   if (v_name) sql += ` AND vl.name like (\'%${v_name}%\')`
   if (sa_code) sql += ` AND vl.area_code = (\'${sa_code}\')`

@@ -81,10 +81,11 @@ export default {
       return this.smallCodes(this.authInfo).find(o => o.s_code === sc)
     },
     isAccessible () {
-      if (!this.$parent.S_CODE) return true // 신규인 경우는 가능
-      if (!this.authInfo || !this.authInfo.area_code) return false
-      else if (this.authInfo.level === 'L4') return true
-      return this.S_CODE.substr(0, 2) === this.authInfo.area_code.substr(0, 2)
+      return true
+      // if (!this.$parent.S_CODE) return true // 신규인 경우는 가능
+      // if (!this.authInfo || !this.authInfo.area_code) return false
+      // else if (this.authInfo.level === 'L4') return true
+      // return this.S_CODE.substr(0, 2) === this.authInfo.area_code.substr(0, 2)
     }
   }
 }
