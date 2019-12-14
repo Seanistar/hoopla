@@ -91,7 +91,7 @@
       </v-tooltip>
       <v-layout pb-2>
         <v-flex xs6 text-xs-left>
-          <div>조회 결과 수 : {{queryCount}} 건</div>
+          <div>조회 결과 수 : {{queryCount|units}} 건</div>
         </v-flex>
         <v-flex xs6 text-xs-right>
           <div>월교육 : {{edusCount|units}} 건 / 봉사 {{actsCount|units}} 건</div>
@@ -108,11 +108,12 @@
             <td class="text-xs-center w-4">{{ props.index + 1 }}</td>
             <td class="text-xs-center w-10">{{ props.item.ca_id|dash }}</td>
             <td class="text-xs-center w-10" style="cursor: pointer">{{ props.item.name }}</td>
-            <td class="text-xs-center w-15" style="cursor: pointer">{{ props.item.ca_name }}</td>
-            <td class="text-xs-center w-10">{{ props.item.au_date|monthstamp }}</td>
+            <td class="text-xs-center w-13" style="cursor: pointer">{{ props.item.ca_name }}</td>
+            <td class="text-xs-center w-10">{{ props.item.au_date|datestamp }}</td>
             <td class="text-xs-center w-10">{{ props.item.br_date|datestamp }}</td>
-            <td class="text-xs-center w-13">{{ props.item.la_name }}</td>
-            <td class="text-xs-center w-15">{{ props.item.sa_name }}</td>
+            <td class="text-xs-center w-11">{{ props.item.la_name }}</td>
+            <td class="text-xs-center w-13">{{ props.item.sa_name }}</td>
+            <td class="text-xs-center w-8">{{ activityState[props.item.state] }}</td>
             <td class="text-xs-center w-4">{{ props.item.edu_count }}</td>
             <!--<td class="text-xs-center w-5">{{ props.item.grp_count }}</td>-->
             <td class="text-xs-center w-4">{{ props.item.act_count }}</td>
@@ -189,6 +190,9 @@ export default {
     },
     edusCount () {
       return reduce(this.queryVolunteers, (t, v) => t + v.edu_count, 0)
+    },
+    activityState () {
+      return { ACT: '활동중', STP: '중단', BRK: '쉼', DTH: '사망' }
     }
   },
   watch: {
@@ -294,6 +298,7 @@ export default {
       { text: '생년월일', value: 'br_date' },
       { text: '교구명', value: 'la_name' },
       { text: '본당명', value: 'sa_name' },
+      { text: '활동상태', value: 'state' },
       { text: '교육', value: 'edu_cnt' },
       { text: '봉사', value: 'act_cnt' },
       { text: '메모', value: 'memo' }
@@ -313,8 +318,14 @@ export default {
         // if (obj) isEmpty = false
         if (f === 'v_name') this.params.v_name = obj && obj.replace(/\s*/g, '')
         if (f === 's_age' && this.params.s_age) {
-          this.params.st_age = (new Date()).getFullYear() - this.params.s_age + 1
-          this.params.ed_age = (this.params.s_age === 80) ? null : this.params.st_age + 9
+          this.params.st_age = (new Date()).getFullYear() - (this.params.s_age + 8)
+          if (this.params.s_age === 30) {
+            this.params.ed_age = this.params.st_age; this.params.st_age = null
+          } else if (this.params.s_age === 80) {
+            this.params.ed_age = null; this.params.st_age = this.params.st_age + 10
+          } else {
+            this.params.ed_age = this.params.st_age + 9
+          }
         }
       })
       // if (isEmpty) return alert('조회할 항목을 설정하세요.')
@@ -368,7 +379,7 @@ export default {
     toExcel () {
       if (this.pagination.rowsPerPage !== -1) return alert('전체 페이지 보기로 설정해주세요!')
       const table = document.getElementsByTagName('table')
-      const wb = XLSX.utils.table_to_book(table[2])
+      const wb = XLSX.utils.table_to_book(table[2], {raw: true})
       XLSX.writeFile(wb, 'queried_list.xlsx')
     }
   },
@@ -396,6 +407,12 @@ export default {
   tr td { padding: 0 !important;}
   .w-4 {
     width: 4% !important;
+  }
+  .w-8 {
+    width: 8% !important;
+  }
+  .w-11 {
+    width: 11% !important;
   }
   .w-13 {
     width: 13% !important;
