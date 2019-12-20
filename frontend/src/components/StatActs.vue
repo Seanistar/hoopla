@@ -35,7 +35,7 @@
           <td rowspan="2" class="text-xs-center w-10">&nbsp;{{props.item|v_name}}&nbsp;<br/>{{props.item|ca_name}}</td>
           <td>노트</td>
           <td class="text-xs-left"
-              v-for="at in actCodes" :key="at.code"><span class="caption pl-2">{{props.item|keyBy|ready(at.code)}}</span>
+              v-for="at in stdCodes" :key="at.code"><span class="caption pl-2">{{props.item|keyBy|ready(at.code)}}</span>
           </td>
         </tr>
         <tr>
@@ -67,6 +67,7 @@ export default {
   computed: {
     ...mapGetters([
       'actCodes',
+      'stdCodes',
       'smallCodes',
       'statActs'
     ])
