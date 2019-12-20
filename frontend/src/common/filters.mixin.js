@@ -1,3 +1,5 @@
+import { sumBy } from 'lodash/math'
+
 const FiltersMixin = {
   filters: {
     yearKey (val) {
@@ -10,15 +12,15 @@ const FiltersMixin = {
     },
     counter (val, obj) {
       if (!val[obj.code]) return ''
-      return val[obj.code][0].counter
+      return sumBy(val[obj.code], 'counter')
     },
     uv_counter (val, obj) {
       if (!val[obj.code]) return ''
-      return val[obj.code][0].uv_count
+      return sumBy(val[obj.code], 'uv_count')
     },
     gp_counter (val, obj) {
       if (!val[obj.code]) return ''
-      return val[obj.code][0].gp_count
+      return sumBy(val[obj.code], 'gp_count')
     },
     subject (name) {
       const [tr, nm] = name.split('-')

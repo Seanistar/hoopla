@@ -23,10 +23,10 @@
           <!--<th rowspan="2" class="align-center body-2"><p class="head-title">번호</p></th>-->
           <th rowspan="2" class="align-center body-2" style="width: 120px"><p class="head-title">성명</p></th>
           <th rowspan="2" class="align-center body-2" style="width: 50px"><p class="head-title">구분</p></th>
-          <th colspan="9" class="align-center subheading"><p class="head-title"><b>봉사 항목</b></p></th>
+          <th colspan="10" class="align-center subheading"><p class="head-title"><b>봉사 항목</b></p></th>
         </tr>
         <tr class="data-column second-row">
-          <th class="align-center body-2" v-for="header in stdCodes" :key="header.code"><p class="head-title">{{header.name|subject}}</p></th>
+          <th class="align-center body-2" v-for="header in actCodes" :key="header.code"><p class="head-title">{{header.name|subject}}</p></th>
         </tr>
       </template>
       <template slot="items" slot-scope="props">
@@ -35,7 +35,7 @@
           <td rowspan="2" class="text-xs-center w-10">&nbsp;{{props.item|v_name}}&nbsp;<br/>{{props.item|ca_name}}</td>
           <td>노트</td>
           <td class="text-xs-left"
-              v-for="at in stdCodes" :key="at.code"><span class="caption pl-2">{{props.item|keyBy|ready(at.code)}}</span>
+              v-for="at in actCodes" :key="at.code"><span class="caption pl-2">{{props.item|keyBy|ready(at.code)}}</span>
           </td>
         </tr>
         <tr>
@@ -47,7 +47,7 @@
         </tr>
       </template>
       <template slot="no-data">
-        <tr class="text-xs-center"><td colspan="11">현황 내역이 없습니다.</td></tr>
+        <tr class="text-xs-center"><td colspan="12">현황 내역이 없습니다.</td></tr>
       </template>
     </v-data-table>
   </v-container>
@@ -62,12 +62,11 @@ import FiltersMixin from '../common/filters.mixin'
 import XLSX from 'xlsx'
 
 export default {
-  name: 'StatYearly',
+  name: 'StatActs',
   mixins: [ FiltersMixin ],
   computed: {
     ...mapGetters([
       'actCodes',
-      'stdCodes',
       'smallCodes',
       'statActs'
     ])

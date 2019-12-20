@@ -106,7 +106,7 @@
         <tr class="first-column" v-else>
           <td class="text-xs-center w-10">{{props.item|yearKey}}</td>
           <template v-for="(at, i) in actCodes">
-            <td class="text-xs-center" :key="ebsCodes.length + i">{{props.item|keyBy|gp_counter(at)}}</td>
+            <td class="text-xs-center" :key="ebsCodes.length + i">{{props.item|keyBy|gp_counter(at)|units}}</td>
             <td class="text-xs-center" :key="(ebsCodes.length + 100) + i">{{props.item|keyBy|uv_counter(at)|units}}</td>
           </template>
         </tr>
