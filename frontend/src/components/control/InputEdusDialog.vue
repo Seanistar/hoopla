@@ -24,12 +24,12 @@
               </v-flex>
               <v-flex xs6>
                 <v-select label="교육 대분류" v-model="item.e_type" hide-details
-                          :items="large_edus" item-text="name" item-value="value"
+                          :items="largeEdus" item-text="name" item-value="value"
                 ></v-select>
               </v-flex>
               <v-flex xs6>
                 <v-select label="교육 항목" v-model="item.edu_code" hide-details
-                          :items="smallEdus()" item-text="name" item-value="code"
+                          :items="smallEdus" item-text="name" item-value="code"
                 ></v-select>
               </v-flex>
               <!--<v-flex :class="isMonthEdu || isNoteCheck ? 'xs6' : 'xs12'">
@@ -177,7 +177,7 @@ export default {
       const start = (new Date()).getFullYear()
       return ['선택없음'].concat(range(start, 2006, -1))
     },
-    large_edus () {
+    largeEdus () {
       return [
         {name: '기본 교육', value: 'E'},
         {name: '노트 검사', value: 'N'},
@@ -185,6 +185,10 @@ export default {
         {name: '그룹 공부', value: 'G'},
         {name: '마두명', value: 'M'}
       ]
+    },
+    smallEdus () {
+      if (!this.item.e_type) return
+      return filter(this.eduCodes, e => e.type === this.item.e_type)
     }
   },
   watch: {
@@ -238,10 +242,6 @@ export default {
         if (sDate.length <= 4) this.item.e_date += '1231'
         else if (sDate.length <= 6) this.item.e_date += '28'
       }
-    },
-    smallEdus () {
-      if (!this.item.e_type) return
-      return filter(this.eduCodes, e => e.type === this.item.e_type)
     },
     reset () {
       this.isECount = false

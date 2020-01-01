@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
   let _sql = ''
 
   if (unlimited) {
-    _sql = 'SELECT id, ca_id, me_id FROM volunteers'
+    _sql = 'SELECT id as v_id, ca_id, name, ca_name, area_code, a.l_name la_name, a.m_name ma_name, a.s_name sa_name FROM volunteers v INNER JOIN area_code a ON v.area_code = a.a_code'
   } else {
     _sql = `
     SELECT v.*, IF(ISNULL(l.v_id), 'N', 'Y')is_leader,
@@ -203,7 +203,7 @@ router.put('/edu', async (req, res) => {
     const mns = months && months.split(',')
     let ms = []
     for (let m of mns) {
-      let r = await insertEduItem(v_id, edu_code, m, r_year, gv_id, area_code, gv_name, memo)
+      let r = await insertEduItem(v_id, edu_code, area_code, r_year, m, false, gv_id, gv_name, memo)
       if(!r) return res.status(500).send('Internal Server Error')
       else ms.push(r)
     }
@@ -226,12 +226,12 @@ router.put('/edu', async (req, res) => {
   }
 })
 
-const insertEduItem = (v_id, e_code, month, r_year, gv_id, area_code, gv_name, memo) => {
+const insertEduItem = (v_id, e_code, area_code, r_year, month, day, gv_id, gv_name, memo) => {
   return new _promise(function(resolve) {
     let d = new Date()
     d.setFullYear(r_year)
-    d.setMonth(month-1)
-    d.setDate(1)
+    d.setMonth(month - 1)
+    d.setDate(day ? d.getDate() : 1)
     const s_date = d.toISOString().substr(0, 10)
     d.setMonth(d.getMonth() + 1)
     d.setDate(d.getDate() - 1)
@@ -289,12 +289,15 @@ router.delete('/edu/:id', (req, res) => {
   })
 })
 
-/*
-router.post('/automation', (req, res) => {
-  console.log('automated...')
+router.post('/automation', async (req, res) => {
+  const { attenders, month, year, edu_code } = req.body
+  for (let one of attenders) {
+    //console.log('automated...', one.id, edu_code, one.a_code, month, year)
+    let r = await insertEduItem(one.id, edu_code, one.a_code, year, month, true)
+    if(!one.id || !r) return res.status(500).send('Internal Server Error')
+  }
   res.status(200).send({success: true})
 })
-*/
 
 /**********************************************************
  * volunteer activities
