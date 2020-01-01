@@ -481,7 +481,7 @@ router.get('/queried', (req, res) => {
 router.get('/find', (req, res) => {
   const {name} = req.query
   const select = `
-    SELECT vl.*, ac.s_name sa_name
+    SELECT vl.*, ac.l_name la_name, ac.m_name ma_name, ac.s_name sa_name
     FROM volunteers vl LEFT JOIN area_code ac ON vl.area_code = ac.a_code
     WHERE vl.name like (\'%${name}%\')`
   // console.log(select, req.query)

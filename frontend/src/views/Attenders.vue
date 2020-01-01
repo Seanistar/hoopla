@@ -46,17 +46,31 @@
           <td class="text-xs-center">{{ props.item.sa_name }}</td>
           <td class="justify-center layout px-0">
             <v-icon small @click.self="onDeleteItem(props.index)">delete</v-icon>
-            <!--<v-icon small class="ml-4" @click.self="onEditItem(props.item)">edit</v-icon>-->
+          </td>
+        </tr>
+        <tr v-if="manual && props.index >= attenders.length - 1">
+          <td class="text-xs-center" colspan="10">
+            <v-btn fab outline small color="cyan" slot="activator" @click.prevent="finder = true">
+              <v-icon dark>add</v-icon>
+            </v-btn>
           </td>
         </tr>
       </template>
-      <template slot="no-data" v-if="parsed">
-        <v-alert :value="true" color="warning" icon="warning">
+      <template slot="no-data">
+        <v-alert :value="true" color="warning" icon="warning" v-if="parsed">
           표시할 출석자 정보가 없습니다.
         </v-alert>
+        <tr v-if="manual">
+          <td class="text-xs-center" colspan="10">
+            <v-btn fab outline small color="cyan" slot="activator" @click.prevent="finder = true">
+              <v-icon dark>add</v-icon>
+            </v-btn>
+          </td>
+        </tr>
       </template>
     </v-data-table>
 
+    <people-dialog :visible="finder" @close-find-people="onFound"/>
   </v-container>
 </template>
 
@@ -64,9 +78,11 @@
 import { mapGetters } from 'vuex'
 import { map, find, filter } from 'lodash/collection'
 import { UPDATE_AUTOMATION, FETCH_VOLUNTEERS } from '@/store/actions.type'
+import PeopleDialog from '../components/control/FindPeopleDialog'
 
 export default {
   name: 'Attenders',
+  components: { PeopleDialog },
   data () {
     return {
       perPage: [50, 100, 200, {text: '$vuetify.dataIterator.rowsPerPageAll', value: -1}],
@@ -74,6 +90,7 @@ export default {
       attenders: [],
       edu: {type: null, code: null},
       manual: false,
+      finder: false,
       parsed: null,
       confirmed: null,
       stat: {pass: 0, fail: 0}
@@ -83,7 +100,6 @@ export default {
     ...mapGetters(['eduCodes']),
     headerFields () { return ['ID', '고유 번호', '성명', '세례명', '교구', '지구', '본당'] },
     contextFields () { return ['v_id', 'ca_id', 'name', 'ca_name', 'la_name', 'ma_name', 'sa_name'] },
-    // rawFields () { return ['date', 'time', 'device_id', 'user_id', 'name', 'sco_no', 'type', 'mode', 'auth', 'result'] },
     headers () {
       const list = map(this.headerFields, (h, i) => ({text: h, value: this.contextFields[i], align: 'center', sortable: true}))
       list.unshift({text: '번호', value: 'no', align: 'center', sortable: false})
@@ -122,52 +138,9 @@ export default {
     loadHandler (event) {
       const file = event.target.result
       this.parsed = false; this.confirmed = null
+
       const rawData = file.split(/\r\n|\n/).filter(f => f).map(d => d.slice(4))
-      console.log('parsed...', rawData)
-      /* for (let i = 0; i < allTextLines.length - 1; i++) {
-        const lines = allTextLines[i].split(',').filter(d => d)
-        if (i === 0 || !lines) continue
-
-        const item = {no: i}
-        map(lines.slice(0, this.rawFields.length), (d, n) => {
-          item[this.rawFields[n]] = d.startsWith("'") ? d.slice(1) : d
-        })
-
-        if (data[item.user_id]) {
-          data[item.user_id].count += 1
-          if (item.mode === '출근') {
-            data[item.user_id].start += 1
-            data[item.user_id].start_time = item.time
-          } else if (item.mode === '퇴근') {
-            data[item.user_id].end += 1
-            data[item.user_id].end_time = item.time
-          }
-        } else {
-          data[item.user_id] = Object.assign({}, item)
-          data[item.user_id].count = 1
-          if (item.mode === '출근') {
-            data[item.user_id].start = 1
-            data[item.user_id].start_time = item.time
-            data[item.user_id].end = 0
-          } else if (item.mode === '퇴근') {
-            data[item.user_id].end = 1
-            data[item.user_id].end_time = item.time
-            data[item.user_id].start = 0
-          }
-        }
-      }
-      this.stat.pass = 0; this.stat.fail = 0
-      this.attenders = map(data, (d, k) => {
-        d.mem_id = k
-        if (d.start_time && d.end_time) {
-          d.result = 'O'
-          this.stat.pass += 1
-        } else {
-          d.result = 'X'
-          this.stat.fail += 1
-        }
-        return d
-      }) */
+      // console.log('parsed...', rawData)
       const params = {unlimited: 1}
       return this.$store.dispatch(FETCH_VOLUNTEERS, {params})
         .then(data => {
@@ -189,7 +162,7 @@ export default {
     },
     onUpdateAutomation () {
       if (!confirm('현재 리스트대로 출석 처리하시겠습니까?')) return
-      if (!this.edu_code) return alert('교육 항목을 선택해주세요!')
+      if (!this.edu.code) return alert('교육 항목을 선택해주세요!')
 
       this.confirmed = false
       const now = new Date()
@@ -202,11 +175,27 @@ export default {
 
       this.$store.dispatch(UPDATE_AUTOMATION, payload).then(() => {
         alert('모두 출석 처리되었습니다.')
+        this.attenders = []
       }).finally(() => (this.confirmed = true))
     },
     onDeleteItem (index) {
       if (!confirm('선택한 항목을 삭제하시겠습니까?')) return
       this.attenders.splice(index, 1)
+    },
+    onFound (data) {
+      if (data === undefined) { this.finder = false; return }
+      const attender = {
+        v_id: data.id,
+        ca_id: data.ca_id,
+        area_code: data.area_code,
+        name: data.name,
+        ca_name: data.ca_name,
+        la_name: data.la_name,
+        ma_name: data.ma_name,
+        sa_name: data.sa_name
+      }
+      this.attenders.push(attender)
+      this.finder = false
     }
   },
   filters: {
@@ -215,6 +204,7 @@ export default {
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     },
     caID (x) {
+      if (!x) return '-'
       const s = x.slice(0, 2); const e = x.slice(2)
       return `${s}-${e}`
     }
