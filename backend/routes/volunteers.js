@@ -291,12 +291,25 @@ router.delete('/edu/:id', (req, res) => {
 
 router.post('/automation', async (req, res) => {
   const { attenders, month, year, edu_code } = req.body
+  if (attenders.length === 0) return res.status(500).send('Internal Server Error')
+
   for (let one of attenders) {
     //console.log('automated...', one.id, edu_code, one.a_code, month, year)
     let r = await insertEduItem(one.id, edu_code, one.a_code, year, month, true)
     if(!one.id || !r) return res.status(500).send('Internal Server Error')
   }
-  res.status(200).send({success: true})
+
+  const ids = attenders.map(a => a.id)
+  const sql = [`INSERT INTO automation (ids) VALUES (?)`, [ids.toString()]]
+  db.query(...sql, (err) => {
+    if (!err) {
+      console.log('automation has been inserted')
+      res.status(200).send({success: true})
+    } else {
+      console.warn('automation query error : ' + err)
+      return res.status(500).send('Internal Server Error')
+    }
+  })
 })
 
 /**********************************************************

@@ -175,7 +175,7 @@ export default {
 
       this.$store.dispatch(UPDATE_AUTOMATION, payload).then(() => {
         alert('모두 출석 처리되었습니다.')
-        this.attenders = []
+        // this.attenders = []
       }).finally(() => (this.confirmed = true))
     },
     onDeleteItem (index) {
