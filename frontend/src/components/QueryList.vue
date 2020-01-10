@@ -110,6 +110,7 @@
             <td class="text-xs-center w-10" style="cursor: pointer">{{ props.item.name }}</td>
             <td class="text-xs-center w-13" style="cursor: pointer">{{ props.item.ca_name }}</td>
             <td class="text-xs-center w-10">{{ props.item.au_date|datestamp }}</td>
+            <td class="text-xs-center">{{ props.item.phone|phoneNumber }}</td>
             <td class="text-xs-center w-10">{{ props.item.br_date|datestamp }}</td>
             <td class="text-xs-center w-11">{{ props.item.la_name }}</td>
             <td class="text-xs-center w-13">{{ props.item.sa_name }}</td>
@@ -180,7 +181,7 @@ export default {
     },
     birthYears () {
       const start = (new Date()).getFullYear()
-      return ['선택없음'].concat(range(start - 30, 1920, -1))
+      return ['선택없음'].concat(range(start - 20, 1920, -1))
     },
     ages () {
       return ['선택없음', 30, 40, 50, 60, 70, 80]
@@ -295,6 +296,7 @@ export default {
       { text: '성명', value: 'name' },
       { text: '세례명', value: 'ca_name' },
       { text: '선서일', value: 'au_date' },
+      { text: '전화번호', value: 'phone' },
       { text: '생년월일', value: 'br_date' },
       { text: '교구명', value: 'la_name' },
       { text: '본당명', value: 'sa_name' },
@@ -380,7 +382,7 @@ export default {
       if (this.pagination.rowsPerPage !== -1) return alert('전체 페이지 보기로 설정해주세요!')
       const table = document.getElementsByTagName('table')
       const wb = XLSX.utils.table_to_book(table[2], {raw: true})
-      XLSX.writeFile(wb, 'queried_list.xlsx')
+      XLSX.writeFile(wb, '봉사자조회.xlsx')
     }
   },
   filters: {
@@ -392,6 +394,14 @@ export default {
     units (x) {
       if (!Number.isInteger(x) || Number.isNaN(x)) return x
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    },
+    phoneNumber (no) {
+      if (!no) return ''
+      if (no && no.toString().indexOf('-') > 0) return no
+      const pn1 = no.toString().slice(0, 3)
+      const pn2 = no.toString().slice(3, 7)
+      const pn3 = no.toString().slice(7)
+      return `${pn1}-${pn2}-${pn3}`
     }
   }
 }

@@ -213,7 +213,7 @@ export default {
     toExcel () {
       const table = document.getElementsByTagName('table')
       const wb = XLSX.utils.table_to_book(table[0], {raw: true})
-      XLSX.writeFile(wb, 'stats_yearly.xlsx')
+      XLSX.writeFile(wb, '연도별현황.xlsx')
     }
   },
   filters: {

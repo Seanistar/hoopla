@@ -26,6 +26,7 @@
       </v-flex>
       <v-flex xs2 v-if="winWidth >= 900">
         <v-layout justify-end>
+          <v-btn color="green" outline @click="toExcel">내려받기</v-btn>
           <v-btn color="indigo accent-2" outline dark class="mb-3" @click="newVolunteer">신규 봉사자</v-btn>
         </v-layout>
       </v-flex>
@@ -170,7 +171,7 @@ export default {
     toExcel () {
       const table = document.getElementsByTagName('table')
       const wb = XLSX.utils.table_to_book(table[0], {raw: true})
-      XLSX.writeFile(wb, 'volunteers.xlsx')
+      XLSX.writeFile(wb, '봉사자정보입력.xlsx')
     }
   },
   filters: {

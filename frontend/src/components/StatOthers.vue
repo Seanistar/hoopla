@@ -136,7 +136,7 @@ export default {
     toExcel () {
       const table = document.getElementsByTagName('table')
       const wb = XLSX.utils.table_to_book(table[0], {raw: true})
-      XLSX.writeFile(wb, 'stats_others.xlsx')
+      XLSX.writeFile(wb, '타본당봉사현황.xlsx')
     }
   }
 }
