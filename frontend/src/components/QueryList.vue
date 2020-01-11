@@ -331,7 +331,7 @@ export default {
         }
       })
       // if (isEmpty) return alert('조회할 항목을 설정하세요.')
-      console.log(this.formData)
+      // console.log(this.formData)
       this.$store.dispatch(QUERY_VOLUNTEERS, this.formData)
       this.queried = true
     },

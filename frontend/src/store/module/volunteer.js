@@ -2,7 +2,7 @@ import { VolunteerService } from '@/common/api.service'
 import {
   FETCH_VOLUNTEERS, CREATE_VOLUNTEER, UPDATE_VOLUNTEER, DELETE_VOLUNTEER, FETCH_VOLUNTEER_ITEM,
   QUERY_VOLUNTEERS, QUERY_VOLUNTEER_ITEM, GET_TOTAL_COUNT,
-  FIND_VOLUNTEERS, UPDATE_AUTOMATION,
+  FIND_VOLUNTEERS, UPDATE_AUTOMATION, FETCH_AUTOMATION,
   FETCH_VOLUNTEER_EDUS, CREATE_VOLUNTEER_EDU, UPDATE_VOLUNTEER_EDU, DELETE_VOLUNTEER_EDU,
   FETCH_VOLUNTEER_ACTS, CREATE_VOLUNTEER_ACT, UPDATE_VOLUNTEER_ACT, DELETE_VOLUNTEER_ACT,
   FETCH_VOLUNTEER_LEADER, BEGIN_VOLUNTEER_LEADER, END_VOLUNTEER_LEADER,
@@ -281,9 +281,14 @@ const actions = {
   },
   [UPDATE_AUTOMATION] (context, params) {
     return VolunteerService.update_automation(params)
-      .then(() => {
-        // context.commit(NO_VOLUNTEER_LEADER, ldr)
+      .then(() => {})
+      .catch((error) => {
+        throw new Error(error)
       })
+  },
+  [FETCH_AUTOMATION] (context, params) {
+    return VolunteerService.get_automation(params)
+      .then(({data}) => data)
       .catch((error) => {
         throw new Error(error)
       })

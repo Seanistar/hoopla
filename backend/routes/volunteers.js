@@ -300,7 +300,7 @@ router.post('/automation', async (req, res) => {
   }
 
   const ids = attenders.map(a => a.id)
-  const sql = [`INSERT INTO automation (ids) VALUES (?)`, [ids.toString()]]
+  const sql = [`INSERT INTO automation (ids, edu_code) VALUES (?, ?)`, [ids.toString(), edu_code]]
   db.query(...sql, (err) => {
     if (!err) {
       console.log('automation has been inserted')
@@ -308,6 +308,19 @@ router.post('/automation', async (req, res) => {
     } else {
       console.warn('automation query error : ' + err)
       return res.status(500).send('Internal Server Error')
+    }
+  })
+})
+
+router.get('/automation', (req, res) => {
+  const sql = ['SELECT * FROM automation ORDER BY no DESC']
+
+  db.query(...sql, (err, rows) => {
+    if (!err) {
+      res.status(200).send(rows)
+    } else {
+      console.warn('query error : ' + err)
+      res.status(500).send('Internal Server Error')
     }
   })
 })

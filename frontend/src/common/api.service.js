@@ -191,6 +191,9 @@ export const VolunteerService = {
   },
   update_automation (data) {
     return ApiService.update('volts/automation', data)
+  },
+  get_automation () {
+    return ApiService.get('volts/automation')
   }
 }
 

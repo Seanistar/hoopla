@@ -13,6 +13,7 @@ export const CREATE_VOLUNTEER = 'createVolunteer'
 export const UPDATE_VOLUNTEER = 'updateVolunteer'
 export const GET_TOTAL_COUNT = 'getVolunteerCount'
 export const UPDATE_AUTOMATION = 'updateAutomation'
+export const FETCH_AUTOMATION = 'fetchAutomation'
 
 // volunteer's mandatory education
 export const FETCH_VOLUNTEER_ACTS = 'fetchVolunteerActs'
