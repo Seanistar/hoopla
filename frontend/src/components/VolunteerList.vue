@@ -54,8 +54,8 @@
           <td class="text-xs-center">{{ props.item.au_date }}</td>
           <td class="text-xs-center">{{ props.item.br_date }}</td>
           <td class="justify-center layout px-0">
-            <v-icon small class="mr-3" @click.self="editItem(props.item)">edit</v-icon>
-            <v-icon small @click.self="deleteItem(props.item)">delete</v-icon>
+            <v-icon small class="mr-4" @click.self="deleteItem(props.item)">delete</v-icon>
+            <v-icon small @click.self="editItem(props.item)">edit</v-icon>
           </td>
         </tr>
       </template>
@@ -114,7 +114,7 @@ export default {
       'isVolunteersLoading'
     ]),
     activityState () {
-      return { ACT: '활동중', STP: '중단', BRK: '쉼', DTH: '사망' }
+      return { ACT: '활동중', STP: '중단', BRK: '쉼', DTH: '사망', SBB: '안식년' }
     }
   },
   created () {

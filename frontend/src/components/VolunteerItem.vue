@@ -205,6 +205,7 @@ export default {
       sex: 'F',
       area_code: '01-01-01',
       ls_date: null,
+      ca_date: null,
       l_work: null,
       state: 'ACT',
       photo: null
@@ -321,10 +322,10 @@ export default {
     makeToDate () {
       let date = event.target.value
       date = date.replace(/-/g, '')
-      if (date.length === 0) return ''
+      if (date.length === 0) return null
       else if (date.length <= 4) return date + '0101'
       else if (date.length <= 6) return date + '01'
-      return date
+      return date === '' ? null : date
     },
     async onChangedCode (info) {
       this.name.la = info ? info.l_name : ''
