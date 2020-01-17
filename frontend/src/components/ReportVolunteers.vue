@@ -62,7 +62,7 @@ export default {
       'reportVolts'
     ]),
     activityState () {
-      return { ACT: '활동중', STP: '중단', BRK: '쉼', DTH: '사망' }
+      return { ACT: '활동중', STP: '중단', BRK: '쉼', DTH: '사망', SBB: '안식년' }
     }
   },
   data: () => ({

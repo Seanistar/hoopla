@@ -193,7 +193,7 @@ export default {
       return reduce(this.queryVolunteers, (t, v) => t + v.edu_count, 0)
     },
     activityState () {
-      return { ACT: '활동중', STP: '중단', BRK: '쉼', DTH: '사망' }
+      return { ACT: '활동중', STP: '중단', BRK: '쉼', DTH: '사망', SBB: '안식년' }
     }
   },
   watch: {
