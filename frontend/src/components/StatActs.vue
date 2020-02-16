@@ -23,7 +23,7 @@
           <!--<th rowspan="2" class="align-center body-2"><p class="head-title">번호</p></th>-->
           <th rowspan="2" class="align-center body-2" style="width: 120px"><p class="head-title">성명</p></th>
           <th rowspan="2" class="align-center body-2" style="width: 50px"><p class="head-title">구분</p></th>
-          <th colspan="10" class="align-center subheading"><p class="head-title"><b>봉사 항목</b></p></th>
+          <th colspan="10" class="align-center subheading"><p class="head-title"><b>항목</b></p></th>
         </tr>
         <tr class="data-column second-row">
           <th class="align-center body-2" v-for="header in actCodes" :key="header.code"><p class="head-title">{{header.name|subject}}</p></th>

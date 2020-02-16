@@ -141,7 +141,7 @@
         </v-layout>
 
         <v-layout pt-2>
-          <v-textarea label="메모사항" box auto-grow v-model="params.memo"></v-textarea>
+          <v-textarea label="메모" box auto-grow v-model="params.memo"></v-textarea>
         </v-layout>
       </v-container>
 

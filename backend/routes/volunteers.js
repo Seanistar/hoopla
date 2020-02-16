@@ -203,7 +203,7 @@ router.put('/edu', async (req, res) => {
     const mns = months && months.split(',')
     let ms = []
     for (let m of mns) {
-      let r = await insertEduItem(v_id, edu_code, area_code, r_year, m, false, gv_id, gv_name, memo)
+      let r = await insertEduItem(v_id, edu_code, area_code, r_year, m, false, memo, gv_id, gv_name)
       if(!r) return res.status(500).send('Internal Server Error')
       else ms.push(r)
     }
@@ -226,21 +226,21 @@ router.put('/edu', async (req, res) => {
   }
 })
 
-const insertEduItem = (v_id, e_code, area_code, r_year, month, day, gv_id, gv_name, memo) => {
+const insertEduItem = (v_id, e_code, area_code, r_year, month, is_auto, memo, gv_id, gv_name) => {
   return new _promise(function(resolve) {
     let d = new Date()
     d.setFullYear(r_year)
     d.setMonth(month - 1)
-    d.setDate(day ? d.getDate() : 1)
+    d.setDate(is_auto ? d.getDate() : 1)
     const s_date = d.toISOString().substr(0, 10)
     d.setMonth(d.getMonth() + 1)
     d.setDate(d.getDate() - 1)
     const e_date = d.toISOString().substr(0, 10)
     // console.log(s_date, e_date)
     const sql = [`
-    INSERT INTO edus (v_id, edu_code, s_date, e_date, area_code, gv_id, gv_name, memo) 
-    VALUES (?,?,?,?,?,?,?,?)`,
-      [v_id, e_code, s_date, e_date, area_code, gv_id, gv_name, memo]
+    INSERT INTO edus (v_id, edu_code, s_date, e_date, area_code, gv_id, gv_name, memo, auto) 
+    VALUES (?,?,?,?,?,?,?,?,?)`,
+      [v_id, e_code, s_date, e_date, area_code, gv_id, gv_name, memo, is_auto ? 'Y' : 'N']
     ]
     return db.query(...sql, (err, rows) => {
       if (!err) {
@@ -290,12 +290,12 @@ router.delete('/edu/:id', (req, res) => {
 })
 
 router.post('/automation', async (req, res) => {
-  const { attenders, month, year, edu_code } = req.body
+  const { attenders, month, year, edu_code, memo } = req.body
   if (attenders.length === 0) return res.status(500).send('Internal Server Error')
 
   for (let one of attenders) {
     //console.log('automated...', one.id, edu_code, one.a_code, month, year)
-    let r = await insertEduItem(one.id, edu_code, one.a_code, year, month, true)
+    let r = await insertEduItem(one.id, edu_code, one.a_code, year, month, true, memo)
     if(!one.id || !r) return res.status(500).send('Internal Server Error')
   }
 
@@ -441,7 +441,7 @@ router.get('/query', async (req, res) => {
   if (st_age && ed_age) sql += ` AND YEAR(vl.br_date) >= ${st_age} AND YEAR(vl.br_date) <= ${ed_age}`
   else if (st_age) sql += ` AND YEAR(vl.br_date) <= ${st_age}`
   else if (ed_age) sql += ` AND YEAR(vl.br_date) >= ${ed_age}`
-  if (s_year) sql += ` AND YEAR(vl.br_date) = ${s_year}`
+  if (s_year) sql += ` AND YEAR(vl.au_date) = ${s_year}`
   if (a_code) sql += ` AND vl.area_code like (\'${a_code}%\')`
   if (v_name) sql += ` AND vl.name like (\'%${v_name}%\')`
   if (sa_code) sql += ` AND vl.area_code = (\'${sa_code}\')`

@@ -38,7 +38,7 @@ export default {
       height: 0
     },
     titles: ['교구별 현황', '지구별 현황', '연도별 현황', '본당별 현황',
-      '전체 봉사자 현황', '봉사 활동 현황', '타 본당 봉사 현황', '대표 봉사자 현황']
+      '전체 봉사자 현황', '노트 및 봉사현황', '타 본당 봉사 현황', '대표 봉사자 현황']
   }),
   created () {
     this.window.width = window.innerWidth

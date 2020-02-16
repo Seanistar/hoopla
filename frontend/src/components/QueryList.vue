@@ -67,7 +67,7 @@
                   ></v-select>
                 </v-flex>
                 <v-flex xs6 pl-2>
-                  <v-select label="조회 연도" v-model="params.s_year" hide-details :items="birthYears" class="body-1"
+                  <v-select label="조회 연도" v-model="params.s_year" hide-details :items="years" class="body-1"
                   ></v-select>
                 </v-flex>
               </v-layout>
@@ -178,10 +178,6 @@ export default {
     years () {
       const start = (new Date()).getFullYear()
       return ['선택없음'].concat(range(start, 1920, -1))
-    },
-    birthYears () {
-      const start = (new Date()).getFullYear()
-      return ['선택없음'].concat(range(start - 20, 1920, -1))
     },
     ages () {
       return ['선택없음', 30, 40, 50, 60, 70, 80]
@@ -301,7 +297,7 @@ export default {
       { text: '교구명', value: 'la_name' },
       { text: '본당명', value: 'sa_name' },
       { text: '활동상태', value: 'state' },
-      { text: '교육', value: 'edu_cnt' },
+      { text: '월교육', value: 'edu_cnt' },
       { text: '봉사', value: 'act_cnt' },
       { text: '메모', value: 'memo' }
     ]
@@ -310,7 +306,7 @@ export default {
     reset () {
       // this.resetCode()
       this.params.au_s_date = this.params.au_e_date = null
-      this.params.v_name = this.params.s_name = this.params.memo = this.params.s_age = this.params.e_age = ''
+      this.params.v_name = this.params.s_name = this.params.memo = this.params.s_age = this.params.e_age = this.params.s_year = ''
       this.model = { la_name: '', ma_name: '', sa_name: '', search: null }
     },
     submit () {

@@ -89,7 +89,7 @@ export default {
       { text: '교육 종료일', value: 'e_date' },
       { text: '봉사자', value: 'v_name' },
       // { text: '인원 수', value: 'numbers' },
-      { text: '참고 사항', value: 'memo', sortable: false }
+      { text: '교육내용 및 주제', value: 'memo', sortable: false }
     ]
   }),
   created () {
