@@ -203,7 +203,7 @@ router.put('/edu', async (req, res) => {
     const mns = months && months.split(',')
     let ms = []
     for (let m of mns) {
-      let r = await insertEduItem(v_id, edu_code, area_code, r_year, m, false, memo, gv_id, gv_name)
+      let r = await insertEduItem(v_id, edu_code, area_code, r_year, m, false, memo, 'X', gv_id, gv_name)
       if(!r) return res.status(500).send('Internal Server Error')
       else ms.push(r)
     }
@@ -226,7 +226,7 @@ router.put('/edu', async (req, res) => {
   }
 })
 
-const insertEduItem = (v_id, e_code, area_code, r_year, month, is_auto, memo, gv_id, gv_name) => {
+const insertEduItem = (v_id, e_code, area_code, r_year, month, is_auto, memo, group_type, gv_id, gv_name) => {
   return new _promise(function(resolve) {
     let d = new Date()
     d.setFullYear(r_year)
@@ -238,9 +238,9 @@ const insertEduItem = (v_id, e_code, area_code, r_year, month, is_auto, memo, gv
     const e_date = d.toISOString().substr(0, 10)
     // console.log(s_date, e_date)
     const sql = [`
-    INSERT INTO edus (v_id, edu_code, s_date, e_date, area_code, gv_id, gv_name, memo, auto) 
-    VALUES (?,?,?,?,?,?,?,?,?)`,
-      [v_id, e_code, s_date, e_date, area_code, gv_id, gv_name, memo, is_auto ? 'Y' : 'N']
+    INSERT INTO edus (v_id, edu_code, s_date, e_date, area_code, gv_id, gv_name, memo, group_type, auto) 
+    VALUES (?,?,?,?,?,?,?,?,?,?)`,
+      [v_id, e_code, s_date, e_date, area_code, gv_id, gv_name, memo, group_type, is_auto ? 'Y' : 'N']
     ]
     return db.query(...sql, (err, rows) => {
       if (!err) {
@@ -290,12 +290,12 @@ router.delete('/edu/:id', (req, res) => {
 })
 
 router.post('/automation', async (req, res) => {
-  const { attenders, month, year, edu_code, memo } = req.body
+  const { attenders, month, year, edu_code, memo, group_type } = req.body
   if (attenders.length === 0) return res.status(500).send('Internal Server Error')
 
   for (let one of attenders) {
     //console.log('automated...', one.id, edu_code, one.a_code, month, year)
-    let r = await insertEduItem(one.id, edu_code, one.a_code, year, month, true, memo)
+    let r = await insertEduItem(one.id, edu_code, one.a_code, year, month, true, memo, group_type)
     if(!one.id || !r) return res.status(500).send('Internal Server Error')
   }
 

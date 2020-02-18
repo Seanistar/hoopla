@@ -1,7 +1,7 @@
 <template>
   <v-container class="elevation-5 pt-3">
     <v-layout row align-baseline>
-      <v-flex xs1>
+      <v-flex xs1 pl-2>
         <v-select label="교육 유형" v-model="edu.type" hide-details
                   :disabled="MODE_HISTORICAL"
                   :items="largeEdus" item-text="name" item-value="value"
@@ -19,33 +19,41 @@
                   :items="months"
         ></v-select>
       </v-flex>
-      <v-flex :class="TYPE_EDU_MONTH ? 'xs3' : 'xs4'" pl-3>
+      <v-flex xs1 pl-3 v-if="TYPE_EDU_MONTH">
+        <v-select label="그룹 선택" v-model="groupType" hide-details
+                  :disabled="MODE_HISTORICAL"
+                  :items="groupTypes" item-text="text" item-value="type"
+        ></v-select>
+      </v-flex>
+      <v-flex xs3 pl-3>
         <input type="file" id="txtFileInput" :disabled="!MODE_TOTALLY"
                @change="onHandleFile($event.target.files)" accept=".txt">
         <v-btn x-small icon :disabled="MODE_HISTORICAL"
                @click="onResetFile"><v-icon>close</v-icon></v-btn>
       </v-flex>
-      <v-flex xs3>
+      <v-flex xs3 pl-4 :class="TYPE_EDU_MONTH ? 'offset-xs1' : 'offset-xs3'">
         <v-radio-group v-model="menuOption" row hide-details>
           <v-radio label="일괄출석" value="totally"></v-radio>
           <v-radio label="개별출석" value="manually"></v-radio>
           <v-radio label="출석처리 이력보기" value="historical"></v-radio>
         </v-radio-group>
       </v-flex>
-      <v-flex xs2 text-xs-right>
+    </v-layout>
+
+    <v-layout class="mb-4">
+      <v-flex xs8 pl-2>
+        <v-text-field label="교육 내용 및 주제"
+                      clearable hide-details :disabled="MODE_HISTORICAL"
+                      v-model="edu.memo"></v-text-field>
+      </v-flex>
+      <v-flex xs4 pr-4 text-xs-right>
         <v-btn color="indigo accent-2" outline class="mb-3" :loading="confirmed === false"
                :disabled="attenders.length === 0 || menuOption === 'historical'"
                @click="onUpdateAutomation">출석 처리</v-btn>
         <span>전체 {{attenders.length|units}} {{MODE_HISTORICAL ? '건' : '명'}}</span>
       </v-flex>
     </v-layout>
-    <v-layout class="mb-4" v-if="edu.type === 'E'">
-      <v-flex xs8>
-        <v-text-field label="교육 내용 및 주제"
-                      clearable hide-details :disabled="MODE_HISTORICAL"
-                      v-model="edu.memo"></v-text-field>
-      </v-flex>
-    </v-layout>
+
     <v-layout align-center justify-center class="progress-circular" v-if="parsed === false">
       <v-progress-circular indeterminate color="#00b0f5"></v-progress-circular>
     </v-layout>
@@ -154,6 +162,7 @@ export default {
       parsed: null,
       selected: null,
       confirmed: null,
+      groupType: 'D',
       stat: {pass: 0, fail: 0},
       attenderDialog: false,
       selectedIds: []
@@ -164,7 +173,7 @@ export default {
     MODE_MANUALLY () { return this.menuOption === 'manually' },
     MODE_TOTALLY () { return this.menuOption === 'totally' },
     MODE_HISTORICAL () { return this.menuOption === 'historical' },
-    TYPE_EDU_MONTH () { return this.edu.code === 53 || this.edu.code === 57 },
+    TYPE_EDU_MONTH () { return this.edu.code === 53 },
     headerFields () {
       return this.MODE_HISTORICAL
         ? ['처리 날짜', '교육 항목', '출석 처리 인원']
@@ -192,11 +201,13 @@ export default {
     },
     smallEdus () {
       if (!this.edu.type) return
-      const mapped = map(filter(this.eduCodes, e => e.type === this.edu.type), e => {
-        if (e.code === 53) e.name += ' (낮교육)'
-        return e
-      })
-      return orderBy(mapped, ['name'])
+      const defined = filter(this.eduCodes, e => e.type === this.edu.type)
+      return orderBy(defined, ['name'])
+    },
+    groupTypes () {
+      return [
+        {text: '낮반', type: 'D'}, {text: '직장인반', type: 'N'}
+      ]
     },
     months () {
       return range(1, 13)
@@ -253,8 +264,10 @@ export default {
     onResetFile () {
       const file = document.getElementById('txtFileInput')
       file.value = ''
+
       this.attenders = []
       this.edu = {type: null, code: null, month: null, memo: null}
+      this.groupType = 'D'
     },
     loadHandler (event) {
       const file = event.target.result
@@ -269,7 +282,7 @@ export default {
           return {id: d.slice(2, 8)}
         }
       }))
-      // console.log('parsed...', uniq(voltData), this.volunteers.length)
+
       try {
         let noMatches = ''
         for (const volt of volts) {
@@ -302,7 +315,8 @@ export default {
         year: now.getFullYear(),
         month: !this.edu.month ? now.getMonth() + 1 : this.edu.month,
         memo: this.edu.memo,
-        edu_code: this.edu.code
+        edu_code: this.edu.code,
+        group_type: this.TYPE_EDU_MONTH ? this.groupType : 'X'
       }
 
       this.$store.dispatch(UPDATE_AUTOMATION, payload).then(() => {
