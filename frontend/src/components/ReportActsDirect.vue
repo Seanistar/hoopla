@@ -20,13 +20,13 @@
       <template slot="items" slot-scope="props">
         <tr>
           <td style="width: 20px" :style="{backgroundColor: isFromOther(props.item) ? 'orange': ''}">{{props.index+1}}</td>
-          <td style="width: 100px" v-if="isFromOther(props.item)">
-            <v-text-field flat solo hide-details disabled :value="props.item.name"></v-text-field>
+          <td style="width: 100px">
+            <v-text-field flat solo hide-details readonly :value="props.item.name"></v-text-field>
           </td>
-          <td style="width: 100px" v-else>
+          <!--<td style="width: 100px" v-else>
             <v-select :items="voltList" item-text="name" item-value="id"
                       v-model="props.item.v_id" @change="onChangeName(props.item)" flat solo box hide-details></v-select>
-          </td>
+          </td>-->
           <td style="width: 120px">
             <v-text-field flat solo hide-details :disabled="isFromOther(props.item)" v-model="props.item.ca_name"></v-text-field>
           </td>

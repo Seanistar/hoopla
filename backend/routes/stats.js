@@ -180,7 +180,7 @@ router.get('/leaders', (req, res) => {
     LEFT JOIN volunteers v ON l.v_id = v.id
     LEFT JOIN area_code ac ON l.area_code = ac.a_code
     WHERE l.work = 'Y'`
-  if (s_year) _sql += ` AND YEAR(l.s_date) = '${s_year}'`
+  if (s_year) _sql += ` AND YEAR(l.s_date) <= '${s_year}'`
   if (l_area) _sql += ` AND ac.l_code = '${l_area}'`
 
   db.query(_sql, (err, rows) => {

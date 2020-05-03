@@ -29,8 +29,8 @@
                   class="elevation-5">
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
-        <tr @click="moveToQuery(props.item.id)"> <!--@click="selected = props.item" :style="{backgroundColor: (selected.id === props.item.id ? 'orange' : 'white')}">-->
-          <td class="text-xs-center">{{ props.item.ca_id|churchID }}</td>
+        <tr @click="moveToQuery(props.item.id)">
+          <td class="text-xs-center" :style="{backgroundColor: isFromOther(props.item) ? 'orange' : ''}">{{ props.item.ca_id|churchID }}</td>
           <td class="text-xs-center">{{ props.item.name }}</td>
           <td class="text-xs-center">{{ props.item.ca_name }}</td>
           <td class="text-xs-center">{{ props.item.au_date }}</td>
@@ -67,6 +67,7 @@ export default {
   },
   data: () => ({
     s_name: null,
+    s_code: null,
     volts: { tv: 0, av: 0, bv: 0 },
     fetched: false,
     /* model: '',
@@ -90,7 +91,7 @@ export default {
     const res = this.$parent.getSmall()
     if (res) {
       this.s_name = res.s_name
-      this.fetchData(res.s_code)
+      this.fetchData(this.s_code = res.s_code)
     }
   },
   methods: {
@@ -110,6 +111,10 @@ export default {
     },
     moveToQuery (id) {
       this.$router.push({name: 'edit-volunteer', params: {id: id, menu: 'm-0'}})
+    },
+    isFromOther (item) {
+      if (!item.other_code) return false
+      return item.area_code !== this.s_code
     }
     /* onClickMenu (type) {
       if (type === 'add') {

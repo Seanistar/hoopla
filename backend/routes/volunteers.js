@@ -430,23 +430,27 @@ router.get('/query', async (req, res) => {
   const sns = s_name && await getSmallCodes(s_name)
   let sql = `
     SELECT vl.*, ac.l_name la_name, ac.m_name ma_name, ac.s_name sa_name,
-    (SELECT COUNT(DISTINCT id) FROM edus WHERE v_id = vl.id AND edu_code = 53) edu_count,
-    (SELECT COUNT(DISTINCT id) FROM acts WHERE v_id = vl.id) act_count 
-    FROM volunteers vl LEFT JOIN area_code ac ON vl.area_code = ac.a_code
-    WHERE 1 = 1`
-  // (SELECT COUNT(DISTINCT id) FROM edus e INNER JOIN edu_code ec ON e.edu_code = ec.code WHERE v_id = vl.id AND ec.type ='G') grp_count,
+    (SELECT COUNT(DISTINCT id) FROM edus WHERE v_id = vl.id AND edu_code = 53) edu_count, `
+  if (s_year) {
+    sql += `(SELECT COUNT(DISTINCT id) FROM acts WHERE v_id = vl.id and YEAR(s_date) = ${s_year}) act_count`
+  } else {
+    sql += `(SELECT COUNT(DISTINCT id) FROM acts WHERE v_id = vl.id) act_count`
+  }
+  sql += ` FROM volunteers vl LEFT JOIN area_code ac ON vl.area_code = ac.a_code WHERE 1 = 1`
+
   if (au_s_date && au_e_date) sql += ` AND YEAR(vl.au_date) >= ${au_s_date} AND YEAR(vl.au_date) <= ${au_e_date}`
   else if (au_s_date) sql += ` AND YEAR(vl.au_date) >= ${au_s_date}`
   else if (au_e_date) sql += ` AND YEAR(vl.au_date) <= ${au_e_date}`
   if (st_age && ed_age) sql += ` AND YEAR(vl.br_date) >= ${st_age} AND YEAR(vl.br_date) <= ${ed_age}`
   else if (st_age) sql += ` AND YEAR(vl.br_date) <= ${st_age}`
   else if (ed_age) sql += ` AND YEAR(vl.br_date) >= ${ed_age}`
-  if (s_year) sql += ` AND YEAR(vl.au_date) = ${s_year}`
   if (a_code) sql += ` AND vl.area_code like (\'${a_code}%\')`
   if (v_name) sql += ` AND vl.name like (\'%${v_name}%\')`
   if (sa_code) sql += ` AND vl.area_code = (\'${sa_code}\')`
   if (memo) sql += ` AND vl.memo like (\'%${memo}%\')`
   if (sns && sns.length) sql += ` AND vl.area_code in (${sns})`
+  if (s_year) sql += ` HAVING (act_count > 0)`
+
   console.log('query... ', sql, req.query)
   db.query(sql, (err, rows) => {
     if (!err) {

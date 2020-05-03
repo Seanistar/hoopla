@@ -39,7 +39,7 @@ router.get('/volts', (req, res) => {
     other_code, (SELECT s_name FROM area_code WHERE s_code = a.other_code) other_name  
     FROM volunteers v 
     INNER JOIN acts a ON v.id = a.v_id
-    WHERE v.area_code=? AND a.s_date BETWEEN ? AND ?`,
+    WHERE a.area_code=? AND a.s_date BETWEEN ? AND ?`,
     [a_code, s_date, e_date]
   ] // WHERE area_code=? AND registered <= DATE_FORMAT(?, '%Y-%m-%d %H:%i:%s')`
   db.query(...sql, (err, rows) => {
