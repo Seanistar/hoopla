@@ -28,14 +28,14 @@ router.get('/area', (req, res) => {
 router.post('/area', (req, res) => {
   const {ac, lc, ln, mc, mn, sc, sn} = req.body
   let sql = ''
-  if (sc !== undefined) sql = [`INSERT INTO area_code(a_code, l_code, l_name, m_code, m_name, s_code, s_name) 
-    VALUES(?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE l_code=?, l_name=?, m_code=?, m_name=?, s_code=?, s_name=?`,
+  if (sc !== undefined) sql = [`INSERT INTO area_code(a_code, l_code, l_name, m_code, m_name, s_code, s_name, used) 
+    VALUES(?,?,?,?,?,?,?,'Y') ON DUPLICATE KEY UPDATE l_code=?, l_name=?, m_code=?, m_name=?, s_code=?, s_name=?`,
     [ac, lc, ln, mc, mn, sc, sn, lc, ln, mc, mn, sc, sn]]
-  else if (mc !== undefined) sql = [`INSERT INTO area_code(a_code, l_code, l_name, m_code, m_name) 
-    VALUES(?,?,?,?,?) ON DUPLICATE KEY UPDATE l_code=?, l_name=?, m_code=?, m_name=?`,
+  else if (mc !== undefined) sql = [`INSERT INTO area_code(a_code, l_code, l_name, m_code, m_name, used) 
+    VALUES(?,?,?,?,?,'Y') ON DUPLICATE KEY UPDATE l_code=?, l_name=?, m_code=?, m_name=?`,
     [ac, lc, ln, mc, mn, lc, ln, mc, mn]]
-  else if (lc !== undefined) sql = [`INSERT INTO area_code(a_code, l_code, l_name) 
-    VALUES(?,?,?) ON DUPLICATE KEY UPDATE l_code=?, l_name=?`,
+  else if (lc !== undefined) sql = [`INSERT INTO area_code(a_code, l_code, l_name, used) 
+    VALUES(?,?,?,'Y') ON DUPLICATE KEY UPDATE l_code=?, l_name=?`,
     [ac, lc, ln, lc, ln]]
 
   db.query(...sql, (err) => {

@@ -179,7 +179,7 @@ export default {
         return
       }
       if (!this.getCode) return alert('구역을 선택해주세요!')
-      // if (type === 'remove') confirm('선택한 항목을 삭제하시겠습니까?') && this.deleteItem(this.getCode)
+      if (type === 'remove') confirm('선택한 항목을 삭제하시겠습니까?') && this.deleteItem(this.getCode)
       if (type === 'update') {
         this.$refs.codes.setItem({code: this.getCode, name: this._code_name(this.getCode)})
         this.inputDlg = true

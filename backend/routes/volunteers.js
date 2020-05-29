@@ -234,7 +234,11 @@ const insertEduItem = (v_id, e_code, area_code, r_year, month, is_auto, memo, gr
     d.setDate(is_auto ? d.getDate() : 1)
     const s_date = d.toISOString().substr(0, 10)
     d.setMonth(d.getMonth() + 1)
-    d.setDate(d.getDate() - 1)
+    if (e_code === 53) {
+      d.setDate(0)
+    } else {
+      d.setDate(d.getDate() - 1)
+    }
     const e_date = d.toISOString().substr(0, 10)
     // console.log(s_date, e_date)
     const sql = [`

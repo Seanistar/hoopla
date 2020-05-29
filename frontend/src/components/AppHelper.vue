@@ -7,10 +7,11 @@
         </div>
         <v-divider light class="my-3"></v-divider>-->
 
-        <div id="writer" class="mt-3">
+        <!--<div id="writer" class="mt-3">
           <ckeditor :editor="editor" v-model="content" :config="config" :disabled="!editable"
           ></ckeditor>
-        </div>
+        </div>-->
+        <div v-html="content"></div>
 
         <v-card-actions class="px-0 mt-2 box-btn" v-if="editable">
           <v-flex xs12 text-xs-right>
@@ -30,14 +31,14 @@
 <script>
 import { mapGetters } from 'vuex'
 import { FETCH_HELPER, UPDATE_HELPER } from '@/store/actions.type'
-import CKEditor from '@ckeditor/ckeditor5-vue'
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import { UploadAdapterPlugin } from '@/plugins/uploader'
+// import CKEditor from '@ckeditor/ckeditor5-vue'
+// import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+// import { UploadAdapterPlugin } from '@/plugins/uploader'
 
 export default {
   name: 'AppHelper',
   props: ['editable'],
-  components: { ckeditor: CKEditor.component },
+  // components: { ckeditor: CKEditor.component },
   computed: {
     ...mapGetters(['helper'])
   },
@@ -59,11 +60,11 @@ export default {
     return {
       title: '',
       editorDisabled: true,
-      editor: ClassicEditor,
+      // editor: ClassicEditor,
       content: '',
       config: {
         originType: 'discussion',
-        extraPlugins: [ UploadAdapterPlugin ],
+        // extraPlugins: [ UploadAdapterPlugin ],
         image: {
           toolbar: [ 'imageTextAlternative', '|', 'imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight' ],
           styles: [ 'full', 'alignLeft', 'alignRight' ]
