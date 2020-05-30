@@ -90,15 +90,15 @@ export default {
   },
   created () {
     this.fetchInfo()
-  },
-  mounted () {
+  }
+  /* mounted () {
     setTimeout(() => {
       const box = document.querySelector('.ck-editor__editable')
       if (box) box.style.height = '100%' //  (window.innerHeight - 150) + 'px'
       const bar = document.querySelector('.ck-toolbar')
       bar.classList.add('no-display')
     }, 100)
-  }
+  } */
 }
 </script>
 
