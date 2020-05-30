@@ -83,12 +83,12 @@
 
 <script>
 import CodeMixin from '@/common/code.mixin'
-import MenuButtons from './control/MenuButtons'
-import ItemDialog from './control/InputItemDialog'
+import MenuButtons from '../control/MenuButtons'
+import ItemDialog from '../control/InputItemDialog'
 import { uniqBy, last } from 'lodash/array'
 import { filter, find } from 'lodash/collection'
 import { startsWith } from 'lodash/string'
-import { UPDATE_AREA_CODE, DELETE_AREA_CODE, FETCH_AREA_CODES } from '../store/actions.type'
+import { UPDATE_AREA_CODE, DELETE_AREA_CODE, FETCH_AREA_CODES } from '../../store/actions.type'
 
 export default {
   name: 'AreaCode',

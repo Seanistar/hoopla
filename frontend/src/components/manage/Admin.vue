@@ -27,13 +27,13 @@
 </template>
 
 <script>
-import MenuButtons from './control/MenuButtons'
-import ItemDialog from './control/InputItemDialog'
+import MenuButtons from '../control/MenuButtons'
+import ItemDialog from '../control/InputItemDialog'
 import { isEmpty } from 'lodash/lang'
 import { find } from 'lodash/collection'
 import { pick, omit } from 'lodash/object'
 import { mapGetters, mapActions } from 'vuex'
-import { FETCH_ADMINS, REGISTER_ADMIN, UPDATE_ADMIN, DELETE_ADMIN } from '../store/actions.type'
+import { FETCH_ADMINS, REGISTER_ADMIN, UPDATE_ADMIN, DELETE_ADMIN } from '../../store/actions.type'
 
 export default {
   name: 'AdminList',

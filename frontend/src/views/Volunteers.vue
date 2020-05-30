@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import VolunteerList from '@/components/VolunteerList'
+import VolunteerList from '@/components/volunteer/List'
 import { CodeService } from '@/common/api.service'
 
 export default {

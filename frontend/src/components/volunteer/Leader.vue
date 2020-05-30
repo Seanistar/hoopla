@@ -39,12 +39,12 @@
 </template>
 
 <script>
-import MenuButtons from './control/MenuButtons'
-import DatePicker from './control/DatePicker'
-import ItemDialog from './control/InputItemDialog'
+import MenuButtons from '../control/MenuButtons'
+import DatePicker from '../control/DatePicker'
+import ItemDialog from '../control/InputItemDialog'
 import { isUndefined } from 'lodash/lang'
 import { mapGetters } from 'vuex'
-import { FETCH_VOLUNTEER_LEADER } from '../store/actions.type'
+import { FETCH_VOLUNTEER_LEADER } from '../../store/actions.type'
 
 export default {
   name: 'VolunteerLeader',

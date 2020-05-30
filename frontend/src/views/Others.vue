@@ -13,9 +13,9 @@
 </template>
 
 <script>
-import ManageArea from '@/components/ManageArea'
-import ManageEdus from '@/components/ManageEdus'
-import ManageAdmin from '@/components/ManageAdmin'
+import ManageArea from '@/components/manage/Area'
+import ManageEdus from '@/components/manage/Edus'
+import ManageAdmin from '@/components/manage/Admin'
 
 export default {
   name: 'ViewOthers',

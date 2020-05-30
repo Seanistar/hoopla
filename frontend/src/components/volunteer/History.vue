@@ -31,7 +31,7 @@
 
 <script>
 import { isUndefined } from 'lodash/lang'
-import { FETCH_VOLUNTEER_HISTORY } from '../store/actions.type'
+import { FETCH_VOLUNTEER_HISTORY } from '../../store/actions.type'
 import { mapGetters } from 'vuex'
 
 export default {

@@ -70,7 +70,7 @@ import { mapGetters } from 'vuex'
 import { FETCH_REPORT_GROUP_ACTS, FETCH_REPORT_STATE, CREATE_REPORT } from '@/store/actions.type'
 import { reduce, find, groupBy } from 'lodash/collection'
 import { pick } from 'lodash/object'
-import MenuButtons from './control/MenuButtons'
+import MenuButtons from '../control/MenuButtons'
 
 export default {
   name: 'ReportGroupActs',

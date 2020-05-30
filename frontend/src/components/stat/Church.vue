@@ -1,28 +1,56 @@
 <template>
   <v-container pt-2 mt-1>
-    <v-layout justify-center v-if="$parent.window.width >= 900">
-      <v-flex xs2 mt-2>
-        <v-radio-group v-model="type" row height="20" hide-details>
+    <v-layout row align-baseline v-if="$parent.window.width >= 900">
+      <v-flex xs3>
+        <v-select label="교구선택" class="body-2" clearable hide-details
+                    v-model="area" :items="areaList" item-value="code" item-text="name">
+        </v-select>
+      </v-flex>
+      <v-flex xs3 ml-3 pl-2>
+        <v-select label="연도선택" class="w-90 text-xs-center body-1" clearable hide-details
+                  :items="years" v-model="year"></v-select>
+      </v-flex>
+      <v-flex xs3 ml-3>
+        <v-radio-group v-model="type" row height="30">
           <v-radio label="교육 현황" value="edus"></v-radio>
           <v-radio label="봉사 현황" value="acts"></v-radio>
         </v-radio-group>
       </v-flex>
-      <v-flex xs2>
-        <v-select label="연도선택" class="w-90 text-xs-center body-1" clearable
-                  :items="years" v-model="year"></v-select>
-      </v-flex>
-      <!--<v-flex xs2 mt-3>
-        <div class="body-2 grey&#45;&#45;text">※ 현재 연도 자료입니다.</div>
-      </v-flex>-->
-      <v-flex xs8 mt-2 text-xs-right>
+      <v-flex xs3 text-xs-right>
         <v-btn color="primary" outline @click="toExcel">내려받기</v-btn>
       </v-flex>
     </v-layout>
-    <v-layout v-else>
-      <v-flex xs12>
-        <v-radio-group v-model="type" row height="20" class="ml-3">
+    <v-layout row align-baseline v-else-if="$parent.window.width >= 600">
+      <v-flex xs3 ml-3>
+        <v-select label="교구선택" class="body-2" clearable
+                  v-model="area" :items="areaList" item-value="code" item-text="name">
+        </v-select>
+      </v-flex>
+      <v-flex xs3 ml-3 pl-2>
+        <v-select label="연도선택" class="w-90 text-xs-center body-1" clearable
+                  :items="years" v-model="year"></v-select>
+      </v-flex>
+      <v-flex xs6>
+        <v-radio-group v-model="type" row height="30">
           <v-radio label="교육 현황" value="edus"></v-radio>
           <v-radio label="봉사 현황" value="acts"></v-radio>
+        </v-radio-group>
+      </v-flex>
+    </v-layout>
+    <v-layout v-else>
+      <v-flex xs6 ml-2>
+        <v-select label="교구선택" class="body-2" clearable
+                  v-model="area" :items="areaList" item-value="code" item-text="name">
+        </v-select>
+      </v-flex>
+      <v-flex xs6 ml-2>
+        <v-select label="연도선택" class="w-90 text-xs-center body-1" clearable
+                  :items="years" v-model="year"></v-select>
+      </v-flex>
+      <v-flex xs6 ml-2>
+        <v-radio-group v-model="type" row height="30" hide-details>
+          <v-radio label="교육현황" value="edus"></v-radio>
+          <v-radio label="봉사현황" value="acts"></v-radio>
         </v-radio-group>
       </v-flex>
     </v-layout>
@@ -34,11 +62,11 @@
     <v-data-table :items="items" hide-actions
                   style="max-height: calc(80vh - 10px);backface-visibility: hidden;"
                   :class="type === 'edus' ? 'main-table' : 'acts-table'"
-                  class="elevation-1  fixed-header v-table__overflow">
+                  class="elevation-1 fixed-header v-table__overflow">
       <template slot="headers" slot-scope="props">
         <template v-if="type === 'edus'">
           <tr class="first-row">
-            <th rowspan="2" class="body-2 font-weight-bold w-5"><p class="head-title">교구 구분</p></th>
+            <th rowspan="2" class="body-2 font-weight-bold" style="width: 120px"><p class="head-title">본당 구분</p></th>
             <th :colspan="ebsCodes.length" class="body-2 font-weight-bold">교육 현황 (명)</th>
             <th :colspan="grpCodes.length" class="body-2 font-weight-bold">그룹 공부 현황 (명)</th>
             <th :colspan="trnCodes.length" class="body-2 font-weight-bold">성서 연수 현황 (명)</th>
@@ -53,7 +81,7 @@
         </template>
         <template v-else>
           <tr class="first-row">
-            <th rowspan="3" class="body-2 font-weight-bold w-5"><p class="head-title">교구 구분</p></th>
+            <th rowspan="3" class="body-2 font-weight-bold" style="width: 120px"><p class="head-title">본당 구분</p></th>
             <th :colspan="actCodes.length * 2" class="body-2 font-weight-bold">봉사 현황</th>
           </tr>
           <tr class="data-column second-row">
@@ -68,8 +96,8 @@
         </template>
       </template>
       <template slot="items" slot-scope="props">
-        <tr class="first-column" v-if="type === 'edus'">
-          <td class="text-xs-center ">{{props.item|yearKey}}</td>
+        <tr v-if="type === 'edus'" class="first-column">
+          <td class="text-xs-center">{{props.item|yearKey}}</td>
           <td class="text-xs-center" v-for="at in ebsCodes" :key="at.code">{{props.item|keyBy|uv_counter(at)|units}}</td>
           <td class="text-xs-center" v-for="at in grpCodes" :key="at.code">{{props.item|keyBy|uv_counter(at)|units}}</td>
           <td class="text-xs-center" v-for="at in trnCodes" :key="at.code">{{props.item|keyBy|uv_counter(at)|units}}</td>
@@ -92,11 +120,11 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { FETCH_STAT_AREA } from '@/store/actions.type'
-import { groupBy, find } from 'lodash/collection'
+import { FETCH_STAT_CHURCH } from '@/store/actions.type'
+import { groupBy, sortBy, find, map } from 'lodash/collection'
+import FiltersMixin from '../../common/filters.mixin'
 import { range } from 'lodash/util'
 import { sumBy } from 'lodash/math'
-import FiltersMixin from '../common/filters.mixin'
 import XLSX from 'xlsx'
 
 export default {
@@ -110,7 +138,8 @@ export default {
       'trnCodes',
       'stdCodes',
       'areaCodes',
-      'statArea'
+      'largeCodes',
+      'statChurch'
     ]),
     years () {
       const start = (new Date()).getFullYear()
@@ -119,46 +148,52 @@ export default {
   },
   data: () => ({
     items: [],
-    fetched: false,
+    areaList: [],
+    year: null,
+    area: null,
     type: 'edus',
-    year: null
+    fetched: false,
+    pagination: {rowsPerPage: 25}
   }),
   watch: {
-    'areaCodes' (val) {
-      val.length && this._mapData()
-    },
-    type () {
-      this.fetchData()
-    },
     year (nv, ov) {
       if (!ov && !nv) return
+      this.fetchData()
+    },
+    area (nv, ov) {
+      if (!ov && !nv) return
+      this.fetchData()
+    },
+    type () {
       this.fetchData()
     }
   },
   created () {
     this.fetchData()
+    this.$nextTick(() => { this.setArea() })
   },
   methods: {
     async fetchData () {
       this.fetched = false
-      const params = { type: this.type, year: this.year }
-      await this.$store.dispatch(FETCH_STAT_AREA, {params})
+      const params = { year: this.year, area: this.area, type: this.type }
+      await this.$store.dispatch(FETCH_STAT_CHURCH, {params})
       this.$nextTick(() => { this._mapData() })
     },
-    async _mapData () {
-      const qv = this.statArea
+    _mapData () {
+      const qv = this.statChurch
       if (!qv) return
 
       this.items = []
-      const yg = groupBy(qv, 'l_code')
+      const yg = groupBy(qv, 'a_code')
       Object.keys(yg).forEach(k => {
         yg[k] = groupBy(yg[k], 'e_code')
         const area = find(this.areaCodes, (o) => o.a_code === k)
         if (area) {
-          let obj = {}; obj[`${area.l_name}`] = yg[k]
+          let obj = {}; obj[`${area.l_name}-${area.s_name}`] = yg[k]
           this.items.push(obj)
         }
       })
+      this.items = sortBy(this.items, o => Object.keys(o))
 
       const ye = groupBy(qv, 'e_code')
       let rs = {}
@@ -168,10 +203,17 @@ export default {
       this.items = [{'합계': rs}].concat(this.items)
       this.fetched = true
     },
+    setArea () {
+      // if (!this.areaCodes.length) await this.$store.dispatch('fetchAreaCodes')
+      this.$nextTick(() => {
+        this.areaList = map(this.largeCodes, o => { return {code: o.l_code, name: o.l_name} })
+      })
+      this.areaList = [{code: '', name: '선택없음'}].concat(this.areaList)
+    },
     toExcel () {
       const table = document.getElementsByTagName('table')
       const wb = XLSX.utils.table_to_book(table[0], {raw: true})
-      XLSX.writeFile(wb, '교구별현황.xlsx')
+      XLSX.writeFile(wb, '본당별현황.xlsx')
     }
   },
   filters: {

@@ -14,11 +14,11 @@
 </template>
 
 <script>
-// import ReportStates from '@/components/ReportStates'
-import ReportVolunteers from '@/components/ReportVolunteers'
-import ReportActs from '@/components/ReportActs'
-import ReportDirect from '@/components/ReportActsDirect'
-import ReportGroupActs from '@/components/ReportGroupActs'
+// import ReportStates from '@/components/report/States'
+import ReportVolunteers from '@/components/report/Volunteers'
+import ReportActs from '@/components/report/Acts'
+import ReportDirect from '@/components/report/ActsDirect'
+import ReportGroupActs from '@/components/report/GroupActs'
 import FloatButton from '@/components/control/FloatButton'
 import { mapGetters } from 'vuex'
 

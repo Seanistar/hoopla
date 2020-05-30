@@ -167,8 +167,8 @@ import { mapGetters } from 'vuex'
 import { FETCH_REPORT_STATE, CREATE_REPORT, UPDATE_REPORT } from '@/store/actions.type'
 import { reduce, find } from 'lodash/collection'
 import { pick, omit } from 'lodash/object'
-import MenuButtons from './control/MenuButtons'
-import ReportLayout from './ReportLayout'
+import MenuButtons from '../control/MenuButtons'
+import ReportLayout from './Layout'
 
 export default {
   name: 'ReportStates',

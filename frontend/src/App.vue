@@ -17,8 +17,8 @@
 import Vue from 'vue'
 import AppSnackBar from '@/components/control/AppSnackBar'
 import AppConfirm from '@/components/control/AppConfirm'
-import AppHeader from '@/components/AppHeader'
-import AppFooter from '@/components/AppFooter'
+import AppHeader from '@/components/app/Header'
+import AppFooter from '@/components/app/Footer'
 import {FETCH_EDU_CODES, FETCH_AREA_CODES} from '@/store/actions.type'
 
 export default {

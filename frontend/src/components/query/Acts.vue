@@ -3,27 +3,29 @@
     <!--<inline-text-box :au_year="queryInfo.good.au_date|yearstamp"
                      :v_name="`${queryInfo.good.name} ${queryInfo.good.ca_name} (${queryInfo.good.sa_name} 본당)`"/>-->
     <slot name="voltInfo"></slot>
-    <v-data-table hide-actions class="elevation-1" :items="items"
+    <v-data-table :items="items" hide-actions
+                  class="elevation-1"
     >
       <template slot="headers" slot-scope="props">
         <tr>
-          <th rowspan="2" class="body-1 font-weight-bold w-10">연도</th>
-          <th :colspan="stdCodes.length" class="body-1 font-weight-bold w-90">노트 검사 현황</th>
+          <th rowspan="2" class="body-2 font-weight-bold w-10">연도</th>
+          <th :colspan="actCodes.length" class="body-2 font-weight-bold w-90">그룹 봉사 현황</th>
         </tr>
         <tr>
-          <th class="body-1 w-10"
-              v-for="item in stdCodes" :key="item.code">{{item.name|subject}}</th>
+          <th class="align-center body-1 w-10"
+              v-for="header in actCodes" :key="header.code">{{ header.name }}
+          </th>
         </tr>
       </template>
       <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
       <template slot="items" slot-scope="props">
         <tr>
           <td class="text-xs-center">{{ props.item|yearKey }}</td>
-          <td class="text-xs-center" v-for="(nt, i) in stdCodes" :key="i">{{ props.item|keyBy|counter(nt) }}</td>
+          <td class="text-xs-center" v-for="(at, i) in actCodes" :key="i">{{ props.item|keyBy|counter(at) }}</td>
         </tr>
       </template>
       <template slot="no-data">
-        <tr class="text-xs-center"><td colspan="16">현황 내역이 없습니다.</td></tr>
+        <tr class="text-xs-center"><td colspan="10">현황 내역이 없습니다.</td></tr>
       </template>
     </v-data-table>
     <slot name="moveTo"></slot>
@@ -32,13 +34,13 @@
 
 <script>
 // import InlineTextBox from './control/InlineTextBox'
-import QueryMixin from '../common/query.mixin'
+import QueryMixin from '../../common/query.mixin'
 
 export default {
-  name: 'QueryNotes',
+  name: 'QueryActs',
   mixins: [ QueryMixin ],
   // components: { InlineTextBox },
-  created () { this.e_type = 'N' }
+  created () { this.e_type = 'A' }
 }
 </script>
 

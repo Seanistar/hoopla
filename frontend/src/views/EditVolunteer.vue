@@ -20,11 +20,11 @@
 </template>
 
 <script>
-import VolunteerItem from '@/components/VolunteerItem'
-import VolunteerEdus from '@/components/VolunteerEdus'
-import VolunteerActs from '@/components/VolunteerActs'
-import VolunteerLeader from '@/components/VolunteerLeader'
-import VolunteerHistory from '@/components/VolunteerHistory'
+import VolunteerItem from '@/components/volunteer/Item'
+import VolunteerEdus from '@/components/volunteer/Edus'
+import VolunteerActs from '@/components/volunteer/Acts'
+import VolunteerLeader from '@/components/volunteer/Leader'
+import VolunteerHistory from '@/components/volunteer/History'
 import FloatButton from '@/components/control/FloatButton'
 import InlineTextBox from '@/components/control/InlineTextBox'
 // import { SET_CHANGED_CODE } from '@/store/mutations.type'

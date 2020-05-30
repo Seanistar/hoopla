@@ -32,7 +32,7 @@
 
 <script>
 // import InlineTextBox from './control/InlineTextBox'
-import QueryMixin from '../common/query.mixin'
+import QueryMixin from '../../common/query.mixin'
 import { reduce } from 'lodash/collection'
 
 export default {

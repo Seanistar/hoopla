@@ -31,7 +31,7 @@
 
 <script>
 // import InlineTextBox from './control/InlineTextBox'
-import QueryMixin from '../common/query.mixin'
+import QueryMixin from '../../common/query.mixin'
 
 export default {
   name: 'QueryBibles',

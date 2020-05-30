@@ -69,8 +69,8 @@
 </template>
 
 <script>
-import MenuButtons from './control/MenuButtons'
-import ActsDialog from './control/InputActsDialog'
+import MenuButtons from '../control/MenuButtons'
+import ActsDialog from '../control/InputActsDialog'
 import { pick } from 'lodash/object'
 import { isEmpty } from 'lodash/lang'
 import { groupBy, map, reduce } from 'lodash/collection'

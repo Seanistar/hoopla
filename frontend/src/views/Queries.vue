@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import QueryList from '@/components/QueryList'
+import QueryList from '@/components/query/List'
 
 export default {
   name: 'QueryVolunteer',

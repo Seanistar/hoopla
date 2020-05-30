@@ -160,11 +160,11 @@
 import { isEmpty, isUndefined, isEqual, cloneDeep } from 'lodash/lang'
 import { pick } from 'lodash/object'
 import { map, find, orderBy } from 'lodash/collection'
-import DatePicker from './control/DatePicker'
-import AppAlert from './control/AppAlert'
-import ImageUploader from './control/ImageUploader'
+import DatePicker from '../control/DatePicker'
+import AppAlert from '../control/AppAlert'
+import ImageUploader from '../control/ImageUploader'
 import { VolunteerService } from '@/common/api.service'
-import { ACTIVITY_STATES, LEADER_STATES } from '../common/const.info'
+import { ACTIVITY_STATES, LEADER_STATES } from '../../common/const.info'
 import { mapActions, mapGetters } from 'vuex'
 import {
   CREATE_VOLUNTEER,

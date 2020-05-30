@@ -13,9 +13,9 @@
 </template>
 
 <script>
-import VolunteerItem from '@/components/VolunteerItem'
-import VolunteerEdus from '@/components/VolunteerEdus'
-import VolunteerActs from '@/components/VolunteerActs'
+import VolunteerItem from '@/components/volunteer/Item'
+import VolunteerEdus from '@/components/volunteer/Edus'
+import VolunteerActs from '@/components/volunteer/Acts'
 import FloatButton from '@/components/control/FloatButton'
 
 export default {

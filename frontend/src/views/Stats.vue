@@ -13,14 +13,14 @@
 </template>
 
 <script>
-import StatYearly from '@/components/StatYearly'
-import StatChurch from '@/components/StatChurch'
-import StatArea from '@/components/StatArea'
-import StatVolt from '@/components/StatVolts'
-import StatActs from '@/components/StatActs'
-import StatOthers from '@/components/StatOthers'
-import StatLeaders from '@/components/StatLeaders'
-import StatDistrict from '@/components/StatDistrict'
+import StatYearly from '@/components/stat/Annual'
+import StatChurch from '@/components/stat/Church'
+import StatArea from '@/components/stat/Area'
+import StatVolt from '@/components/stat/Volunteers'
+import StatActs from '@/components/stat/Acts'
+import StatOthers from '@/components/stat/Others'
+import StatLeaders from '@/components/stat/Leaders'
+import StatDistrict from '@/components/stat/District'
 import FloatButton from '@/components/control/FloatButton'
 
 export default {

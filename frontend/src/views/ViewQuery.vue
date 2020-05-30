@@ -28,11 +28,11 @@
 </template>
 
 <script>
-import QueryEdus from '@/components/QueryEdus'
-import QueryBibles from '@/components/QueryBibles'
-import QueryActs from '@/components/QueryActs'
-import QueryNotes from '@/components/QueryNotes'
-import QueryGroup from '@/components/QueryGroup'
+import QueryEdus from '@/components/query/Edus'
+import QueryBibles from '@/components/query/Bibles'
+import QueryActs from '@/components/query/Acts'
+import QueryNotes from '@/components/query/Notes'
+import QueryGroup from '@/components/query/Group'
 import FloatButton from '@/components/control/FloatButton'
 import InlineTextBox from '@/components/control/InlineTextBox'
 

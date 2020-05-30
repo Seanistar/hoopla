@@ -46,11 +46,11 @@
 </template>
 
 <script>
-import MenuButtons from './control/MenuButtons'
-import DatePicker from './control/DatePicker'
-import ActsDialog from './control/InputActsDialog'
+import MenuButtons from '../control/MenuButtons'
+import DatePicker from '../control/DatePicker'
+import ActsDialog from '../control/InputActsDialog'
 import { isUndefined } from 'lodash/lang'
-import { FETCH_VOLUNTEER_ACTS, CREATE_VOLUNTEER_ACT, UPDATE_VOLUNTEER_ACT, DELETE_VOLUNTEER_ACT } from '../store/actions.type'
+import { FETCH_VOLUNTEER_ACTS, CREATE_VOLUNTEER_ACT, UPDATE_VOLUNTEER_ACT, DELETE_VOLUNTEER_ACT } from '../../store/actions.type'
 import { mapGetters } from 'vuex'
 
 export default {

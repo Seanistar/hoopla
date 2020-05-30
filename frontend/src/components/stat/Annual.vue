@@ -126,7 +126,7 @@ import { mapGetters } from 'vuex'
 import { FETCH_STAT_YEARLY } from '@/store/actions.type'
 import { groupBy, orderBy, map } from 'lodash/collection'
 import { sumBy } from 'lodash/math'
-import FiltersMixin from '../common/filters.mixin'
+import FiltersMixin from '../../common/filters.mixin'
 import XLSX from 'xlsx'
 
 export default {

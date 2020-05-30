@@ -44,7 +44,7 @@
 <script>
 import { trimStart } from 'lodash/string'
 import { mapGetters } from 'vuex'
-import AppHelper from './AppHelper'
+import AppHelper from './Helper'
 
 export default {
   name: 'Header',

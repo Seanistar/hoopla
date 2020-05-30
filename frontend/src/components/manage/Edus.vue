@@ -148,10 +148,10 @@
 </template>
 
 <script>
-import MenuButtons from './control/MenuButtons'
-import ItemDialog from './control/InputItemDialog'
+import MenuButtons from '../control/MenuButtons'
+import ItemDialog from '../control/InputItemDialog'
 import { last } from 'lodash/array'
-import { UPDATE_EDUS_CODE } from '../store/actions.type'
+import { UPDATE_EDUS_CODE } from '../../store/actions.type'
 import { mapGetters } from 'vuex'
 
 export default {

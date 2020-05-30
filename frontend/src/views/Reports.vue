@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import ReportList from '@/components/ReportList'
+import ReportList from '@/components/report/List'
 
 export default {
   name: 'ReportHome',

@@ -132,7 +132,7 @@
 import { mapGetters } from 'vuex'
 import { FETCH_STAT_DISTRICT } from '@/store/actions.type'
 import { groupBy, sortBy, find, map, filter } from 'lodash/collection'
-import FiltersMixin from '../common/filters.mixin'
+import FiltersMixin from '../../common/filters.mixin'
 import { range } from 'lodash/util'
 import { sumBy } from 'lodash/math'
 import { uniqBy, concat } from 'lodash/array'
